@@ -54,18 +54,20 @@ export default {
         if (!valid) return;
         //解构赋值data
         // const { data: res } = await this.$http.post("login", this.loginForm);
-        const res = await this.$http.post("login", this.loginForm);
+        const res = await this.$http.post("login", this.loginForm)
+        console.log(res)
+        
         if (res.status !== 200) {
           this.$message.error("登录失败");
         } else {
           this.$message.success("登录成功");
         }
-        console.log(res);
-        window.sessionStorage.setItem('token',res.data.data.token)
-        this.$router.push('/home')
+        
+        window.sessionStorage.setItem("token", res.data.data.token);
+        this.$router.push("/home");
       });
     }
-  
+
     // //保存密码
     // keepPsw() {},
     // //忘记密码
@@ -78,12 +80,12 @@ export default {
 .loginContainer {
   background-color: #236795;
   height: 100%;
+
   display: flex;
   justify-content: center;
-
   .loginBox {
     background-color: aliceblue;
-    min-width: 40%;
+    min-width: 20%;
     min-height: 20%;
     border-radius: 4px;
     align-self: center;
