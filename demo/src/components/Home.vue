@@ -19,6 +19,7 @@
     </el-header>
 
     <el-container>
+      <!-- 侧边栏菜单区域 -->
       <el-aside width="210px" height="100%">
         <el-menu
           default-active="1"
@@ -28,9 +29,7 @@
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
-          :index="menuId+''"
-          v-for="(item,menuId) in menuList"
-          :key="menuId"
+          
         >
           <!-- <el-menu-item index="1">
             <template slot="title">
@@ -43,11 +42,17 @@
           <el-menu-item index="3">
             <span slot="title">导航三</span>
           </el-menu-item>-->
-          <el-submenu >
+          <!-- 一级菜单 -->
+          <el-submenu :index="menuId+''"
+          v-for="(item,menuId) in menuList"
+          :key="menuId">
             <template slot="title">{{item.menuName}}</template>
 
-            <el-menu-item :index="item1.menuId"  v-for="item1 in item.childrens"
-          :key="item1.menuId">{{item1.menuName}}</el-menu-item>
+            <el-menu-item
+              :index="menuId+''"
+              v-for="(item1,menuId) in item.childrens"
+              :key="menuId"
+            >{{item1.menuName}}</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -91,13 +96,12 @@ export default {
     async getMenuList() {
       await this.$http.get("menu/getMenu").then(res => {
         this.menuList = res.data.data;
-        console.log(res)
+        console.log(res);
       });
-    },
+    }
     // async getUser(){
     //     await this.$http.get('login')
     // }
-
   }
 };
 </script>
