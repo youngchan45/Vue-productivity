@@ -10,10 +10,10 @@
         <el-form-item prop="password">
           <el-input placeholder="请输入密码" show-password v-model="loginForm.password"></el-input>
         </el-form-item>
-        <div class="keep">
+        <!-- <div class="keep">
           <el-checkbox v-model="checked" @click="keepPsw">记住密码</el-checkbox>
           <span class="forgetPsw" @click="forgetPsw">忘记密码</span>
-        </div>
+        </div>-->
         <el-form-item>
           <el-button type="primary" block class="onSubmit" @click="onSubmit">登录</el-button>
         </el-form-item>
@@ -26,16 +26,18 @@
 export default {
   data() {
     return {
-      //记住密码复选框默认为否
-      checked: false,
+      // //记住密码复选框默认为否
+      // checked: false,
       //登录表单的数据绑定对象
       loginForm: {
-        username: "",
-        password: ""
+        username: "jackchen",
+        password: "123456"
       },
       //登录表单的验证规则
       loginFormRules: {
-        username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
+        ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, message: "长度至少6个字符", trigger: "blur" }
@@ -51,17 +53,23 @@ export default {
         //console.log(valid);
         if (!valid) return;
         //解构赋值data
-        const { data: res } = await this.$http.post("login", this.loginForm);
+        // const { data: res } = await this.$http.post("login", this.loginForm);
+        const res = await this.$http.post("login", this.loginForm);
+        if (res.status !== 200) {
+          this.$message.error("登录失败");
+        } else {
+          this.$message.success("登录成功");
+        }
         console.log(res);
-        // if (res.meta.status !== 200) {
-        //   this.$message.error("登录失败");
-        // }
+        window.sessionStorage.setItem('token',res.data.data.token)
+        this.$router.push('/home')
       });
-    },
-    //保存密码
-    keepPsw() {},
-    //忘记密码
-    forgetPsw() {}
+    }
+  
+    // //保存密码
+    // keepPsw() {},
+    // //忘记密码
+    // forgetPsw() {}
   }
 };
 </script>
@@ -76,7 +84,7 @@ export default {
   .loginBox {
     background-color: aliceblue;
     min-width: 40%;
-    min-height: 40%;
+    min-height: 20%;
     border-radius: 4px;
     align-self: center;
     padding: 2%;
@@ -85,14 +93,14 @@ export default {
     }
   }
 }
-.keep {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-  .forgetPsw {
-    font-size: 14px;
-    color: red;
-    cursor: pointer;
-  }
-}
+// .keep {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-bottom: 30px;
+//   .forgetPsw {
+//     font-size: 14px;
+//     color: red;
+//     cursor: pointer;
+//   }
+// }
 </style>
