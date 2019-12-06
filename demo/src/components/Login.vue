@@ -3,12 +3,12 @@
     <div class="loginBox">
       <el-form label-width="0px" :model="loginForm" :rules="loginFormRules" ref="loginFormRef">
         <el-form-item prop="username">
-          <el-input placeholder="请输入用户名" v-model="loginForm.username">
+          <el-input placeholder="请输入用户名" v-model="loginForm.username" clearable>
             <i slot="suffix" class="el-icon-user"></i>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input placeholder="请输入密码" show-password v-model="loginForm.password"></el-input>
+          <el-input placeholder="请输入密码" show-password v-model="loginForm.password" clearable></el-input>
         </el-form-item>
         <!-- <div class="keep">
           <el-checkbox v-model="checked" @click="keepPsw">记住密码</el-checkbox>

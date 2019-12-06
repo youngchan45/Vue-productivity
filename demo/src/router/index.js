@@ -11,6 +11,7 @@ axios.interceptors.request.use(config=>{
 // import login from '../components/Login.vue'
 const login = () => import('../components/Login.vue')
 const home = () => import('../components/Home.vue')
+const accountmanagement =()=> import("../components/Usermanagement/Accountmanagement.vue")
 
 Vue.use(VueRouter)
 
@@ -22,7 +23,14 @@ const routes = [
   {
     path: '/home',
     component: home,
-  }
+    children:[
+      {
+        path:"/userManagement/accountManagement",
+        component:accountmanagement
+      }
+    ]
+  },
+  
 ]
 
 const router = new VueRouter({

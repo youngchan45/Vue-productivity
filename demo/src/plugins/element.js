@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, form, formItem, input, checkbox, message, Menu, submenu,MenuItemGroup,menuItem,container,header,main,footer,aside,dialog,popconfirm,popover } from 'element-ui'
+import { Button, form, formItem, input, checkbox, message, Menu, submenu,MenuItemGroup,menuItem,container,header,main,footer,aside,dialog,popconfirm,popover,table,tableColumn,pagination } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(form)
@@ -20,3 +20,6 @@ Vue.use(aside)
 Vue.use(dialog)
 Vue.use(popconfirm)
 Vue.use(popover)
+Vue.use(table)
+Vue.use(tableColumn)
+Vue.use(pagination)
