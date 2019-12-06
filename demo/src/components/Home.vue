@@ -11,25 +11,35 @@
       </div>
       <div class="topSet">
         <span>
-          <i class="el-icon-user"></i>您好，用户A
+          <i class="el-icon-user"></i>
+          您好，({{this.deptName1}}){{this.chineseName1}}
         </span>
         <span @click="changePsw">修改密码</span>
-        <span @click="loginOut">退出</span>
+
+        <el-popover placement="top" width="160" v-model="visible">
+          <p>确定要退出平台吗？</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+            <el-button type="primary" size="mini" @click="loginOut">确定</el-button>
+          </div>
+          <span slot="reference">退出</span>
+        </el-popover>
+
+        <!-- <span @click="loginOut">退出</span> -->
       </div>
     </el-header>
+    <!--按钮身上有个事件，点击时把布尔值传递给子组件，子组件身上也有个布尔参数，但这个参数取决于子组件传过来的布尔值-->
 
     <el-container>
       <!-- 侧边栏菜单区域 -->
-      <el-aside width="210px" height="100%">
+      <el-aside width="240px" height="100%">
         <el-menu
           default-active="1"
           class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
-          
+          unique-opened
         >
           <!-- <el-menu-item index="1">
             <template slot="title">
@@ -43,9 +53,7 @@
             <span slot="title">导航三</span>
           </el-menu-item>-->
           <!-- 一级菜单 -->
-          <el-submenu :index="menuId+''"
-          v-for="(item,menuId) in menuList"
-          :key="menuId">
+          <el-submenu :index="menuId+''" v-for="(item,menuId) in menuList" :key="menuId">
             <template slot="title">{{item.menuName}}</template>
 
             <el-menu-item
@@ -60,48 +68,141 @@
       <el-container>
         <el-main>Main</el-main>
 
-        <el-footer>Footer</el-footer>
+        <el-footer>
+          <el-dialog
+            title="提示"
+            :visible.sync="dialogFormVisible"
+            width="30%"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :show-close="false"
+          >
+            <!--弹窗内容-->
+            <span>新用户强制改密码</span>
+
+            <span slot="footer" class="dialog-footer">
+              <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
+              <el-button type="primary" @click="tishi">去改密码</el-button>
+            </span>
+          </el-dialog>
+
+          <el-dialog
+            title="修改密码"
+            :visible.sync="dialogFormVisible1"
+            width="30%"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :show-close="showClose"
+          >
+            <!--弹窗内容-->
+            <el-form class="demo-ruleForm" ref="pswFormRef" statue-icon :model="pswForm">
+              <el-form-item label="密码">
+                <el-input v-model="pswForm.pass"></el-input>
+              </el-form-item>
+              <el-form-item label="确认密码">
+                <el-input  v-model="pswForm.checkpass"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="resetForm">重置</el-button>
+              <el-button type="primary" @click="dialogFormVisible1 = false">确 定</el-button>
+            </span>
+          </el-dialog>
+          <!-- <changepsw :ModelState="showModel" @closeModal="closeModel"></changepsw>
+          <el-button type="danger"  @click="oppenModel">弹窗</el-button>-->
+          Footer
+        </el-footer>
       </el-container>
     </el-container>
   </el-container>
+
   <!-- </div> -->
 </template>
 
 <script>
+// import changePsw from "./publicUse/changePsw";
 // import Navmenu from '../components/NavMenu/Navmenu'
 export default {
   data() {
     return {
-      menuList: []
+      visible: false,
+      menuList: [],
+      deptName1: window.sessionStorage.getItem("deptName"),
+      chineseName1: window.sessionStorage.getItem("chineseName"),
+      dialogFormVisible: false,
+      dialogFormVisible1: false,
+      showClose: false,
+      pswForm: {
+        pass: "",
+        checkpass: ""
+      }
+      // showModel: false
     };
   },
   created() {
     this.getMenuList();
+    this.forcedToModify();
   },
   components: {
     // navmenu:Navmenu,
+    // changepsw: changePsw
   },
   methods: {
+    tishi() {
+      this.dialogFormVisible = false;
+      this.dialogFormVisible1 = true;
+    },
+    changePsw() {
+      this.dialogFormVisible1 = true;
+      this.showClose = true;
+    },
+    //重置修改密码表单
+    resetForm() {
+      console.log("重置", this);
+      this.$refs.pswFormRef.resetFields();
+    },
+    // showlDialog(data){
+    //       console.log(data)
+    //     if(data == 'false'){
+    //       this.isShow = false;
+    //     }else{
+    //       this.isShow = true;
+    //     }
+    //      console.log('是否弹窗布尔',this.isShow)
+    // },
+    // oppenModel () {
+    //   this.showModel = true
+    // },
+    // closeModel (res) {
+    //   this.showModel = res
+    // },
     loginOut() {
       window.sessionStorage.clear();
       this.$router.push("/login");
     },
-    changePsw() {},
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+    forcedToModify() {
+      //changePw为0是新用户，修改保存后changePw为1
+      var oldNewUser = window.sessionStorage.getItem("changePw");
+      if (oldNewUser == 0) {
+        this.dialogFormVisible = true;
+        console.log(typeof oldNewUser);
+      } else {
+        this.dialogFormVisible = true;
+      }
+      // console.log('弹窗')
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
+    // handleOpen(key, keyPath) {
+    //   console.log(key, keyPath);
+    // },
+    // handleClose(key, keyPath) {
+    //   console.log(key, keyPath);
+    // },
     async getMenuList() {
       await this.$http.get("menu/getMenu").then(res => {
         this.menuList = res.data.data;
         console.log(res);
       });
     }
-    // async getUser(){
-    //     await this.$http.get('login')
-    // }
   }
 };
 </script>

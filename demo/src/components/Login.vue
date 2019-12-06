@@ -54,24 +54,27 @@ export default {
         if (!valid) return;
         //解构赋值data
         // const { data: res } = await this.$http.post("login", this.loginForm);
-        const res = await this.$http.post("login", this.loginForm)
-        console.log(res)
-        
+        const res = await this.$http.post("login", this.loginForm);
+        console.log("------login",res );
+
         if (res.status !== 200) {
           this.$message.error("登录失败");
         } else {
+          window.sessionStorage.setItem("token", res.data.data.token);
+          window.sessionStorage.setItem("userId", res.data.data.userId);
+          window.sessionStorage.setItem("deptName", res.data.data.deptName);
+          window.sessionStorage.setItem("chineseName", res.data.data.chineseName);
+          window.sessionStorage.setItem("changePw",res.data.data.changePw)
           this.$message.success("登录成功");
+          this.$router.push("/home");
         }
-        
-        window.sessionStorage.setItem("token", res.data.data.token);
-        this.$router.push("/home");
       });
-    }
 
-    // //保存密码
-    // keepPsw() {},
-    // //忘记密码
-    // forgetPsw() {}
+      // //保存密码
+      // keepPsw() {},
+      // //忘记密码
+      // forgetPsw() {}
+    }
   }
 };
 </script>

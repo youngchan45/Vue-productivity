@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import axios from 'axios'
 //配置请求的根路径
-axios.defaults.baseURL = 'http://192.168.2.153:8088/'
+axios.defaults.baseURL = 'http://itlead.vicp.net:9905/archive'
 Vue.prototype.$http = axios
 axios.interceptors.request.use(config=>{
   config.headers.Authorization=window.sessionStorage.getItem('token')
