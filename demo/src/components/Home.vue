@@ -27,41 +27,34 @@
     <!--按钮身上有个事件，点击时把布尔值传递给子组件，子组件身上也有个布尔参数，但这个参数取决于子组件传过来的布尔值-->
     <el-container>
       <!-- 侧边栏菜单区域 -->
-      <el-aside width="240px" height="100%">
+      <el-aside width="180px" height="100%">
         <el-menu
-          default-active="/home"
+          :default-active="this.$route.path"
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           unique-opened
-          router 
+          router
         >
-          <!-- <el-menu-item index="1">
-            <template slot="title">
-              <span>导航一</span>
-            </template>           
-          </el-menu-item>
-          <el-menu-item index="2">
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3">
-            <span slot="title">导航三</span>
-          </el-menu-item>-->
           <!-- 一级菜单 -->
-          <el-submenu :index="menuId+''" v-for="(item,menuId) in menuList" :key="menuId">
+          <el-submenu :index="item.pageUrl+''" v-for="(item,menuId) in menuList" :key="menuId">
             <template slot="title">{{item.menuName}}</template>
+            <!-- 二级菜单 -->
             <el-menu-item
-              :index="'/'+item1.pageUrl"
-              v-for="(item1,menuId) in item.childrens"
-              :key="menuId"
+              :index="item1.pageUrl+''"
+              v-for="(item1,menuId1) in item.childrens"
+              :key="menuId1"
+              @click='saveNavState(item1.pageUrl+"")'
             >{{item1.menuName}}</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-container>
         <el-main>
-          <router-view></router-view>
+          <el-card class="box-card">
+            <router-view></router-view>
+          </el-card>
         </el-main>
         <el-footer>Footer</el-footer>
       </el-container>
@@ -159,17 +152,21 @@ export default {
           }
         ]
       },
-//       var validatePass1=(rule,value,callback)=>{
-//         var a =(?=.*?[0-9])
-//         if((?=.*?[0-9])){
-// callback(new Error('请输入密码'))
-// ),
-//         })
-     };
+      //       var validatePass1=(rule,value,callback)=>{
+      //         var a =(?=.*?[0-9])
+      //         if((?=.*?[0-9])){
+      // callback(new Error('请输入密码'))
+      // ),
+      //         })
+      activePath:'',
+    };
   },
   created() {
     this.getMenuList();
-    this.forcedToModify();
+    // this.forcedToModify();
+    this.activePath=window.sessionStorage.getItem(
+      'activePath'
+    )
   },
   components: {
     // navmenu:Navmenu,
@@ -230,6 +227,9 @@ export default {
         this.menuList = res.data.data;
         console.log(res);
       });
+    },
+    saveNavState(activePath){
+window.sessionStorage.setItem('activePath',activePath)
     }
   }
 };
@@ -274,5 +274,26 @@ export default {
       padding: 0 16px;
     }
   }
+
+  .text {
+    font-size: 14px;
+  }
+
+  .item {
+    margin-bottom: 18px;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both;
+  }
+  .box-card {
+    width: 480px;
+  }
+  
 }
 </style>
