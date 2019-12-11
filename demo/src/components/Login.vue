@@ -1,7 +1,7 @@
 <template>
   <div class="loginContainer">
     <div class="loginBox">
-      <el-form label-width="0px" :model="loginForm" :rules="loginFormRules" ref="loginFormRef">
+      <el-form label-width="0px" :model="loginForm" :rules="loginFormRules" ref="loginFormRef" >
         <el-form-item prop="username">
           <el-input placeholder="请输入用户名" v-model="loginForm.username" clearable>
             <i slot="suffix" class="el-icon-user"></i>

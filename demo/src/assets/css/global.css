@@ -8,10 +8,13 @@ body,
     font-family: "Microsoft YaHei";
     /* overflow:hidden; */
 }
-.el-menu {
-    border: none;
-  }
-  /* .el-table-filter__list{
-  max-height: 100px;
-    overflow: auto;
-   } */
+.el-menu{
+  border:none;
+}
+.el-table-filter__list {
+  max-height: 250px;
+  overflow: auto;
+}
+.el-dialog__body{
+  padding:10px 20px;
+}

@@ -77,13 +77,14 @@
     <el-dialog
       title="修改密码"
       :visible.sync="dialogFormVisible1"
-      width="30%"
+      width="35%"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :show-close="showClose"
     >
       <!--弹窗内容-->
-      <el-form ref="pswFormRef" statue-icon :model="pswForm" :rules="pswFormRules">
+      <el-form ref="pswFormRef" statue-icon :model="pswForm" :rules="pswFormRules" :inline="true"
+       >
         <el-form-item label="旧密码" prop="oldpass">
           <el-input v-model="pswForm.oldpass" clearable></el-input>
         </el-form-item>
