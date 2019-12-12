@@ -56,7 +56,7 @@
             <router-view></router-view>
           </el-card>
         </el-main>
-        <el-footer>Footer</el-footer>
+        <el-footer>Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
       </el-container>
     </el-container>
     <el-dialog
@@ -241,9 +241,14 @@ window.sessionStorage.setItem('activePath',activePath)
   height: 100%;
 }
 // .el-header,
-// .el-footer {
-//   background-color: #b3c0d1;
-// }
+.el-footer {
+  color:#999;
+  font-size:12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .el-aside {
   background-color: #545c64;
 }

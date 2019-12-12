@@ -2,7 +2,14 @@
   <div>
     <!-- <el-button @click="resetDateFilter">清除日期过滤器</el-button>
     <el-button @click="clearFilter">清除所有过滤器</el-button>-->
-    <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe border height max-height="450px">
+    <el-table
+      ref="filterTable"
+      :data="tableData"
+      style="width: 100%"
+      stripe
+      border
+      max-height="460px"
+    >
       <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
       <el-table-column prop="username" label="账号" width="120"></el-table-column>
       <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
@@ -38,13 +45,23 @@
       <el-table-column
         label="状态"
         width="70"
-        :filters="isGuoQiData"
-        filter-placement="bottom-center"
+        :filters="stateData"
+        filter-placement="bottom-start"
+        :filter-method="stateFilter"
         :filter-multiple="false"
       >
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
-        <template slot-scope="scope">{{scope.row.isGuoQi}}</template>
+        <template slot-scope="scope">
+          <!-- {{scope.row.isGuoQi}} -->
+          <!-- 判断：停用启用，过期 锁定 -->
+          <!-- <span :class="[scope.row.stop? 'yStop':'nStop']">正常</span> -->
+
+          <span v-if="scope.row.stop==0">停用</span>
+          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'">过期</span>
+          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked">锁定</span>
+          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked">正常</span>
+        </template>
         <!-- <template slot-scope="scope">
           <el-tag
             :type="scope.row.tag === '家' ? 'primary' : 'success'"
@@ -56,14 +73,23 @@
         </template>-->
       </el-table-column>
       <el-table-column label="操作" width="280">
-        <template>
+        <template slot-scope="scope">
           <el-button type="primary" plain size="mini" @click="edit">编辑</el-button>
           <el-button type="danger" plain size="mini">删除</el-button>
           <el-button type="success" plain size="mini">启用</el-button>
-          <el-button type="info" plain size="mini">解锁</el-button>
+
+          <el-button
+            type="info"
+            plain
+            size="mini"
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked"
+            @click="deblocking(scope.row.id)"
+          >解锁</el-button>
+          <el-button type="info" plain size="mini" v-else disabled>解锁</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
     <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
@@ -129,19 +155,19 @@
 export default {
   data() {
     return {
-      queryInfo:{
-            dept: "",
-            role: "",
-            state: "",
-            //当前页
-            pageIndex: 1,
-            chinesename: "",
-            pagesize:'',
-          },
+      queryInfo: {
+        dept: "",
+        role: "",
+        state: "",
+        //当前页
+        pageIndex: 1,
+        chinesename: "",
+        pagesize: ""
+      },
       tableData: [],
       deptNameData: [{ text: "", value: "" }],
       roleNameData: [{ text: "", value: "" }],
-      isGuoQiData: [
+      stateData: [
         { text: "正常", value: "正常" },
         { text: "过期", value: "过期" },
         { text: "停用", value: "停用" },
@@ -164,32 +190,29 @@ export default {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-      },
-      //判断：停用启用，过期 锁定
-      
-      
+      }
     };
   },
   created() {
     this.getTableList();
     this.getFliterDept();
     this.getFliterRole();
-    this.status();
   },
   methods: {
     // indexMethod(index) {
     //   return index * 1 + 1;
     // },
+    //获取表格数据
     async getTableList() {
       await this.$http
-        .get("/usermanage/getUser", {params: this.queryInfo
-        })
+        .get("/usermanage/getUser", { params: this.queryInfo })
         .then(res => {
           console.log("表格数据", res);
           this.tableData = res.data.data[0].list;
           this.paging = res.data.data[0];
         });
     },
+    //获取部门筛选框的数据
     async getFliterDept() {
       await this.$http.get("/dept/getAllDept").then(res => {
         // console.log('部门',res);
@@ -201,6 +224,7 @@ export default {
         });
       });
     },
+    //获取角色筛选框的数据
     async getFliterRole() {
       await this.$http.get("/role/getAllRole").then(res => {
         // console.log('角色',res);
@@ -209,38 +233,69 @@ export default {
         });
       });
     },
-    //监听N条/页
+    //分页：监听N条/页
     handleSizeChange(newSide) {
-      console.log('每页条',newSide);
-      this.queryInfo.pagesize=newSide;
-      this.getTableList();
-      this.newSide=newSide;
-    },
-    //监听页码值
-    handleCurrentChange(newPageIndex) {
-      console.log(`当前页: ${newPageIndex}`);
-      this.queryInfo.pageIndex=newPageIndex;
+      console.log("每页条", newSide);
+      this.queryInfo.pagesize = newSide;
       this.getTableList();
     },
-    deptNameFilter(value) {
-      // const property = column["property"];
-      // console.log('111',row[property])
-      this.queryInfo.dept=value;
+    //分页：监听页码值
+    handleCurrentChange(newPage) {
+      console.log(`当前页: ${newPage}`);
+      this.queryInfo.pageIndex = newPage;
       this.getTableList();
-      // return row[property] === value;
     },
-    roleNameFilter(value, row, column) {
+    //筛选部门，后端返回新分页，未完成
+    deptNameFilter(value, row, column) {
       const property = column["property"];
-
       // console.log('111',row[property])
+      // this.queryInfo.dept = value;
+      // this.getTableList();
       return row[property] === value;
     },
-
+    //筛选角色，后端返回新分页，未完成
+    roleNameFilter(value, row, column) {
+      const property = column["property"];
+      // this.queryInfo.role = value;
+      // this.getTableList();
+      // console.log('222',row[property])
+      return row[property] === value;
+    },
+    //筛选状态，后端返回新分页，未完成
+    stateFilter(value, row, column) {
+      const property = column["property"];
+      // this.queryInfo.state = value;
+      // this.getTableList();
+      console.log("111", row[property]);
+      return row[property] === value;
+    },
+    //点击打开编辑弹窗
     edit() {
       this.userEditVisible = true;
     },
+    //随机密码
     passRandom() {},
-    status() {},
+    async axdeblocking(rowId) {
+      await this.$http
+        .get("/usermanage/unlock/", {
+          params: {
+            id: rowId
+          }
+        })
+        .then(res => {
+          console.log("解锁", res);
+        });
+    }
+    // async status() {
+    //   await this.$http
+    //     .get("/usermanage/getUser", { params: this.queryInfo })
+    //     .then(res => {
+    //       console.log("状态", res);
+    //       this.tingyong = res.data.data[0].list.stop;
+    //       this.guoqi = res.data.data[0].list.isGuoQi;
+    //       this.suoding = res.data.data[0].list.accountNonLocked;
+    //     });
+    // }
   }
 };
 </script>
