@@ -2,6 +2,7 @@
   <div>
     <!-- <el-button @click="resetDateFilter">清除日期过滤器</el-button>
     <el-button @click="clearFilter">清除所有过滤器</el-button>-->
+    <el-button @click="newAccount">新建账号</el-button>
     <el-table
       ref="filterTable"
       :data="tableData"
@@ -68,15 +69,41 @@
             disable-transitions
           >{{scope.row.tag}}</el-tag>
         </template>-->
-        <!-- <template slot-scope='scope'>
-          
+        <!-- <template slot-scope='scope'>         
         </template>-->
       </el-table-column>
       <el-table-column label="操作" width="280">
         <template slot-scope="scope">
-          <el-button type="primary" plain size="mini" @click="edit">编辑</el-button>
+          <el-button type="primary" plain size="mini">编辑</el-button>
           <el-button type="danger" plain size="mini">删除</el-button>
-          <el-button type="success" plain size="mini">启用</el-button>
+          <el-button
+            type="success"
+            plain
+            size="mini"
+            v-if="scope.row.stop==0"
+            @click="whetherUsing(scope.row.id,scope.row.stop)"
+          >启用</el-button>
+          <el-button
+            type="warning"
+            plain
+            size="mini"
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked"
+            @click="whetherUsing(scope.row.id,scope.row.stop)"
+          >停用</el-button>
+          <el-button
+            type="warning"
+            plain
+            size="mini"
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'"
+            @click="whetherUsing(scope.row.id,scope.row.stop)"
+          >停用</el-button>
+          <el-button
+            type="warning"
+            plain
+            size="mini"
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked"
+            @click="whetherUsing(scope.row.id,scope.row.stop)"
+          >停用</el-button>
 
           <el-button
             type="info"
@@ -96,16 +123,15 @@
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageIndex"
         :page-sizes="[10, 20, 30]"
-        :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.paging.totalRow"
       ></el-pagination>
     </div>
-    <!--编辑弹窗-->
+    <!--新建弹窗-->
     <el-dialog
-      title="用户编辑"
-      :visible.sync="userEditVisible"
-      width="45%"
+      title="新建账号"
+      :visible.sync="userAddVisible"
+      width="470px"
       :close-on-click-modal="true"
       :close-on-press-escape="true"
       :show-close="true"
@@ -114,36 +140,46 @@
       <el-form
         ref="userEditFormRef"
         statue-icon
-        :model="userEditForm"
-        :rules="userEditFormRules"
+        :model="userAddForm"
+        :rules="userAddFormRules"
         :inline="true"
         class="demo-form-inline"
       >
-        <el-form-item label="姓名" prop="chinesename">
-          <el-input v-model="userEditForm.chinesename" clearable></el-input>
+        <el-form-item label="姓名" prop="chinesename" label-width="100px">
+          <el-input v-model="userAddForm.chinesename" clearable></el-input>
         </el-form-item>
-        <el-form-item label="部门" prop="dept">
-          <el-input v-model="userEditForm.dept"></el-input>
+
+        <el-form-item label="部门" prop="dept" label-width="100px">
+          <el-select v-model="value" clearable placeholder="请选择">
+            <option value=" " v-show='false'></option>
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
         </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-input v-model="userEditForm.role"></el-input>
+
+        <el-form-item label="角色" prop="role" label-width="100px">
+          <el-input v-model="userAddForm.role"></el-input>
         </el-form-item>
-        <el-form-item label="有效期至" prop="date">
+        <el-form-item label="有效期至" prop="date" label-width="100px">
           <div class="block">
             <el-date-picker v-model="editData" type="date" placeholder="请选择日期"></el-date-picker>
           </div>
         </el-form-item>
-        <el-form-item label="账号" prop="username">
-          <el-input v-model="userEditForm.username" clearable></el-input>
+        <el-form-item label="账号" prop="username" label-width="100px">
+          <el-input v-model="userAddForm.username" clearable></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="userEditForm.password" clearable></el-input>
+        <el-form-item label="密码" prop="password" label-width="100px">
+          <el-input v-model="userAddForm.password" clearable></el-input>
           <span class="passRandom" @click="passRandom">随机生成</span>
         </el-form-item>
         <!-- <span slot="footer" class="dialog-footer"> -->
         <el-form-item>
-          <el-button @click="userEditVisible = false">取消</el-button>
-          <el-button type="primary" @click="userEditVisible = false">保存</el-button>
+          <el-button @click="userAddVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveNewAccount">保存</el-button>
         </el-form-item>
       </el-form>
       <!-- </span> -->
@@ -174,7 +210,8 @@ export default {
         { text: "锁定", value: "锁定" }
       ],
       currentPage4: 1,
-      userEditForm: {
+      //账号数据绑定
+      userAddForm: {
         chinesename: "",
         dept: "",
         role: "",
@@ -182,15 +219,20 @@ export default {
         username: "",
         password: ""
       },
-      userEditFormRules: {},
-      userEditVisible: false,
+      //账号规则
+      userAddFormRules: {},
+      userAddVisible: false,
       editData: "",
       paging: "",
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-      }
+      },
+      options:[
+        {value:'',label:''}
+      ],
+       value: '',
     };
   },
   created() {
@@ -215,14 +257,16 @@ export default {
     //获取部门筛选框的数据
     async getFliterDept() {
       await this.$http.get("/dept/getAllDept").then(res => {
-        // console.log('部门',res);
         res.data.data.forEach(item => {
           // console.log(item.deptName)
           // this.deptNameData[0].text=item.deptName;
           // this.deptNameData[0].value=item.deptName;
           this.deptNameData.push({ text: item.deptName, value: item.deptName });
+          this.options.push({ value: item.deptName, label: item.deptName })
         });
       });
+      // this.options.unshift({value:'全部',label:'全部'})
+      
     },
     //获取角色筛选框的数据
     async getFliterRole() {
@@ -269,21 +313,52 @@ export default {
       console.log("111", row[property]);
       return row[property] === value;
     },
-    //点击打开编辑弹窗
-    edit() {
-      this.userEditVisible = true;
+    //点击打开新建弹窗
+    newAccount() {
+      this.userAddVisible = true;
     },
     //随机密码
-    passRandom() {},
-    async axdeblocking(rowId) {
-      await this.$http
-        .get("/usermanage/unlock/", {
-          params: {
-            id: rowId
-          }
-        })
+    passRandom() {
+      this.$http.get("/usermanage/getUserPassword").then(res => {
+        this.userEditForm.password = res.data.data;
+        console.log(res.data);
+        this.$message.success(res.data.message);
+      });
+    },
+    deblocking(rowId) {
+      //拼接在url上
+      this.$http.get("/usermanage/unlock/" + rowId).then(res => {
+        if (!status == 200) {
+          this.$message.error("解锁失败");
+        }
+        this.$message.success("解锁成功");
+        console.log("解锁", res.data);
+      });
+    },
+    //账号是否停用启用
+    whetherUsing(id, stop) {
+      if (stop == 1) {
+        this.$http
+          .get("/usermanage/changeStopStatus/" + id + "/0")
+          .then(res => {
+            console.log("停用", res);
+            this.getTableList();
+          });
+      } else {
+        this.$http
+          .get("/usermanage/changeStopStatus/" + id + "/1")
+          .then(res => {
+            console.log("启用", res);
+            this.getTableList();
+          });
+      }
+    },
+    //保存新账号
+    saveNewAccount(roleId) {
+      this.$http
+        .post("/usermanage/updateUser/" + roleId, this.userAddForm)
         .then(res => {
-          console.log("解锁", res);
+          console.log("保存新账号", res);
         });
     }
     // async status() {
@@ -308,7 +383,8 @@ export default {
   padding: 0;
 }
 .passRandom:hover {
-  color: #509ae0;
+  color: #409eff;
   cursor: pointer;
+  display: inline-block;
 }
 </style>

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, form, formItem, input, checkbox, message, Menu, submenu,MenuItemGroup,menuItem,container,header,main,footer,aside,dialog,popconfirm,popover,table,tableColumn,pagination,card,tag,datePicker   } from 'element-ui'
+import { Button, form, formItem, input, checkbox, message, Menu, submenu, MenuItemGroup, menuItem, container, header, main, footer, aside, dialog, popconfirm, popover, table, tableColumn, pagination, card, tag, datePicker, MessageBox, select,option } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(form)
@@ -26,3 +26,6 @@ Vue.use(pagination)
 Vue.use(card)
 Vue.use(tag)
 Vue.use(datePicker)
+Vue.prototype.$confirm = MessageBox.confirm
+Vue.use(select)
+Vue.use(option)
