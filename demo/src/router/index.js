@@ -5,7 +5,7 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://itlead.vicp.net:9905/archive'
 Vue.prototype.$http = axios
 axios.interceptors.request.use(config=>{
-  config.headers.authorization='Bearer'+' '+window.sessionStorage.getItem('token')
+  config.headers.authorization=window.sessionStorage.getItem('token')
   return config;
 })
 // import login from '../components/Login.vue'

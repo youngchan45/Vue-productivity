@@ -1,8 +1,36 @@
 <template>
   <div>
-    <!-- <el-button @click="resetDateFilter">清除日期过滤器</el-button>
-    <el-button @click="clearFilter">清除所有过滤器</el-button>-->
-    <el-button @click="newAccount">新建账号</el-button>
+<span>部门</span>
+<el-select v-model="value" clearable placeholder="全部" size='mini'>
+    <el-option
+      v-for="item in deptOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+<span>角色</span>
+<el-select v-model="value" clearable placeholder="全部" size='mini'>
+            <!-- <option value=" " v-show='false'>666</option> -->
+    <el-option
+      v-for="item in roleOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <span>状态</span>
+<el-select v-model="value" clearable placeholder="全部" size='mini'>
+            <!-- <option value=" " v-show='false'>666</option> -->
+    <el-option
+      v-for="item in stateData"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+  <el-button @click="searchAccount" size='mini'>搜索</el-button>
+    <el-button @click="newAccount" size='mini'>新建账号</el-button>
     <el-table
       ref="filterTable"
       :data="tableData"
@@ -18,22 +46,14 @@
         prop="deptName"
         label="部门"
         width="120"
-        :filters="deptNameData"
-        column-key="deptName"
-        :filter-multiple="false"
-        :filter-method="deptNameFilter"
-        filter-placement="bottom-start"
+        
       ></el-table-column>
 
       <el-table-column
         prop="roleName"
         label="角色"
         width="120"
-        :filters="roleNameData"
-        column-key="roleName"
-        :filter-multiple="false"
-        :filter-method="roleNameFilter"
-        filter-placement="bottom-start"
+        
       ></el-table-column>
       <el-table-column
         prop="logintime"
@@ -46,10 +66,7 @@
       <el-table-column
         label="状态"
         width="70"
-        :filters="stateData"
-        filter-placement="bottom-start"
-        :filter-method="stateFilter"
-        :filter-multiple="false"
+        
       >
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
@@ -149,20 +166,27 @@
           <el-input v-model="userAddForm.chinesename" clearable></el-input>
         </el-form-item>
 
-        <el-form-item label="部门" prop="dept" label-width="100px">
+        <el-form-item label="部门" label-width="100px">
           <el-select v-model="value" clearable placeholder="请选择">
-            <option value=" " v-show='false'></option>
+            <!-- <option value=" " v-show='false'>666</option> -->
     <el-option
-      v-for="item in options"
+      v-for="item in deptOptions"
       :key="item.value"
       :label="item.label"
       :value="item.value">
     </el-option>
   </el-select>
         </el-form-item>
-
-        <el-form-item label="角色" prop="role" label-width="100px">
-          <el-input v-model="userAddForm.role"></el-input>
+        <el-form-item label="角色"  label-width="100px">
+          <el-select v-model="value" clearable placeholder="请选择">
+            <!-- <option value=" " v-show='false'>666</option> -->
+    <el-option
+      v-for="item in roleOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
         </el-form-item>
         <el-form-item label="有效期至" prop="date" label-width="100px">
           <div class="block">
@@ -229,10 +253,11 @@ export default {
           return time.getTime() > Date.now();
         }
       },
-      options:[
-        {value:'',label:''}
+      deptOptions:[
+        // {value:'',label:''}
       ],
-       value: '',
+      roleOptions:[],
+      value: '',
     };
   },
   created() {
@@ -262,7 +287,7 @@ export default {
           // this.deptNameData[0].text=item.deptName;
           // this.deptNameData[0].value=item.deptName;
           this.deptNameData.push({ text: item.deptName, value: item.deptName });
-          this.options.push({ value: item.deptName, label: item.deptName })
+          this.deptOptions.push({ value: item.deptName, label: item.deptName })
         });
       });
       // this.options.unshift({value:'全部',label:'全部'})
@@ -274,9 +299,12 @@ export default {
         // console.log('角色',res);
         res.data.data.forEach(item => {
           this.roleNameData.push({ text: item.roleName, value: item.roleName });
+          this.roleOptions.push({ text: item.roleName, value: item.roleName });
         });
       });
     },
+    //查询
+    searchAccount(){},
     //分页：监听N条/页
     handleSizeChange(newSide) {
       console.log("每页条", newSide);

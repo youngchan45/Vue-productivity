@@ -21,3 +21,6 @@ body,
 .el-input{
   width:220px;
 }
+li .el-select-dropdown__item selected hover{
+  display:none;
+}
