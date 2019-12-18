@@ -186,6 +186,7 @@
               v-model="userAddForm.effectiveTime"
               type="date"
               placeholder="请选择日期"
+              value-format="yyyy-MM-dd 23:59:59"  @change="getSTime"
             ></el-date-picker>
           </div>
         </el-form-item>
@@ -248,8 +249,6 @@ export default {
       },
       //新增账号弹窗默认隐藏
       userAddVisible: false,
-      //新增账号弹窗选择日历数据
-      editData: "",
       //获取接口返回的关于分页的数据
       paging: "",
       //日历控件
@@ -273,9 +272,6 @@ export default {
         { label: "过期", value: "2" },
         { label: "停用", value: "3" }
       ],
-      //下拉框所选
-      value1: "",
-      value2: ""
     };
   },
   created() {
@@ -373,9 +369,13 @@ export default {
           .post("/usermanage/updateUser/" + id, this.userAddForm)
           .then(res => {
             console.log("保存新用户", res);
-            console.log('tag111',this.userAddForm.deptid)
+            // console.log('tag111',this.userAddForm.effectiveTime)
+            
           });
       });
+    },
+    getSTime(val){
+this.userAddForm.effectiveTime=val;
     }
   }
 };

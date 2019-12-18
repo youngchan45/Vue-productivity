@@ -1,7 +1,7 @@
 <template>
   <div class="loginContainer">
     <div class="loginBox">
-      <el-form label-width="0px" :model="loginForm" :rules="loginFormRules" ref="loginFormRef" >
+      <el-form :model="loginForm" :rules="loginFormRules" ref="loginFormRef" >
         <el-form-item prop="username">
           <el-input placeholder="请输入用户名" v-model="loginForm.username" clearable>
             <i slot="suffix" class="el-icon-user"></i>
@@ -15,7 +15,7 @@
           <span class="forgetPsw" @click="forgetPsw">忘记密码</span>
         </div>-->
         <el-form-item>
-          <el-button type="primary" block class="onSubmit" @click="onSubmit">登录</el-button>
+          <el-button type="primary" class="onSubmit" @click="onSubmit">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -83,29 +83,21 @@ export default {
 .loginContainer {
   background-color: #236795;
   height: 100%;
-
   display: flex;
   justify-content: center;
   .loginBox {
     background-color: aliceblue;
-    min-width: 20%;
-    min-height: 20%;
+    width: 300px;
+    min-height: 180px;
     border-radius: 4px;
     align-self: center;
-    padding: 2%;
+    padding: 20px;
     .onSubmit {
+      width: 100%;
+    }
+    .el-input__inner{
       width: 100%;
     }
   }
 }
-// .keep {
-//   display: flex;
-//   justify-content: space-between;
-//   margin-bottom: 30px;
-//   .forgetPsw {
-//     font-size: 14px;
-//     color: red;
-//     cursor: pointer;
-//   }
-// }
 </style>
