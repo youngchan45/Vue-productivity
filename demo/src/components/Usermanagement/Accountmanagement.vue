@@ -1,93 +1,87 @@
 <template>
   <div>
-<span>部门</span>
-<el-select v-model="value" clearable placeholder="全部" size='mini'>
-    <el-option
-      v-for="item in deptOptions"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-<span>角色</span>
-<el-select v-model="value" clearable placeholder="全部" size='mini'>
-            <!-- <option value=" " v-show='false'>666</option> -->
-    <el-option
-      v-for="item in roleOptions"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-  <span>状态</span>
-<el-select v-model="value" clearable placeholder="全部" size='mini'>
-            <!-- <option value=" " v-show='false'>666</option> -->
-    <el-option
-      v-for="item in stateData"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-  <el-button @click="searchAccount" size='mini'>搜索</el-button>
-    <el-button @click="newAccount" size='mini'>新建账号</el-button>
+    <div class="filter">
+      <span>部门</span>
+      <el-select
+        v-model="queryInfo.dept"
+        clearable
+        placeholder="全部"
+        size="mini"
+        @clear="getTableList"
+      >
+        <el-option
+          v-for="item in deptOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <span>角色</span>
+      <el-select
+        v-model="queryInfo.role"
+        clearable
+        placeholder="全部"
+        size="mini"
+        @clear="getTableList"
+      >
+        <el-option
+          v-for="item in roleOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <span>状态</span>
+      <el-select
+        v-model="queryInfo.state"
+        clearable
+        placeholder="全部"
+        size="mini"
+        @clear="getTableList"
+      >
+        <el-option
+          v-for="item in stateOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+      <span>姓名</span>
+      <el-input
+        placeholder="请输入姓名"
+        prefix-icon="el-icon-search"
+        v-model="queryInfo.chinesename"
+        clearable
+        @clear="getTableList"
+        size="mini"
+      ></el-input>
+      <el-button @click="getTableList" size="mini" type="primary">搜索</el-button>
+      <el-button @click="newAccount" size="mini" type="primary">新建账号</el-button>
+    </div>
     <el-table
       ref="filterTable"
       :data="tableData"
       style="width: 100%"
       stripe
       border
-      max-height="460px"
+      max-height="470px"
     >
       <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
       <el-table-column prop="username" label="账号" width="120"></el-table-column>
       <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
-      <el-table-column
-        prop="deptName"
-        label="部门"
-        width="120"
-        
-      ></el-table-column>
-
-      <el-table-column
-        prop="roleName"
-        label="角色"
-        width="120"
-        
-      ></el-table-column>
-      <el-table-column
-        prop="logintime"
-        tyepe="date"
-        label="最后登录时间"
-        width="160"
-        column-key="date"
-        sortable
-      ></el-table-column>
-      <el-table-column
-        label="状态"
-        width="70"
-        
-      >
+      <el-table-column prop="deptName" label="部门" width="120"></el-table-column>
+      <el-table-column prop="roleName" label="角色" width="120"></el-table-column>
+      <el-table-column prop="logintime" type="date" label="最后登录时间" width="160" sortable></el-table-column>
+      <el-table-column label="状态" width="70">
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
         <template slot-scope="scope">
-          <!-- {{scope.row.isGuoQi}} -->
           <!-- 判断：停用启用，过期 锁定 -->
-          <!-- <span :class="[scope.row.stop? 'yStop':'nStop']">正常</span> -->
-
           <span v-if="scope.row.stop==0">停用</span>
           <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'">过期</span>
           <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked">锁定</span>
           <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked">正常</span>
         </template>
-        <!-- <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.tag === '家' ? 'primary' : 'success'"
-            disable-transitions
-          >{{scope.row.tag}}</el-tag>
-        </template>-->
-        <!-- <template slot-scope='scope'>         
-        </template>-->
       </el-table-column>
       <el-table-column label="操作" width="280">
         <template slot-scope="scope">
@@ -121,7 +115,6 @@
             v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked"
             @click="whetherUsing(scope.row.id,scope.row.stop)"
           >停用</el-button>
-
           <el-button
             type="info"
             plain
@@ -155,55 +148,58 @@
     >
       <!--弹窗内容-->
       <el-form
-        ref="userEditFormRef"
+        ref="userAddFormRef"
         statue-icon
         :model="userAddForm"
         :rules="userAddFormRules"
         :inline="true"
         class="demo-form-inline"
+        label-width="100px"
+        size="small"
       >
-        <el-form-item label="姓名" prop="chinesename" label-width="100px">
-          <el-input v-model="userAddForm.chinesename" clearable></el-input>
+        <el-form-item label="姓名" prop="chinesename" clearable>
+          <el-input v-model="userAddForm.chinesename"></el-input>
         </el-form-item>
-
-        <el-form-item label="部门" label-width="100px">
-          <el-select v-model="value" clearable placeholder="请选择">
-            <!-- <option value=" " v-show='false'>666</option> -->
-    <el-option
-      v-for="item in deptOptions"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
+        <el-form-item label="部门" prop="dept">
+          <el-select v-model="userAddForm.deptid" clearable placeholder="请选择">
+            <el-option
+              v-for="item in deptOptions1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="角色"  label-width="100px">
-          <el-select v-model="value" clearable placeholder="请选择">
-            <!-- <option value=" " v-show='false'>666</option> -->
-    <el-option
-      v-for="item in roleOptions"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="userAddForm.id" clearable placeholder="请选择">
+            <el-option
+              v-for="item in roleOptions1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="有效期至" prop="date" label-width="100px">
+        <el-form-item label="有效期至" prop="date">
           <div class="block">
-            <el-date-picker v-model="editData" type="date" placeholder="请选择日期"></el-date-picker>
+            <el-date-picker
+              v-model="userAddForm.effectiveTime"
+              type="date"
+              placeholder="请选择日期"
+            ></el-date-picker>
           </div>
         </el-form-item>
-        <el-form-item label="账号" prop="username" label-width="100px">
+        <el-form-item label="账号" prop="username">
           <el-input v-model="userAddForm.username" clearable></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password" label-width="100px">
+        <el-form-item label="密码" prop="password">
           <el-input v-model="userAddForm.password" clearable></el-input>
           <span class="passRandom" @click="passRandom">随机生成</span>
         </el-form-item>
         <!-- <span slot="footer" class="dialog-footer"> -->
-        <el-form-item>
+        <el-form-item class="addBtn">
           <el-button @click="userAddVisible = false">取消</el-button>
-          <el-button type="primary" @click="saveNewAccount">保存</el-button>
+          <el-button type="primary" @click="saveNewAccount(userAddForm.id)">保存</el-button>
         </el-form-item>
       </el-form>
       <!-- </span> -->
@@ -224,40 +220,62 @@ export default {
         chinesename: "",
         pagesize: ""
       },
+      //表格数据绑定
       tableData: [],
-      deptNameData: [{ text: "", value: "" }],
-      roleNameData: [{ text: "", value: "" }],
-      stateData: [
-        { text: "正常", value: "正常" },
-        { text: "过期", value: "过期" },
-        { text: "停用", value: "停用" },
-        { text: "锁定", value: "锁定" }
-      ],
       currentPage4: 1,
-      //账号数据绑定
+      //新增账号弹窗数据绑定
       userAddForm: {
         chinesename: "",
-        dept: "",
-        role: "",
-        date: "",
+        deptid: "",
+        id: "",
+        effectiveTime: "",
         username: "",
         password: ""
       },
-      //账号规则
-      userAddFormRules: {},
+      //新增账号规则
+      userAddFormRules: {
+        chinesename: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
+          { min: 2, max: 10, message: "2-10个字符", trigger: "blur" }
+        ],
+        // dept: [{ required: true, message: "请选择部门", trigger: "change" }],
+        // role: [{ required: true, message: "请选择角色", trigger: "change" }],
+        username: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 8, message: "8个字符", trigger: "blur" }
+        ]
+      },
+      //新增账号弹窗默认隐藏
       userAddVisible: false,
+      //新增账号弹窗选择日历数据
       editData: "",
+      //获取接口返回的关于分页的数据
       paging: "",
+      //日历控件
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
-      deptOptions:[
+      //部门筛选下拉框
+      deptOptions: [
         // {value:'',label:''}
       ],
-      roleOptions:[],
-      value: '',
+      deptOptions1: [],
+      //角色筛选下拉框
+      roleOptions: [],
+      roleOptions1:[],
+      //状态筛选下拉框
+      stateOptions: [
+        { label: "正常", value: "0" },
+        { label: "锁定", value: "1" },
+        { label: "过期", value: "2" },
+        { label: "停用", value: "3" }
+      ],
+      //下拉框所选
+      value1: "",
+      value2: ""
     };
   },
   created() {
@@ -266,9 +284,6 @@ export default {
     this.getFliterRole();
   },
   methods: {
-    // indexMethod(index) {
-    //   return index * 1 + 1;
-    // },
     //获取表格数据
     async getTableList() {
       await this.$http
@@ -283,28 +298,20 @@ export default {
     async getFliterDept() {
       await this.$http.get("/dept/getAllDept").then(res => {
         res.data.data.forEach(item => {
-          // console.log(item.deptName)
-          // this.deptNameData[0].text=item.deptName;
-          // this.deptNameData[0].value=item.deptName;
-          this.deptNameData.push({ text: item.deptName, value: item.deptName });
-          this.deptOptions.push({ value: item.deptName, label: item.deptName })
+          this.deptOptions.push({ label: item.deptName, value: item.deptName });
+          this.deptOptions1.push({ label: item.deptName, value: item.deptId });
         });
       });
-      // this.options.unshift({value:'全部',label:'全部'})
-      
     },
     //获取角色筛选框的数据
     async getFliterRole() {
       await this.$http.get("/role/getAllRole").then(res => {
-        // console.log('角色',res);
         res.data.data.forEach(item => {
-          this.roleNameData.push({ text: item.roleName, value: item.roleName });
-          this.roleOptions.push({ text: item.roleName, value: item.roleName });
+          this.roleOptions.push({ label: item.roleName, value: item.roleName });
+          this.roleOptions1.push({ label: item.roleName, value: item.roleId });
         });
       });
     },
-    //查询
-    searchAccount(){},
     //分页：监听N条/页
     handleSizeChange(newSide) {
       console.log("每页条", newSide);
@@ -317,42 +324,19 @@ export default {
       this.queryInfo.pageIndex = newPage;
       this.getTableList();
     },
-    //筛选部门，后端返回新分页，未完成
-    deptNameFilter(value, row, column) {
-      const property = column["property"];
-      // console.log('111',row[property])
-      // this.queryInfo.dept = value;
-      // this.getTableList();
-      return row[property] === value;
-    },
-    //筛选角色，后端返回新分页，未完成
-    roleNameFilter(value, row, column) {
-      const property = column["property"];
-      // this.queryInfo.role = value;
-      // this.getTableList();
-      // console.log('222',row[property])
-      return row[property] === value;
-    },
-    //筛选状态，后端返回新分页，未完成
-    stateFilter(value, row, column) {
-      const property = column["property"];
-      // this.queryInfo.state = value;
-      // this.getTableList();
-      console.log("111", row[property]);
-      return row[property] === value;
-    },
     //点击打开新建弹窗
     newAccount() {
       this.userAddVisible = true;
     },
-    //随机密码
+    //新增账号弹窗的随机密码
     passRandom() {
       this.$http.get("/usermanage/getUserPassword").then(res => {
-        this.userEditForm.password = res.data.data;
+        this.userAddForm.password = res.data.data;
         console.log(res.data);
         this.$message.success(res.data.message);
       });
     },
+    //给账号解锁
     deblocking(rowId) {
       //拼接在url上
       this.$http.get("/usermanage/unlock/" + rowId).then(res => {
@@ -381,38 +365,49 @@ export default {
           });
       }
     },
-    //保存新账号
-    saveNewAccount(roleId) {
-      this.$http
-        .post("/usermanage/updateUser/" + roleId, this.userAddForm)
-        .then(res => {
-          console.log("保存新账号", res);
-        });
+    //新增账号的保存新账号
+    saveNewAccount(id) {
+      this.$refs.userAddFormRef.validate(valid => {
+        if (!valid) return;
+        this.$http
+          .post("/usermanage/updateUser/" + id, this.userAddForm)
+          .then(res => {
+            console.log("保存新用户", res);
+            console.log('tag111',this.userAddForm.deptid)
+          });
+      });
     }
-    // async status() {
-    //   await this.$http
-    //     .get("/usermanage/getUser", { params: this.queryInfo })
-    //     .then(res => {
-    //       console.log("状态", res);
-    //       this.tingyong = res.data.data[0].list.stop;
-    //       this.guoqi = res.data.data[0].list.isGuoQi;
-    //       this.suoding = res.data.data[0].list.accountNonLocked;
-    //     });
-    // }
   }
 };
 </script>
 
 <style lang='less' scoped>
+.filter {
+  .el-input {
+    width: 160px;
+    margin: 0 5px 0 0;
+  }
+  .el-input__inner {
+    width: 100px;
+    margin: 0 5px 0 0;
+  }
+  span {
+    margin: 0 5px 0 0;
+  }
+}
 .el-table {
   font-size: 0.78rem;
 }
 .el-dialog__body {
   padding: 0;
-}
-.passRandom:hover {
-  color: #409eff;
-  cursor: pointer;
-  display: inline-block;
+  .passRandom:hover {
+    color: #409eff;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .addBtn {
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>
