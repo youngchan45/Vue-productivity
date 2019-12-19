@@ -85,8 +85,8 @@
       </el-table-column>
       <el-table-column label="操作" width="280">
         <template slot-scope="scope">
-          <el-button type="primary" plain size="mini">编辑</el-button>
-          <el-button type="danger" plain size="mini">删除</el-button>
+          <el-button type="primary" plain size="mini" @click="editAccount(scope.row.id)">编辑</el-button>
+          <el-button type="danger" plain size="mini" @click="delSure(scope.row.id)">删除</el-button>
           <el-button
             type="success"
             plain
@@ -146,7 +146,7 @@
       :close-on-press-escape="true"
       :show-close="true"
     >
-      <!--弹窗内容-->
+      <!--新增弹窗内容-->
       <el-form
         ref="userAddFormRef"
         statue-icon
@@ -186,7 +186,8 @@
               v-model="userAddForm.effectiveTime"
               type="date"
               placeholder="请选择日期"
-              value-format="yyyy-MM-dd 23:59:59"  @change="getSTime"
+              value-format="yyyy-MM-dd 23:59:59"
+              @change="getSTime"
             ></el-date-picker>
           </div>
         </el-form-item>
@@ -201,6 +202,77 @@
         <el-form-item class="addBtn">
           <el-button @click="userAddVisible = false">取消</el-button>
           <el-button type="primary" @click="saveNewAccount(userAddForm.id)">保存</el-button>
+        </el-form-item>
+      </el-form>
+      <!-- </span> -->
+    </el-dialog>
+
+    <!--编辑弹窗-->
+    <el-dialog
+      title="编辑账号"
+      :visible.sync="userEditVisible"
+      width="470px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      :show-close="true"
+    >
+      <!--编辑弹窗内容-->
+      <el-form
+        ref="userEditFormRef"
+        statue-icon
+        :model="userEditForm"
+        :rules="userAddFormRules"
+        :inline="true"
+        class="demo-form-inline"
+        label-width="100px"
+        size="small"
+      >
+        <el-form-item label="姓名" prop="chinesename" clearable>
+          <el-input v-model="userEditForm.chinesename"></el-input>
+        </el-form-item>
+        <el-form-item label="部门" prop="dept">
+          <el-select v-model="userEditForm.deptid" clearable placeholder="请选择">
+            <el-option
+              v-for="item in deptOptions1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="userEditForm.id" clearable placeholder="请选择">
+            <el-option
+              v-for="item in roleOptions1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="有效期至" prop="date">
+          <div class="block">
+            <el-date-picker
+              v-model="userEditForm.effectiveTime"
+              type="date"
+              placeholder="请选择日期"
+              value-format="yyyy-MM-dd 23:59:59"
+              @change="getSTime"
+            ></el-date-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="账号" prop="username">
+          <el-input v-model="userEditForm.username" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="userEditForm.password" clearable disabled></el-input>
+          <!-- <span class="passRandom" @click="passRandom">随机生成</span> -->
+        </el-form-item>
+        <!-- <span slot="footer" class="dialog-footer"> -->
+        <el-form-item class="addBtn">
+          <el-button @click="userEditVisible = false">取消</el-button>
+          <!--此时的保存按钮传递的参数id应该为表单中的id 而不是总表格里面的scope-->
+          <el-button type="primary" @click="saveEditAccount(userEditForm.id)">保存</el-button>
         </el-form-item>
       </el-form>
       <!-- </span> -->
@@ -233,7 +305,16 @@ export default {
         username: "",
         password: ""
       },
-      //新增账号规则
+      //编辑账号弹窗数据绑定
+      userEditForm: {
+        chinesename: "",
+        deptid: "",
+        id: "",
+        effectiveTime: "",
+        username: "",
+        password: ""
+      },
+      //账号规则
       userAddFormRules: {
         chinesename: [
           { required: true, message: "请输入姓名", trigger: "blur" },
@@ -249,6 +330,8 @@ export default {
       },
       //新增账号弹窗默认隐藏
       userAddVisible: false,
+      //编辑账号弹窗默认隐藏
+      userEditVisible: false,
       //获取接口返回的关于分页的数据
       paging: "",
       //日历控件
@@ -264,14 +347,14 @@ export default {
       deptOptions1: [],
       //角色筛选下拉框
       roleOptions: [],
-      roleOptions1:[],
+      roleOptions1: [],
       //状态筛选下拉框
       stateOptions: [
         { label: "正常", value: "0" },
         { label: "锁定", value: "1" },
         { label: "过期", value: "2" },
         { label: "停用", value: "3" }
-      ],
+      ]
     };
   },
   created() {
@@ -324,10 +407,11 @@ export default {
     newAccount() {
       this.userAddVisible = true;
     },
-    //新增账号弹窗的随机密码
+    //账号弹窗的随机密码
     passRandom() {
       this.$http.get("/usermanage/getUserPassword").then(res => {
         this.userAddForm.password = res.data.data;
+        this.userEditForm.password = res.data.data;
         console.log(res.data);
         this.$message.success(res.data.message);
       });
@@ -337,7 +421,7 @@ export default {
       //拼接在url上
       this.$http.get("/usermanage/unlock/" + rowId).then(res => {
         if (!status == 200) {
-          this.$message.error("解锁失败");
+          return this.$message.error("解锁失败");
         }
         this.$message.success("解锁成功");
         console.log("解锁", res.data);
@@ -366,16 +450,75 @@ export default {
       this.$refs.userAddFormRef.validate(valid => {
         if (!valid) return;
         this.$http
-          .post("/usermanage/updateUser/" + id, this.userAddForm)
+          .post("/usermanage/newUser/" + id, this.userAddForm)
           .then(res => {
-            console.log("保存新用户", res);
             // console.log('tag111',this.userAddForm.effectiveTime)
-            
+            if (!res.data.status === 200) {
+              return this.$message.error("新增账号失败");
+            }
+            this.$message.success("新增账号成功");
+            this.userAddVisible = false;
+            this.getTableList();
+            // console.log("保存新用户", res);
           });
       });
     },
-    getSTime(val){
-this.userAddForm.effectiveTime=val;
+    //点击打开编辑弹窗
+    async editAccount(id) {
+      this.userEditVisible = true;
+      await this.$http
+        .get("/usermanage/getUserInfoByUserId/" + id)
+        .then(res => {
+          this.userEditForm = res.data.data;
+          console.log("编辑", res.data.data);
+        });
+    },
+    //编辑弹窗的保存
+    saveEditAccount(id) {
+      this.$refs.userEditFormRef.validate(valid => {
+        if (!valid) return;
+        this.$http
+          .post("/usermanage/updateUser/" + id, this.userEditForm)
+          .then(res => {
+            if (!res.data.status === 200) {
+              return this.$message.error("编辑账号失败");
+            }
+            this.$message.success("编辑账号成功");
+            this.userEditVisible = false;
+            this.getTableList();
+            console.log("编辑保存", res);
+          });
+      });
+    },
+    getSTime(val) {
+      this.userAddForm.effectiveTime = val;
+    },
+    //删除账号
+    delUser(id) {
+      this.$http.delete("/usermanage/deleteUser/" + id).then(res => {
+        // console.log('删除',res)
+        if (!res.data.status === 200) {
+          return this.$message.error("删除失败");
+        }
+        this.$message.success("删除成功");
+        this.getTableList();
+      });
+    },
+    delSure(id) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.delUser(id);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   }
 };
