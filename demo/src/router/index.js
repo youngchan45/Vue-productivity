@@ -31,6 +31,7 @@ const routes = [
         path: "/userManagement/accountManagement",
         component: accountmanagement
       },
+<<<<<<< HEAD
       {
         path: "/userManagement/organizationStructure",
         component: organization
@@ -46,6 +47,11 @@ const routes = [
       {
         path:'/systemManagement/menuManagement',
         component:menumanagement
+=======
+      {
+        path: "/userManagement/organizationStructure",
+        component: organization
+>>>>>>> 9285b79f7f140496c8641e4693a63a9bf3c01bac
       }
     ]
   },
