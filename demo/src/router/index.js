@@ -14,6 +14,9 @@ const home = () => import('../components/Home.vue')
 const accountmanagement = () => import("../components/Usermanagement/Accountmanagement.vue")
 const organization =()=>import('../components/Usermanagement/Organization.vue')
 Vue.use(VueRouter)
+const rolemanagement=()=>import('../components/Usermanagement/Rolemanagement.vue')
+const dictionarymanagement=()=>import('../components/Systemmanagement/Dictionarymanagement.vue')
+const menumanagement=()=>import("../components/Systemmanagement/Menumanagement.vue")
 
 const routes = [
   {
@@ -31,6 +34,18 @@ const routes = [
       {
         path: "/userManagement/organizationStructure",
         component: organization
+      },
+      {
+        path:'/userManagement/roleManagement',
+        component:rolemanagement
+      },
+      {
+        path:'/systemManagement/dictionaryManagement',
+        component:dictionarymanagement
+      },
+      {
+        path:'/systemManagement/menuManagement',
+        component:menumanagement
       }
     ]
   },
