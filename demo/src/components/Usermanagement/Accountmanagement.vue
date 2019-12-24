@@ -65,14 +65,15 @@
       stripe
       border
       max-height="470px"
+      show-overflow-tooltip
     >
-      <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
-      <el-table-column prop="username" label="账号" width="120"></el-table-column>
-      <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
-      <el-table-column prop="deptName" label="部门" width="120"></el-table-column>
-      <el-table-column prop="roleName" label="角色" width="120"></el-table-column>
-      <el-table-column prop="logintime" type="date" label="最后登录时间" width="160" sortable></el-table-column>
-      <el-table-column label="状态" width="70">
+      <el-table-column type="index" label="#" align="center" ></el-table-column>
+      <el-table-column prop="username" label="账号" ></el-table-column>
+      <el-table-column prop="chinesename" label="真实姓名" ></el-table-column>
+      <el-table-column prop="deptName" label="部门" ></el-table-column>
+      <el-table-column prop="roleName" label="角色" ></el-table-column>
+      <el-table-column prop="logintime" type="date" label="最后登录时间" sortable></el-table-column>
+      <el-table-column label="状态" >
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
         <template slot-scope="scope">
@@ -494,15 +495,27 @@ export default {
       this.userAddForm.effectiveTime = val;
     },
     //删除账号
-    delUser(id) {
-      this.$http.delete("/usermanage/deleteUser/" + id).then(res => {
-        // console.log('删除',res)
-        if (!res.data.status === 200) {
-          return this.$message.error("删除失败");
-        }
-        this.$message.success("删除成功");
-        this.getTableList();
-      });
+    async delUser(id) {
+      await this.$confirm("此操作将永久删除该账号, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+        this.$http.delete("/usermanage/deleteUser/" + id).then(res => {
+            // console.log('删除',res)
+            if (!res.data.status === 200) {
+              return this.$message.error("删除失败");
+            }
+
+            this.$message.success("删除成功");
+            this.getTableList();
+          });
     },
     delSure(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
