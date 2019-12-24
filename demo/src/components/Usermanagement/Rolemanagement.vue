@@ -26,15 +26,9 @@
         size="mini"
         @clear="getList"
       ></el-input>
-<<<<<<< HEAD
       <el-button size="mini" type="primary" @click="getList">搜索</el-button>
       <el-button size="mini" type="primary" @click="openAddRole">新建角色</el-button>
     </div>
-=======
-      <el-button size="mini" type="primary">搜索</el-button>
-      <el-button size="mini" type="primary">新建角色</el-button>
-    </div>     
->>>>>>> db6e981572007bf93323c6307d8a67574b95cf0f
     <el-table
       ref="filterTable"
       :data="tableData"
@@ -42,7 +36,6 @@
       stripe
       border
       max-height="470px"
-<<<<<<< HEAD
       show-overflow-tooltip
     >
       <!--易错点：prop	对应列内容的字段名，也可以使用 property 属性 需与接口的字段对应 否则无法渲染-->
@@ -56,17 +49,6 @@
       <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
       只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
 
-=======
-    >
-      <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
-      <el-table-column prop="username" label="角色" width="160"></el-table-column>
-      <el-table-column prop="chinesename" label="人数" width="70"></el-table-column>
-      <el-table-column prop="deptName" label="权限" width="260"></el-table-column> 
-      <el-table-column prop="logintime" type="date" label="修改时间" width="190" sortable></el-table-column>
-        <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
-        只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
-       
->>>>>>> db6e981572007bf93323c6307d8a67574b95cf0f
       <el-table-column label="操作" width="160">
         <!-- <template slot-scope="scope"> -->
           <el-button type="primary" plain size="mini" >编辑</el-button> 
@@ -84,7 +66,6 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.paging.totalRow"
       ></el-pagination>
-<<<<<<< HEAD
     </div>-->
 
     <!--新建弹窗-->
@@ -197,20 +178,4 @@ export default {
     }
   }
 };
-=======
-    </div> -->
-    </div>
-</template>
-<script>
-export default {
-    data() {
-        return {
-            tableData:[],
-            roleOptions:'',
-            role:'',
-            power:'',
-        }
-    },
-}
->>>>>>> db6e981572007bf93323c6307d8a67574b95cf0f
 </script>
