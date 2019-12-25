@@ -27,7 +27,7 @@
     <!--按钮身上有个事件，点击时把布尔值传递给子组件，子组件身上也有个布尔参数，但这个参数取决于子组件传过来的布尔值-->
     <el-container>
       <!-- 侧边栏菜单区域 -->
-      <el-aside width="180px" height="100%">
+      <el-aside width="180px">
         <el-menu
           :default-active="this.$route.path"
           class="el-menu-vertical-demo"
@@ -37,18 +37,48 @@
           unique-opened
           router
         >
+        <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" />
           <!-- 一级菜单 -->
-          <el-submenu :index="item.pageUrl+''" v-for="(item,menuId) in menuList" :key="menuId">
-            <template slot="title">{{item.menuName}}</template>
+          <!-- <el-submenu :index="item.pageUrl+''" v-for="(item,menuId) in menuList" :key="menuId">
+            <template slot="title">{{item.menuName}}</template> -->
+
             <!-- 二级菜单 -->
-            <el-menu-item
+            <!-- <el-submenu
               :index="item1.pageUrl+''"
               v-for="(item1,menuId1) in item.childrens"
               :key="menuId1"
-              @click='saveNavState(item1.pageUrl+"")'
-            >{{item1.menuName}}</el-menu-item>
-          </el-submenu>
-        </el-menu>
+              @click="saveNavState(item1.pageUrl+'')"
+            >{{item1.menuName}}</el-submenu>
+          </el-submenu>-->
+
+ <!-- <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" /> -->
+ <!-- <template v-if="item.childrens.length == 0">
+        <el-menu-item :index="item.pageUrl">
+          <i class="el-icon-menu"></i>
+          {{item.menuName}}
+        </el-menu-item>
+    </template>
+
+    <el-submenu v-else :index="item.pageUrl">
+      <template slot="title" >
+        <i class="el-icon-menu"></i>
+        {{item.menuName}}
+      </template>
+
+      <template v-for="child in item.childrens">
+        <sidebar-item
+          v-if="child.childrens&&child.childrens.length>0"
+          :item="child"
+          :key="child.pageUrl"/>
+        <el-menu-item v-else :key="child.pageUrl" :index="child.pageUrl">
+          <i class="el-icon-location"></i>
+          {{child.menuName}}
+        </el-menu-item>
+      </template>
+    </el-submenu>
+    </div></div> -->
+        </el-menu> 
+
       </el-aside>
       <el-container>
         <el-main>
@@ -83,8 +113,7 @@
       :show-close="showClose"
     >
       <!--弹窗内容-->
-      <el-form ref="pswFormRef" statue-icon :model="pswForm" :rules="pswFormRules" :inline="true"
-       >
+      <el-form ref="pswFormRef" statue-icon :model="pswForm" :rules="pswFormRules" :inline="true">
         <el-form-item label="旧密码" prop="oldpass">
           <el-input v-model="pswForm.oldpass" clearable></el-input>
         </el-form-item>
@@ -108,6 +137,7 @@
 <script>
 // import changePsw from "./publicUse/changePsw";
 // import Navmenu from '../components/NavMenu/Navmenu'
+import SidebarItem from './NavMenu/Sidebar'
 export default {
   data() {
     return {
@@ -159,20 +189,27 @@ export default {
       // callback(new Error('请输入密码'))
       // ),
       //         })
-      activePath:'',
-    };
+      activePath: "",
+    }
   },
+   name:'Sidebar',
+  components: { SidebarItem },
+  // props:{
+  //   menuList: {
+  //     type: Array,
+  //     required: true
+  //   }
+  // },
   created() {
     this.getMenuList();
     // this.forcedToModify();
-    this.activePath=window.sessionStorage.getItem(
-      'activePath'
-    )
+    this.activePath = window.sessionStorage.getItem("activePath");
   },
-  components: {
-    // navmenu:Navmenu,
-    // changepsw: changePsw
-  },
+  // components: {
+  //   // navmenu:Navmenu,
+  //   // changepsw: changePsw
+  //   sidebaritem:sidebar-item
+  // },
   methods: {
     tishi() {
       this.dialogFormVisible = false;
@@ -226,11 +263,11 @@ export default {
     async getMenuList() {
       await this.$http.get("menu/getMenu").then(res => {
         this.menuList = res.data.data;
-        console.log(res);
+        console.log('导航栏',res);
       });
     },
-    saveNavState(activePath){
-window.sessionStorage.setItem('activePath',activePath)
+    saveNavState(activePath) {
+      window.sessionStorage.setItem("activePath", activePath);
     }
   }
 };
@@ -242,8 +279,8 @@ window.sessionStorage.setItem('activePath',activePath)
 }
 // .el-header,
 .el-footer {
-  color:#999;
-  font-size:12px;
+  color: #999;
+  font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -300,6 +337,5 @@ window.sessionStorage.setItem('activePath',activePath)
   .box-card {
     width: 480px;
   }
-  
 }
 </style>

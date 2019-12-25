@@ -24,3 +24,11 @@ body,
 li .el-select-dropdown__item selected hover{
   display:none;
 }
+table,tbody,thead {
+  width: 100% !important;
+}
+.el-menu-vertical-demo{
+  height: 680px;
+  position: relative;
+    overflow: scroll;
+}

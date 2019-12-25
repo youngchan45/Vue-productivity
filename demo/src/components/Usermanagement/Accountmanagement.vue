@@ -1,21 +1,21 @@
 <template>
   <div>
     <div class="filter">
-      <span>部门</span>
-      <el-select
-        v-model="queryInfo.dept"
-        clearable
-        placeholder="全部"
-        size="mini"
-        @clear="getTableList"
-      >
-        <el-option
-          v-for="item in deptOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
+        <span>部门</span>
+        <el-select
+          v-model="queryInfo.dept"
+          clearable
+          placeholder="全部"
+          size="mini"
+          @clear="getTableList"
+        >
+          <el-option
+            v-for="item in deptOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
       <span>角色</span>
       <el-select
         v-model="queryInfo.role"
@@ -78,10 +78,10 @@
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
         <template slot-scope="scope">
           <!-- 判断：停用启用，过期 锁定 -->
-          <span v-if="scope.row.stop==0">停用</span>
-          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'">过期</span>
-          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked">锁定</span>
-          <span v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked">正常</span>
+          <el-tag v-if="scope.row.stop==0" :type="'warning'" disable-transitions>停用</el-tag>
+          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'" :type="'primary'" disable-transitions>过期</el-tag>
+          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked" :type="'danger'" disable-transitions>锁定</el-tag>
+          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked" :type="'success'" disable-transitions>正常</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="280">

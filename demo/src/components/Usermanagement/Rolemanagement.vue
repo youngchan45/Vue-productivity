@@ -1,28 +1,21 @@
 <template>
-    <div>
-     <div class="filter">
+  <div>
+    <div class="filter">
       <span>角色</span>
-      <el-select
-        v-model="role"
-        clearable
-        placeholder="全部"
-        size="mini"
-        
-      >
+      <el-select v-model="roleInfo.roleName" clearable placeholder="全部" size="mini" @clear="getList">
         <el-option
           v-for="item in roleOpt"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         ></el-option>
-      </el-select>      
+      </el-select>
       <span>权限</span>
       <el-input
         placeholder="请输入权限"
         prefix-icon="el-icon-search"
         v-model="roleInfo.menuName"
         clearable
-        
         size="mini"
         @clear="getList"
       ></el-input>
@@ -31,7 +24,7 @@
     </div>
     <el-table
       ref="filterTable"
-      :data="tableData"
+      :data="roleTableData"
       style="width: 100%"
       stripe
       border
@@ -51,22 +44,22 @@
 
       <el-table-column label="操作" width="160">
         <!-- <template slot-scope="scope"> -->
-          <el-button type="primary" plain size="mini" >编辑</el-button> 
-          <el-button type="danger" plain size="mini" >删除</el-button>          
+        <el-button type="primary" plain size="mini">编辑</el-button>
+        <el-button type="danger" plain size="mini">删除</el-button>
         <!-- </template> -->
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <!-- <div class="block">
+    <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="queryInfo.pageIndex"
+        :current-page="roleInfo.pageIndex"
         :page-sizes="[10, 20, 30]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.paging.totalRow"
+        :total="this.totalRow"
       ></el-pagination>
-    </div>-->
+    </div>
 
     <!--新建弹窗-->
     <el-dialog
@@ -93,8 +86,8 @@
         </el-form-item>
         <el-form-item>
           <!-- <tree-table ref="treeGridTable" :data="treeGridData" :columns="columns"
-          :selection-type='false' :show-header="false" :border='false'></tree-table> -->
-          <el-tree :data="treeGridData" ></el-tree>
+          :selection-type='false' :show-header="false" :border='false'></tree-table>-->
+          <!-- <el-tree :data="treeGridData" ></el-tree> -->
         </el-form-item>
         <el-form-item class="addBtn">
           <el-button @click="roleAddVisible = false">取消</el-button>
@@ -135,7 +128,8 @@ export default {
           prop: "menuName",
           width: "auto"
         }
-      ]
+      ],
+      totalRow:1,
     };
   },
 
@@ -150,7 +144,18 @@ export default {
         .then(res => {
           console.log("role", res);
           this.roleTableData = res.data.data[0].list;
+          this.totalRow=res.data.data[0].totalRow
         });
+    },
+    //分页N条一页
+    handleSizeChange(newSide) {
+      this.roleInfo.pagesize = newSide;
+      this.getList();
+    },
+    //分页当前页
+    handleCurrentChange(newPage) {
+      this.roleInfo.pageIndex = newPage;
+      this.getList();
     },
     //获取筛选框中的角色下拉框
     async getRoleOpt() {
