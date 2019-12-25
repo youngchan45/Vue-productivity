@@ -6,9 +6,9 @@ import './plugins/element.js'
 //导入全局样式表
 import './assets/css/global.css'
 //导入treegird插件
-import treeTable from 'vue-table-with-tree-grid'
-//注册treeTable组件
-Vue.component('tree-table',treeTable)
+// import treeTable from 'vue-table-with-tree-grid'
+// //注册treeTable组件
+// Vue.component('tree-table',treeTable)
 
 Vue.config.productionTip = false
 Vue.filter("timeset", str => {

@@ -38,20 +38,46 @@ export default {
     },
     async getTree() {
       await this.$http.get("/menu/getMenu").then(res => {
-        if(res.status!=200){
-            this.$message.error('获取菜单失败');
-            // return;
+        // if(res.status!=200){
+        //     this.$message.error('获取菜单失败');
+        //     // return;
+        // }
+        // this.menuData.label=res.data.data.menuName
+        // res.data.data.forEach(item=>{
+        //     // if(item.childrens==0){
+        //         this.menuData.push({label:item.menuName,children:item.childrens})
+        //     // }
+        // })
+        //         for(var i=0;i<res.data.data.length;i++){
+        // this.menuData[i].label=res.data.data[i].label;
+        // this.menuData[i].children=res.data.data[i].children;
+        //         }
+        // for(var i =0; i<res.data.data.length;i++){
+        //   for(var j=0;j<res.data.data.length;j++){
+        //     this.menuList[i].label=res.data.data[i].menuName;
+        //     this.menuList[i].children=res.data.data[i].childrens;
+        //     this.menuList[i].children[j].label=res.data.data[i].childrens[j].menuName;
+        //     this.menuList[i].children[j].children=res.data.data[i].childrens[j].childrens;
+        //   }
+        // }
+        for (let i = 0; i < res.data.data.length; i++) {
+          let obj = {
+            label: res.data.data[i].menuName,
+            children: []
+          };
+          this.menuData.push(obj);
         }
-        this.menuData=res.data.data
-        res.data.data.forEach(item=>{
-            // if(item.childrens==0){           
-                this.menuData.push({label:item.menuName,children:item.childrens})                
-            // }
-        })
-//         for(var i=0;i<res.data.data.length;i++){
-// this.menuData[i].label=res.data.data[i].label;
-// this.menuData[i].children=res.data.data[i].children;
-//         }
+        
+        for (let i = 0; i < res.data.data.length; i++) {
+          for (let j = 0; j < res.data.data[i].childrens.length; j++) {
+            let childObj = {
+              label: res.data.data[i].childrens[j].menuName,
+              children: []
+            };
+            this.menuData[i].children.push(childObj);
+            console.log('look',res.data.data[6].childrens[2].menuName)
+          }
+        }
       });
     }
   }
