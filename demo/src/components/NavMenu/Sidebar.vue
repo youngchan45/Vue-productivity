@@ -18,7 +18,7 @@
       </template>
       <!--子菜单沿用父菜单的循环方式，这里item项用el-menu-item建立是因为已经知道只有二级菜单-->
       <template v-for="child in item.childrens">
-        <el-menu-item :key="child.pageUrl" :index="child.pageUrl+''">
+        <el-menu-item :key="child.menuId" :index="child.pageUrl+''">
           <template slot="title">
             <i :class="item.url"></i>
             {{child.menuName}}
