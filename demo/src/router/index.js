@@ -17,6 +17,8 @@ Vue.use(VueRouter)
 const rolemanagement=()=>import('../components/Usermanagement/Rolemanagement.vue')
 const dictionarymanagement=()=>import('../components/Systemmanagement/Dictionarymanagement.vue')
 const menumanagement=()=>import("../components/Systemmanagement/Menumanagement.vue")
+const logmanagement=()=>import('../components/Systemmanagement/Logmanagement.vue')
+const index=()=>import('../components/Index.vue')
 
 const routes = [
   {
@@ -27,6 +29,10 @@ const routes = [
     path: '/home',
     component: home,
     children: [
+      {
+        path:'/home/index',
+        component:index
+      },
       {
         path: "/userManagement/accountManagement",
         component: accountmanagement
@@ -46,6 +52,10 @@ const routes = [
       {
         path:'/systemManagement/menuManagement',
         component:menumanagement
+      },
+      {
+        path:'/systemManagement/logManagement',
+        component:logmanagement
       }
     ]
   },

@@ -66,7 +66,7 @@ export default {
           window.sessionStorage.setItem("chineseName", res.data.data.chineseName);
           window.sessionStorage.setItem("changePw",res.data.data.changePw)
           this.$message.success("登录成功");
-          this.$router.push("/home");
+          this.$router.push("/home/index");
         }
       });
 

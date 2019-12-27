@@ -30,16 +30,16 @@
       </el-table-column>
     </el-table>
     <!-- 分页 -->
-    <!-- <div class="block">
+    <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="queryInfo.pageIndex"
+        :current-page="this.pageIndex"
         :page-sizes="[10, 20, 30]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.paging.totalRow"
+        :total="this.totalRow"
       ></el-pagination>
-    </div>-->
+    </div>
 
     <!--新建弹窗-->
     <el-dialog
@@ -100,13 +100,17 @@ export default {
       dictList: [],
       dictName: "",
       pageIndex: 1,
-      dictAddForm: {
-        dictName: "",
-        dictRemark: "",
-        dictChildName: "",
-        sort: "",
-        dictChilRemark: ""
-      },
+      pageSize:1,
+      totalRow:1,
+      dictAddForm: [
+        {
+          dictName: "",
+          dictRemark: "",
+          dictChildName: "",
+          sort: "",
+          dictChilRemark: ""
+        }
+      ],
       dictFormRules: {
         dictName: [{ required: true, message: "请输入字典名", trigger: "blur" }]
       },
@@ -123,31 +127,37 @@ export default {
           params: { dictName: this.dictName, pageIndex: this.pageIndex }
         })
         .then(res => {
-          console.log(res);
+          console.log('字典',res);
           this.dictList = res.data.data[0].list;
+          this.totalRow=res.data.data[0].totalRow
         });
     },
     addDict() {
       this.dictAddVisible = true;
     },
-    saveDict() {      
-          this.$http
-            .post("/dict/newDict", {params:this.dictAddForm})
-            .then(res => {
-              if (!res.status == 200) {
-                return this.$message.error("新建字典失败");
-              }
-              this.$message.success("新建字典成功");
-            });
-          this.dictAddVisible = false;
-          this.getDictList();
+    saveDict() {
+      this.$http
+        .post("/dict/newDict", { params: this.dictAddForm })
+        .then(res => {
+          if (!res.status == 200) {
+            return this.$message.error("新建字典失败");
+          }
+          this.$message.success("新建字典成功");
+        });
+      this.dictAddVisible = false;
+      this.getDictList();
+    },
+    handleSizeChange(newPageSize){
+this.pageSize=newPageSize
+this.getDictList();
+    },
+    handleCurrentChange(newPageIndex){
+this.pageIndex=newPageIndex
+this.getDictList();
     }
   }
 };
 </script>
 
 <style lang="less" scope>
-.dictChild {
-  display: flex;
-}
 </style>
