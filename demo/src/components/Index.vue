@@ -82,7 +82,7 @@
       <div>更多</div>
     </div>
     <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane v-for="(item,index) in tabPane" :key="index" :label="item.label" :name='item.name'>
+      <el-tab-pane v-for="(item,index) in tabPane" :key="index" :label="item.label" :name='item.name' >
         <div v-for="(item,index) in warnList" :key="index">
           <el-link
             href=""
@@ -112,26 +112,22 @@ export default {
         year: ""
       },
       cardList1: [],
-      warnQuery0: {
+      warnQuery: {
         deptId: 1,
-        type: 0,
-      },
-      warnQuery1: {
-        deptId: 1,
-        type: 1,
+        type: "",
       },
       warnList: [],
       tabPane: [
-        { label: "房产预警", name:'0', type: 0 },
-        { label: "涉及裸官", name:'1', type: 1 },
-        { label: "疑似经商办企业", name:'2', type: 2 }
+        { label: "房产预警", name:'0', type: '0' },
+        { label: "涉及裸官", name:'1', type: '1' },
+        { label: "疑似经商办企业", name:'2', type: '2' }
       ],
       activeName: '0'
     };
   },
   created() {
     this.getCard1();
-    this.getWarnInfo0();
+    this.getWarnInfo();
   },
   methods: {
     getCard1() {
@@ -146,14 +142,15 @@ export default {
           this.rate.rate4 = res.data.data.rate4;
         });
     },
-     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
-      }},
-    getWarnInfo0() {
+        this.warnQuery.type=tab.index
+        this.getWarnInfo();
+      },
+    getWarnInfo() {
       this.$http
         .get("/warn/indexWarnInfo", {
-          params: this.warnQuery0
+          params: this.warnQuery
         })
         .then(res => {
           console.log("卡片3", res);
