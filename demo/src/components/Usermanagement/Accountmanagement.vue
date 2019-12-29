@@ -1,21 +1,21 @@
 <template>
   <div>
     <div class="filter">
-        <span>部门</span>
-        <el-select
-          v-model="queryInfo.dept"
-          clearable
-          placeholder="全部"
-          size="mini"
-          @clear="getTableList"
-        >
-          <el-option
-            v-for="item in deptOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
+      <span>部门</span>
+      <el-select
+        v-model="queryInfo.dept"
+        clearable
+        placeholder="全部"
+        size="mini"
+        @clear="getTableList"
+      >
+        <el-option
+          v-for="item in deptOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
       <span>角色</span>
       <el-select
         v-model="queryInfo.role"
@@ -72,16 +72,30 @@
       <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
       <el-table-column prop="deptName" label="部门" width="120"></el-table-column>
       <el-table-column prop="roleName" label="角色" width="120"></el-table-column>
-      <el-table-column prop="logintime" type="date" label="最后登录时间"  sortable><template slot-scope="scope">{{scope.row.logintime | timeset}}</template></el-table-column>
+      <el-table-column prop="logintime" type="date" label="最后登录时间" sortable>
+        <template slot-scope="scope">{{scope.row.logintime | timeset}}</template>
+      </el-table-column>
       <el-table-column label="状态" width="80">
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
         <template slot-scope="scope">
           <!-- 判断：停用启用，过期 锁定 -->
           <el-tag v-if="scope.row.stop==0" :type="'warning'" disable-transitions>停用</el-tag>
-          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'" :type="'primary'" disable-transitions>过期</el-tag>
-          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked" :type="'danger'" disable-transitions>锁定</el-tag>
-          <el-tag v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked" :type="'success'" disable-transitions>正常</el-tag>
+          <el-tag
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='过期'"
+            :type="'primary'"
+            disable-transitions
+          >过期</el-tag>
+          <el-tag
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&!scope.row.accountNonLocked"
+            :type="'danger'"
+            disable-transitions
+          >锁定</el-tag>
+          <el-tag
+            v-if="scope.row.stop==1&&scope.row.isGuoQi=='不过期'&&scope.row.accountNonLocked"
+            :type="'success'"
+            disable-transitions
+          >正常</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="280">
@@ -242,12 +256,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="角色" prop="role">
-          <el-select v-model="userEditForm.id" clearable placeholder="请选择">
+          <el-select v-model="userEditForm.id" clearable placeholder="请选择" @change="currenSel">
             <el-option
-              v-for="item in roleOptions1"
-              :key="item.value"
+              v-for="item in roleOptions"
+              :key="item.label"
               :label="item.label"
-              :value="item.value"
+              :value="item.label"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -389,6 +403,7 @@ export default {
         res.data.data.forEach(item => {
           this.roleOptions.push({ label: item.roleName, value: item.roleName });
           this.roleOptions1.push({ label: item.roleName, value: item.roleId });
+          console.log('获取角色',item.roleId)
         });
       });
     },
@@ -471,7 +486,7 @@ export default {
         .get("/usermanage/getUserInfoByUserId/" + id)
         .then(res => {
           this.userEditForm = res.data.data;
-          console.log("编辑", res.data.data);
+          console.log("编辑", this.userEditForm);
         });
     },
     //编辑弹窗的保存
@@ -494,37 +509,26 @@ export default {
     getSTime(val) {
       this.userAddForm.effectiveTime = val;
     },
+    currenSel(selVal) {
+      console.log('角色',selVal)//返回roleId
+      this.queryInfo.role = selVal;
+    },
     //删除账号
-    async delUser(id) {
+    async delSure(id) {
       await this.$confirm("此操作将永久删除该账号, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
-        this.$http.delete("/usermanage/deleteUser/" + id).then(res => {
+        .then(() => {
+          this.$http.delete("/usermanage/deleteUser/" + id).then(res => {
             // console.log('删除',res)
             if (!res.data.status === 200) {
               return this.$message.error("删除失败");
             }
-
             this.$message.success("删除成功");
             this.getTableList();
           });
-    },
-    delSure(id) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.delUser(id);
         })
         .catch(() => {
           this.$message({
