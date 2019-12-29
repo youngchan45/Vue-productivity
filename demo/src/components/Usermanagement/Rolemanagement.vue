@@ -96,7 +96,7 @@
             <el-tree
               :data="sourceData"
               node-key="id"
-              @check-change="handleCheckChange"
+              @check="handleCheckChange"
               highlight-current
               ref="sourceTree"
               :expand-on-click-node="false"
@@ -142,7 +142,7 @@
             <el-tree
               :data="sourceData"
               node-key="id"
-              @check-change="handleCheckChange"
+              @check="handleCheckChange"
               highlight-current
               ref="sourceTree"
               :expand-on-click-node="false"
@@ -177,11 +177,13 @@ export default {
       role: "",
       roleAddForm: {
         roleName: "",
-        roleId: ""
+        roleId: "",
+        checkedBox: []
       },
       roleEditForm: {
         roleName: "",
-        roleId: ""
+        roleId: "",
+        checkedBox: []
       },
       roleFormRules: {
         roleName: [{ required: true, message: "请输入角色名", trigger: "blur" }]
@@ -191,7 +193,7 @@ export default {
       //弹窗内权限列表数据
       sourceData: [],
       totalRow: 1,
-      checkedBox: []
+      
     };
   },
 
@@ -259,11 +261,13 @@ export default {
         }
       });
     },
-    handleCheckChange(treeSelVal,checked, indeterminate) {
-      console.log("treeSel", treeSelVal,checked, indeterminate);
-      this.checkedBox.push(treeSelVal.id)
+    handleCheckChange(treeSelVal) {
+      console.log("treeSel", treeSelVal);
+      this.roleEditForm.checkedBox.push(treeSelVal.id)
       // this.checkedBox=treeSelVal.id;
-      console.log(this.checkedBox);
+      console.log('编辑树',this.roleEditForm.checkedBox);
+      this.roleAddForm.checkedBox.push(treeSelVal.id)
+      console.log('新建树',this.roleAddForm.checkedBox);
     },
     //弹窗全选权限树
     checkAll() {
@@ -281,7 +285,7 @@ export default {
           roleName: this.roleAddForm.roleName,
           createTime: new Date(),
           updateTime: new Date(),
-          ids: this.checkedBox
+          ids: this.roleAddForm.checkedBox
         })
         .then(res => {
           if (res.status != 200) {
@@ -303,7 +307,7 @@ export default {
           console.log("bianji", res);
           this.roleEditForm.roleName = res.data.data[0].roleName;
           this.roleEditForm.roleId = res.data.data[0].roleId;
-          this.checkedBox = res.data.data[0].ids;
+          this.roleEditForm.checkedBox = res.data.data[0].ids;
         });
     },
     //保存编辑角色
@@ -314,7 +318,7 @@ export default {
           roleName: this.roleEditForm.roleName,
           // createTime: new Date(),
           // updateTime: new Date(),
-          ids: this.checkedBox
+          ids: this.roleEditForm.checkedBox
         })
         .then(res => {
           if (res.status != 200) {
