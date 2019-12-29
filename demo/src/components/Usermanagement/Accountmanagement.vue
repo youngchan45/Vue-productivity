@@ -355,6 +355,7 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+
       //部门筛选下拉框
       deptOptions: [
         // {value:'',label:''}
@@ -403,7 +404,7 @@ export default {
         res.data.data.forEach(item => {
           this.roleOptions.push({ label: item.roleName, value: item.roleName });
           this.roleOptions1.push({ label: item.roleName, value: item.roleId });
-          console.log('获取角色',item.roleId)
+          console.log("获取角色", item.roleId);
         });
       });
     },
@@ -461,6 +462,11 @@ export default {
           });
       }
     },
+    getSTime(timeVal) {
+      console.log("time", timeVal);
+      this.userAddForm.effectiveTime = timeVal;
+      this.userEditForm.effectiveTime = timeVal;
+    },
     //新增账号的保存新账号
     saveNewAccount(id) {
       this.$refs.userAddFormRef.validate(valid => {
@@ -506,11 +512,8 @@ export default {
           });
       });
     },
-    getSTime(val) {
-      this.userAddForm.effectiveTime = val;
-    },
     currenSel(selVal) {
-      console.log('角色',selVal)//返回roleId
+      console.log("角色", selVal); //返回roleId
       this.queryInfo.role = selVal;
     },
     //删除账号

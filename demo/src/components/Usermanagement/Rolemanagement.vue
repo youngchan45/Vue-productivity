@@ -82,7 +82,7 @@
         ref="roleAddFormRef"
         statue-icon
         :model="roleAddForm"
-        :rules="roleAddFormRules"
+        :rules="roleFormRules"
         :inline="true"
         class="demo-form-inline"
         label-width="100px"
@@ -96,12 +96,11 @@
             <el-tree
               :data="sourceData"
               node-key="id"
-              @node-click="handleNodeClick"
+              @check-change="handleCheckChange"
               highlight-current
               ref="sourceTree"
               :expand-on-click-node="false"
               show-checkbox
-              :default-checked-keys="checkedBox"
               accordion
             ></el-tree>
           </el-card>
@@ -110,7 +109,53 @@
         </el-form-item>
         <el-form-item class="addBtn">
           <el-button @click="roleAddVisible = false">取消</el-button>
-          <el-button type="primary" @click="saveRole">保存</el-button>
+          <el-button type="primary" @click="saveAddRole">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!--编辑弹窗-->
+    <el-dialog
+      class="dialog"
+      title="编辑角色"
+      :visible.sync="roleEditVisible"
+      width="470px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      :show-close="true"
+    >
+      <!--编辑角色弹窗内容-->
+      <el-form
+        ref="roleEditFormRef"
+        statue-icon
+        :model="roleEditForm"
+        :rules="roleFormRules"
+        :inline="true"
+        class="demo-form-inline"
+        label-width="100px"
+        size="small"
+      >
+        <el-form-item label="角色" prop="roleName" clearable>
+          <el-input v-model="roleEditForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="权限" prop="source">
+          <el-card class="card">
+            <el-tree
+              :data="sourceData"
+              node-key="id"
+              @check-change="handleCheckChange"
+              highlight-current
+              ref="sourceTree"
+              :expand-on-click-node="false"
+              show-checkbox
+              accordion
+            ></el-tree>
+          </el-card>
+          <el-button @click="checkAll">全选</el-button>
+          <el-button @click="resetTree">重置</el-button>
+        </el-form-item>
+        <el-form-item class="addBtn">
+          <el-button @click="roleEditVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveEditRole">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -134,10 +179,15 @@ export default {
         roleName: "",
         roleId: ""
       },
-      roleAddFormRules: {
+      roleEditForm: {
+        roleName: "",
+        roleId: ""
+      },
+      roleFormRules: {
         roleName: [{ required: true, message: "请输入角色名", trigger: "blur" }]
       },
       roleAddVisible: false,
+      roleEditVisible: false,
       //弹窗内权限列表数据
       sourceData: [],
       totalRow: 1,
@@ -209,6 +259,12 @@ export default {
         }
       });
     },
+    handleCheckChange(treeSelVal,checked, indeterminate) {
+      console.log("treeSel", treeSelVal,checked, indeterminate);
+      this.checkedBox.push(treeSelVal.id)
+      // this.checkedBox=treeSelVal.id;
+      console.log(this.checkedBox);
+    },
     //弹窗全选权限树
     checkAll() {
       console.log(this.$refs.sourceTree.setCheckedNodes(this.sourceData));
@@ -217,40 +273,55 @@ export default {
     resetTree() {
       console.log(this.$refs.sourceTree.setCheckedKeys([]));
     },
-    handleNodeClick(data) {
-      console.log(data);
+    //保存新建角色
+    saveAddRole() {
+      this.$http
+        .post("/role/creatRole", {
+          roleId: "",
+          roleName: this.roleAddForm.roleName,
+          createTime: new Date(),
+          updateTime: new Date(),
+          ids: this.checkedBox
+        })
+        .then(res => {
+          if (res.status != 200) {
+            return this.$message.success("新建角色失败");
+          }
+          this.$message.success("新增角色成功");
+          this.roleAddVisible = false;
+          this.getList();
+        });
     },
     //编辑角色
     async editRole(roleId) {
-      this.roleAddVisible = true;
+      this.roleEditVisible = true;
       await this.$http
         .get("/role/getRole", {
           params: { roleId: roleId }
         })
         .then(res => {
           console.log("bianji", res);
-          this.roleAddForm.roleName = res.data.data[0].roleName;
+          this.roleEditForm.roleName = res.data.data[0].roleName;
+          this.roleEditForm.roleId = res.data.data[0].roleId;
           this.checkedBox = res.data.data[0].ids;
         });
     },
     //保存编辑角色
-     saveRole(roleId) {
-       this.$http
-        .post(
-          "/role/creatRole",
-          {
-            roleId: roleId,
-            roleName: this.roleAddForm.roleName,
-            createTime: new Date(),
-            updateTime: new Date(),
-            ids: this.checkedBox
-          })        
+    saveEditRole() {
+      this.$http
+        .post("/role/creatRole", {
+          roleId: this.roleEditForm.roleId,
+          roleName: this.roleEditForm.roleName,
+          // createTime: new Date(),
+          // updateTime: new Date(),
+          ids: this.checkedBox
+        })
         .then(res => {
           if (res.status != 200) {
             return this.$message.success("编辑角色失败");
           }
-          this.$message.success("新增角色成功");
-          this.roleAddVisible = false;
+          this.$message.success("编辑角色成功");
+          this.roleEditVisible = false;
           this.getList();
         });
     }
