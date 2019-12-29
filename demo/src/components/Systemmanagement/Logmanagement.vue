@@ -2,7 +2,7 @@
   <div>
     <div class="filter">
       <span>日志名称</span>
-      <el-select v-model="logQuery.dept" clearable placeholder="全部" size="mini" @clear="getLogList">
+      <el-select v-model="selOpt" clearable placeholder="全部" size="mini" @clear="getLogList" @change="currentSel">
         <el-option
           v-for="item in logNameOptions"
           :key="item.value"
@@ -14,7 +14,16 @@
       <el-input
         placeholder="用户名称"
         prefix-icon="el-icon-search"
-        v-model="dictName"
+        v-model="logQuery.userName"
+        clearable
+        @clear="getLogList"
+        size="mini"
+      ></el-input>
+      <span>IP</span>
+      <el-input
+        placeholder="IP"
+        prefix-icon="el-icon-search"
+        v-model="logQuery.IP"
         clearable
         @clear="getLogList"
         size="mini"
@@ -24,7 +33,13 @@
 
     <el-table ref="dictTable" :data="logList" style="width: 100%" stripe border max-height="470px">
       <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
-      <el-table-column prop="userName" label="日志名称" width="160"></el-table-column>
+      <el-table-column prop="operateType" label="日志名称" width="160">
+        <template slot-scope='scope'>
+<el-tag :type="'success'" v-if='scope.row.operateType==0'>登录日志</el-tag>
+<el-tag :type="'parmary'" v-if='scope.row.operateType==1'>操作日志</el-tag>
+<el-tag :type="'danger'" v-if='scope.row.operateType==2'>异常日志</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="userName" label="用户名称" width="160"></el-table-column>
       <el-table-column prop="logDesc" label="日志描述" width="170"></el-table-column>
       <el-table-column prop="oprateDate" type="date" label="更新时间" width="190" sortable>
@@ -48,17 +63,22 @@
 export default {
   data() {
     return {
-      logNameOptions: [],
+      selOpt:'',
+      logNameOptions: [
+        {label:'登录日志',value:'0'},
+        {label:'异常日志',value:'2'},
+        {label:'操作日志',value:'1'},
+      ],
       logList: [],
-      logQuery: [
+      logQuery: 
         {
           pageIndex: 1,
-          state: "",
+          state: '',
           userName: "",
           IP: "",
           pagesize: 10
         }
-      ],
+      ,
       totalRow: 1
     };
   },
@@ -68,11 +88,11 @@ export default {
   methods: {
     async getLogList() {
      await this.$http
-        .get("/dict/getAllDict", { params: this.logQuery })
+        .get("/logInfo/getAllLogs", { params: this.logQuery })
         .then(res => {
-          console.log(res);
+          console.log('日志列表',res);
           this.logList = res.data.data[0].list;
-          this.totalRow = res.data.data.totalRow;
+          this.totalRow = res.data.data[0].totalRow;
         });
     },
     handleSizeChange(newPageSize) {
@@ -82,6 +102,10 @@ export default {
     handleCurrentChange(newPageIndex) {
       this.logQuery.pageIndex = newPageIndex;
       this.getLogList();
+    },
+    currentSel(selVal){
+      console.log(selVal)
+      this.logQuery.state=selVal
     }
   }
 };
