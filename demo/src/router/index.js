@@ -12,13 +12,14 @@ axios.interceptors.request.use(config => {
 const login = () => import('../components/Login.vue')
 const home = () => import('../components/Home.vue')
 const accountmanagement = () => import("../components/Usermanagement/Accountmanagement.vue")
-const organization =()=>import('../components/Usermanagement/Organization.vue')
+const organization = () => import('../components/Usermanagement/Organization.vue')
 Vue.use(VueRouter)
-const rolemanagement=()=>import('../components/Usermanagement/Rolemanagement.vue')
-const dictionarymanagement=()=>import('../components/Systemmanagement/Dictionarymanagement.vue')
-const menumanagement=()=>import("../components/Systemmanagement/Menumanagement.vue")
-const logmanagement=()=>import('../components/Systemmanagement/Logmanagement.vue')
-const index=()=>import('../components/Index.vue')
+const rolemanagement = () => import('../components/Usermanagement/Rolemanagement.vue')
+const dictionarymanagement = () => import('../components/Systemmanagement/Dictionarymanagement.vue')
+const menumanagement = () => import("../components/Systemmanagement/Menumanagement.vue")
+const logmanagement = () => import('../components/Systemmanagement/Logmanagement.vue')
+const index = () => import('../components/Index.vue')
+const archivesmanagement = () => import('../components/Archivesmanagement.vue')
 
 const routes = [
   {
@@ -30,8 +31,8 @@ const routes = [
     component: home,
     children: [
       {
-        path:'/home/index',
-        component:index
+        path: '/home/index',
+        component: index
       },
       {
         path: "/userManagement/accountManagement",
@@ -42,24 +43,27 @@ const routes = [
         component: organization
       },
       {
-        path:'/userManagement/roleManagement',
-        component:rolemanagement
+        path: '/userManagement/roleManagement',
+        component: rolemanagement
       },
       {
-        path:'/systemManagement/dictionaryManagement',
-        component:dictionarymanagement
+        path: '/systemManagement/dictionaryManagement',
+        component: dictionarymanagement
       },
       {
-        path:'/systemManagement/menuManagement',
-        component:menumanagement
+        path: '/systemManagement/menuManagement',
+        component: menumanagement
       },
       {
-        path:'/systemManagement/logManagement',
-        component:logmanagement
+        path: '/systemManagement/logManagement',
+        component: logmanagement
+      },
+      {
+        path: '/archivesManagement/archivesManagement',
+        component: archivesmanagement
       }
     ]
   },
-
 ]
 
 const router = new VueRouter({

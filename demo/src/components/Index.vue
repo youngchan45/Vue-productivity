@@ -77,20 +77,123 @@
         </el-card>
       </el-col>
     </el-row>
+    <div class="custom">
+      <h3>自定义群体</h3>
+      <el-button type="primary" size="small" @click="addUnit">
+        <i class="el-icon-plus"></i>自定义群体
+      </el-button>
+    </div>
+    <el-row>
+      <el-col :span="6" v-for="(item,index) in unitAddForm" :key='index'>
+        <el-card >
+          <div slot="header">
+            <span>{{item.inputunitName}}</span>
+          </div>
+          <div>
+            <!-- <span class="card1Count1">{{item.unitName.length}}</span> -->
+            <span>人</span>
+          </div>
+          <div class="card1Count2">
+            <a>编辑</a>
+            <a>删除</a>
+          </div>
+        </el-card>
+      </el-col>
+
+      <!-- <el-col :span="6">
+        <el-card>
+          <div slot="header">
+            <span>{{unitAddForm.inputunitName}}</span>
+          </div>
+          <div>
+            <span class="card1Count1">{{unitAddForm.rankName.length}}</span>
+            <span>人</span>
+          </div>
+          <div class="card1Count2">
+            <a>编辑</a>
+            <a>删除</a>
+          </div>
+        </el-card>
+      </el-col> -->
+    </el-row>
     <div class="warn">
       <h3>预警信息</h3>
       <div>更多</div>
     </div>
     <el-tabs type="border-card" v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane v-for="(item,index) in tabPane" :key="index" :label="item.label" :name='item.name' >
+      <el-tab-pane
+        v-for="(item,index) in tabPane"
+        :key="index"
+        :label="item.label"
+        :name="item.name"
+      >
         <div v-for="(item,index) in warnList" :key="index">
-          <el-link
-            href=""
-            underline
-          >{{item.name}}{{item.post}}{{item.ranks}}{{item.deptName}}疑似违规</el-link>
+          <el-link href underline>{{item.name}}{{item.post}}{{item.ranks}}{{item.deptName}}疑似违规</el-link>
         </div>
       </el-tab-pane>
     </el-tabs>
+    <!--新建群体弹窗-->
+    <el-dialog
+      class="dialog"
+      title="自定义群体"
+      :visible.sync="unitAddVisible"
+      width="470px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      :show-close="true"
+    >
+      <!--新增群体弹窗内容-->
+      <el-form
+        ref="unitFormRef"
+        statue-icon
+        :model="unitAddForm"
+        :rules="unitFormRules"
+        :inline="true"
+        class="demo-form-inline"
+        label-width="100px"
+        size="small"
+      >
+        <el-form-item label="群体名称" prop="unitName" clearable>
+          <el-input v-model="unitAddForm.inputunitName"></el-input>
+        </el-form-item>
+        <el-form-item label="类型">
+          <el-select v-model="value" clearable placeholder="请选择" @change="currentSel">
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+            <div></div>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable prop="unitName">
+          <el-select v-model="unitAddForm.unitName" multiple filterable placeholder="请输入搜索或单击选择">
+            <el-option
+              v-for="item in unitAddForm.unitOptions"
+              :key="item.unitId"
+              :label="item.unitName"
+              :value="item.unitId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
+          <el-select v-model="unitAddForm.rankName" multiple filterable placeholder="请输入搜索或单击选择">
+            <el-option
+              v-for="item in unitAddForm.rankOptions"
+              :key="item.rankId"
+              :label="item.rankName"
+              :value="item.rankId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="addBtn">
+          <el-button @click="unitAddVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveUnitAdd">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -98,6 +201,7 @@
 export default {
   data() {
     return {
+      unitAddVisible: false,
       equal: require("../assets/img/equal.png"),
       up: require("../assets/img/up.png"),
       down: require("../assets/img/down.png"),
@@ -114,15 +218,37 @@ export default {
       cardList1: [],
       warnQuery: {
         deptId: 1,
-        type: "",
+        type: ""
       },
       warnList: [],
       tabPane: [
-        { label: "房产预警", name:'0', type: '0' },
-        { label: "涉及裸官", name:'1', type: '1' },
-        { label: "疑似经商办企业", name:'2', type: '2' }
+        { label: "房产预警", name: "0", type: "0" },
+        { label: "涉及裸官", name: "1", type: "1" },
+        { label: "疑似经商办企业", name: "2", type: "2" }
       ],
-      activeName: '0'
+      activeName: "0",
+      typeOptions: [
+        { label: "单位", value: "unit" },
+        { label: "级别", value: "rank" }
+      ],
+      selValId: "",
+      unitAddForm: {
+        inputunitName: "",
+        id: "",
+        unitName: [],
+        rankName: [],
+        unitOptions: [],
+        rankOptions: []
+      },
+      unitFormRules: {
+        inputunitName: "",
+        id: "",
+        unitName: "",
+        rankName: ""
+      },
+      value: "unit",
+      unitShow: true,
+      rankShow: false
     };
   },
   created() {
@@ -142,11 +268,11 @@ export default {
           this.rate.rate4 = res.data.data.rate4;
         });
     },
-      handleClick(tab, event) {
-        console.log(tab, event);
-        this.warnQuery.type=tab.index
-        this.getWarnInfo();
-      },
+    handleClick(tab, event) {
+      console.log(tab, event);
+      this.warnQuery.type = tab.index;
+      this.getWarnInfo();
+    },
     getWarnInfo() {
       this.$http
         .get("/warn/indexWarnInfo", {
@@ -154,7 +280,59 @@ export default {
         })
         .then(res => {
           console.log("卡片3", res);
-          this.warnList = res.data.data;
+          this.warnList = res.data.data.slice(0, 5);
+        });
+    },
+    addUnit() {
+      this.unitAddVisible = true;
+      //获取单位列表
+      var deptId = window.sessionStorage.getItem("deptId");
+      this.$http
+        .get("/index/findUnitCode", {
+          params: {
+            deptId: deptId,
+            unitName: ""
+          }
+        })
+        .then(res => {
+          console.log("单位", res);
+          console.log("id", deptId);
+          this.unitAddForm.unitOptions = res.data.data;
+        });
+      //获取级别列表
+      this.$http
+        .get("/index/findUnitCodeOrRankId", {
+          params: {
+            deptId: deptId,
+            type: "" //旧级别：0，新级别：1
+          }
+        })
+        .then(res => {
+          console.log("级别", res);
+          this.unitAddForm.rankOptions = res.data.data;
+        });
+    },
+    currentSel(selVal) {
+      console.log("来", selVal);
+      this.selValId = selVal;
+      if (this.selValId == "unit") {
+        this.unitShow = true;
+        this.rankShow = false;
+      }
+      if (this.selValId == "rank") {
+        this.rankShow = true;
+        this.unitShow = false;
+      }
+    },
+    saveUnitAdd() {
+      this.$http
+        .post("/index/newCustomizeGroup", this.unitAddForm)
+        .then(res => {
+          // console.log(res);
+          if (res.data.status == 200) {
+            this.$message.success("新建群体成功");
+            this.unitAddVisible = false;
+          }
         });
     }
   }
@@ -172,5 +350,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // .addBtn{
+  //   // height: 16px;
+  //   text-align: center;
+  // }
 }
 </style>
