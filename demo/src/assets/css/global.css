@@ -2,33 +2,46 @@
 html,
 body,
 #app {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: "Microsoft YaHei";
-    /* overflow:hidden; */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Microsoft YaHei";
+  /* overflow:hidden; */
 }
-.el-menu{
-  border:none;
+
+.el-menu {
+  border: none;
 }
+
 .el-table-filter__list {
   max-height: 250px;
   overflow: auto;
 }
-.el-dialog__body{
-  padding:10px 20px;
+
+.el-dialog__body {
+  padding: 10px 20px;
 }
-.el-input{
-  width:220px;
+
+.el-input {
+  width: 220px;
 }
-li .el-select-dropdown__item selected hover{
-  display:none;
+
+li .el-select-dropdown__item selected hover {
+  display: none;
 }
-table,tbody,thead {
+
+table,
+tbody,
+thead {
   width: 100% !important;
 }
-.el-menu-vertical-demo{
+
+.el-menu-vertical-demo {
   height: 680px;
   position: relative;
-    overflow: scroll;
+  overflow: scroll;
+}
+
+.el-card,.el-card__body{
+  height: 100%;
 }

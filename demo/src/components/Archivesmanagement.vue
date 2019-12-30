@@ -34,12 +34,12 @@
       max-height="470px"
       show-overflow-tooltip
     >
-      <el-table-column type="index" label="#" align="center" width="50"></el-table-column>
-      <el-table-column label="姓名" align="center" prop="name" width="100"></el-table-column>
-      <el-table-column label="工作单位" align="center" prop="unit_name" width="120"></el-table-column>
-      <el-table-column label="职务" align="center" prop="present_post" width="100"></el-table-column>
-      <el-table-column label="级别" align="center" prop="present_rank" width="120"></el-table-column>
-      <el-table-column label="提交时间" align="center" width="200">
+      <el-table-column type="index" label="#"  width="50"></el-table-column>
+      <el-table-column label="姓名"  prop="name" width="100"></el-table-column>
+      <el-table-column label="工作单位"  prop="unit_name" width="120"></el-table-column>
+      <el-table-column label="职务"  prop="present_post" width="100"></el-table-column>
+      <el-table-column label="级别"  prop="present_rank" width="120"></el-table-column>
+      <el-table-column label="提交时间"  width="200" sortable>
         <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
       </el-table-column>
       <el-table-column label="查看" align="center" width="260">

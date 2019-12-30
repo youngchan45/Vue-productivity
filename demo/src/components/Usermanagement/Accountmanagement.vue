@@ -64,18 +64,18 @@
       style="width: 100%"
       stripe
       border
-      max-height="470px"
+      max-height="500px"
       show-overflow-tooltip
     >
       <el-table-column type="index" label="#" align="center" width="50"></el-table-column>
-      <el-table-column prop="username" label="账号" width="120"></el-table-column>
+      <el-table-column prop="username" label="账号" width="130"></el-table-column>
       <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
-      <el-table-column prop="deptName" label="部门" width="120"></el-table-column>
-      <el-table-column prop="roleName" label="角色" width="120"></el-table-column>
+      <el-table-column prop="deptName" label="部门" width="130"></el-table-column>
+      <el-table-column prop="roleName" label="角色" width="130"></el-table-column>
       <el-table-column prop="logintime" type="date" label="最后登录时间" sortable>
         <template slot-scope="scope">{{scope.row.logintime | timeset}}</template>
       </el-table-column>
-      <el-table-column label="状态" width="80">
+      <el-table-column label="状态" width="120">
         <!-- 插入一个模板template 加一个属性slot-scope，其中scope.row代表这一行的数据;
         只要定义了作用域插槽，就会覆盖上面的prop，所以可以删掉prop-->
         <template slot-scope="scope">
@@ -98,7 +98,7 @@
           >正常</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="280">
+      <el-table-column label="操作" width="360">
         <template slot-scope="scope">
           <el-button type="primary" plain size="mini" @click="editAccount(scope.row.id)">编辑</el-button>
           <el-button type="danger" plain size="mini" @click="delSure(scope.row.id)">删除</el-button>

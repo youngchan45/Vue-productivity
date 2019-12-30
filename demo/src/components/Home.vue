@@ -86,7 +86,7 @@
             <router-view></router-view>
           </el-card>
         </el-main>
-        <el-footer>Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
+        <el-footer style="height: 38px;">Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
       </el-container>
     </el-container>
     <el-dialog
@@ -336,6 +336,7 @@ export default {
   }
   .box-card {
     width: 480px;
+    
   }
 }
 </style>
