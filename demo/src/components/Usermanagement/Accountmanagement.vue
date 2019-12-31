@@ -72,7 +72,7 @@
       <el-table-column prop="chinesename" label="真实姓名" width="120"></el-table-column>
       <el-table-column prop="deptName" label="部门" width="130"></el-table-column>
       <el-table-column prop="roleName" label="角色" width="130"></el-table-column>
-      <el-table-column prop="logintime" type="date" label="最后登录时间" sortable>
+      <el-table-column prop="logintime" type="date" label="最后登录时间" sortable width="180">
         <template slot-scope="scope">{{scope.row.logintime | timeset}}</template>
       </el-table-column>
       <el-table-column label="状态" width="120">

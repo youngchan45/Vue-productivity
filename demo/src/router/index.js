@@ -19,7 +19,8 @@ const dictionarymanagement = () => import('../components/Systemmanagement/Dictio
 const menumanagement = () => import("../components/Systemmanagement/Menumanagement.vue")
 const logmanagement = () => import('../components/Systemmanagement/Logmanagement.vue')
 const index = () => import('../components/Index.vue')
-const archivesmanagement = () => import('../components/Archivesmanagement.vue')
+const archivesmanagement = () => import('../components/Archivesmanagement/Archivesmanagement.vue')
+const archivesinfo=()=>import('../components/Archivesmanagement/Archivesinfo.vue')
 
 const routes = [
   {
@@ -61,7 +62,25 @@ const routes = [
       {
         path: '/archivesManagement/archivesManagement',
         component: archivesmanagement
-      }
+      },
+      {
+        path:'/archive/infoPerson',
+        component:archivesinfo
+      },
+      // {
+      //   path:'/archive/infoPerson:type:idcard:dateYear',
+      //   component:archivesinfo
+      // },
+      // {
+      //   path:'/archive/infoPerson,{
+      //     params:{
+      //       type:'',
+      //       idcard:'',
+      //       dateYear:'',
+      //     }
+      //   }',
+      //   component:archivesinfo
+      // }
     ]
   },
 ]

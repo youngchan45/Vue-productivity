@@ -37,9 +37,9 @@ thead {
 }
 
 .el-menu-vertical-demo {
-  height: 680px;
+  height: 600px;
   position: relative;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .el-card,.el-card__body{
