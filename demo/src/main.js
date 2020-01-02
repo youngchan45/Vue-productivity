@@ -26,6 +26,14 @@ Vue.filter("timeset", str => {
 
   return `${y}-${m}-${d} ${h}:${mm}:${s}`;
 });
+
+Vue.filter("personTime", str => {
+  var dt = new Date(str);
+  var y = dt.getFullYear();
+  var m = ("0" + (dt.getMonth() + 1)).slice(-2);
+  var d = ("0" + dt.getDate()).slice(-2);
+  return `${y}.${m}.${d}`;
+});
 new Vue({
   router,
   store,
