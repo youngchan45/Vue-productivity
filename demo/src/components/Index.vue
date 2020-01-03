@@ -84,8 +84,8 @@
       </el-button>
     </div>
     <el-row>
-      <el-col :span="6" v-for="(item,index) in unitAddForm" :key='index'>
-        <el-card >
+      <el-col :span="6" v-for="(item,index) in unitAddForm" :key="index">
+        <el-card>
           <div slot="header">
             <span>{{item.inputunitName}}</span>
           </div>
@@ -114,7 +114,7 @@
             <a>删除</a>
           </div>
         </el-card>
-      </el-col> -->
+      </el-col>-->
     </el-row>
     <div class="warn">
       <h3>预警信息</h3>
