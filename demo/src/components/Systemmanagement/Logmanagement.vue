@@ -36,8 +36,8 @@
       <el-table-column prop="operateType" label="日志名称" width="160">
         <template slot-scope='scope'>
 <el-tag :type="'success'" v-if='scope.row.operateType==0'>登录日志</el-tag>
-<el-tag :type="'parmary'" v-if='scope.row.operateType==1'>操作日志</el-tag>
-<el-tag :type="'danger'" v-if='scope.row.operateType==2'>异常日志</el-tag>
+<el-tag :type="'parmary'" v-else-if='scope.row.operateType==1'>操作日志</el-tag>
+<el-tag :type="'danger'" v-else>异常日志</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="userName" label="用户名称" width="160"></el-table-column>

@@ -68,7 +68,7 @@
     </el-card>
 
     <el-card :body-style="{ padding: '10px' }">
-        <h5>因私出入境</h5>
+        <!-- <h5>因私出入境</h5> -->
 <abroadcompare></abroadcompare>
     </el-card>
   </div>
