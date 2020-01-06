@@ -21,6 +21,7 @@ const logmanagement = () => import('../components/Systemmanagement/Logmanagement
 const index = () => import('../components/Index.vue')
 const archivesmanagement = () => import('../components/Archivesmanagement/Archivesmanagement.vue')
 const archivesinfo=()=>import('../components/Archivesmanagement/Archivesinfo.vue')
+const recordcomparison=()=>import('../components/Archivesmanagement/Recordcomparison.vue')
 
 const routes = [
   {
@@ -81,6 +82,10 @@ const routes = [
       //   }',
       //   component:archivesinfo
       // }
+      {
+        path:'/archive/recordcomparison',
+        component:recordcomparison
+      },
     ]
   },
 ]

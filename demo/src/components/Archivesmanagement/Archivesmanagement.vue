@@ -50,7 +50,7 @@
             size="mini"
             @click="goInfo(scope.row.dateYear,scope.row.idcard)"
           >详情</el-button>
-          <el-button type="primary" plain size="mini">历年对比</el-button>
+          <el-button type="primary" plain size="mini" @click="goComparison(scope.row.dateYear,scope.row.idcard)">历年对比</el-button>
           <el-button type="primary" plain size="mini">社会关系</el-button>
         </template>
       </el-table-column>
@@ -156,7 +156,17 @@ export default {
       );
       console.log("发送", idcard);
       console.log("发送", dateYear);
-    }
+    },
+    goComparison(dateYear, idcard){
+this.$router.push(
+  {path:'/archive/recordcomparison',
+  query:{
+    type:0,
+    idcard: idcard,
+    dateYear: dateYear
+  }}
+)
+    },
   }
 };
 </script>

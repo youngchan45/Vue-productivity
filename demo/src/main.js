@@ -10,6 +10,10 @@ import './assets/css/global.css'
 // //注册treeTable组件
 // Vue.component('tree-table',treeTable)
 
+import vehistogram from 'v-charts/lib/line'
+ 
+Vue.component(vehistogram)
+
 Vue.config.productionTip = false
 Vue.filter("timeset", str => {
   var dt = new Date(str);
