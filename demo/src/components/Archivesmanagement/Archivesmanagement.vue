@@ -42,7 +42,7 @@
       <el-table-column label="提交时间" width="200" sortable>
         <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
       </el-table-column>
-      <el-table-column label="查看" align="center" width="260">
+      <el-table-column label="查看" align="center" width="260" fixed="right">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -50,8 +50,13 @@
             size="mini"
             @click="goInfo(scope.row.dateYear,scope.row.idcard)"
           >详情</el-button>
-          <el-button type="primary" plain size="mini" @click="goComparison(scope.row.dateYear,scope.row.idcard)">历年对比</el-button>
-          <el-button type="primary" plain size="mini">社会关系</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goComparison(scope.row.dateYear,scope.row.idcard)"
+          >历年对比</el-button>
+          <el-button type="primary" plain size="mini" @click="goRelations(scope.row)">社会关系</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,7 +74,8 @@
 </template>
 
 <script>
-const archivesinfo=()=>import('./Archivesinfo.vue')
+// const archivesinfo = () => import("./Archivesinfo.vue");
+import { eventBus} from '../../assets/Vuebus'
 export default {
   data() {
     return {
@@ -145,27 +151,38 @@ export default {
     goInfo(dateYear, idcard) {
       this.$router.push(
         //path和query需要放在同一个对象里面
-        { path: "/archive/infoPerson" ,        
+        {
+          path: "/archive/infoPerson",
           query: {
             type: 0,
             idcard: idcard,
             dateYear: dateYear
           },
-          component:archivesinfo
+          // component: archivesinfo
         }
       );
       console.log("发送", idcard);
       console.log("发送", dateYear);
     },
-    goComparison(dateYear, idcard){
-this.$router.push(
-  {path:'/archive/recordcomparison',
-  query:{
-    type:0,
-    idcard: idcard,
-    dateYear: dateYear
-  }}
-)
+    goComparison(dateYear, idcard) {
+      this.$router.push({
+        path: "/archive/recordcomparison",
+        query: {
+          type: 0,
+          idcard: idcard,
+          dateYear: dateYear
+        }
+      });
+    },
+    goRelations(row) {
+      this.$router.push({
+        path: "/archive/socialRelations",
+        query: {
+          idcard: row.idcard,
+          dateYear: row.dateYear
+        }
+      });
+eventBus.$emit('rowMessage',row)
     },
   }
 };

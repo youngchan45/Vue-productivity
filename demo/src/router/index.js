@@ -22,6 +22,7 @@ const index = () => import('../components/Index.vue')
 const archivesmanagement = () => import('../components/Archivesmanagement/Archivesmanagement.vue')
 const archivesinfo=()=>import('../components/Archivesmanagement/Archivesinfo.vue')
 const recordcomparison=()=>import('../components/Archivesmanagement/Recordcomparison.vue')
+const socialRelations=()=>import('../components/Archivesmanagement/SocialRelations.vue')
 
 const routes = [
   {
@@ -86,6 +87,10 @@ const routes = [
         path:'/archive/recordcomparison',
         component:recordcomparison
       },
+      {
+        path:'/archive/socialRelations',
+        component:socialRelations
+      }
     ]
   },
 ]

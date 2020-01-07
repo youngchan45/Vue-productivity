@@ -26,7 +26,8 @@
                 </span>
                 <span v-if="scope.row.compare<0" style="color:red;">
                   <i class="el-icon-bottom"></i>
-                  下降 {{scope.row.compare}} 个职级
+                  <!--涉及到负数时记得处理成绝对值-->
+                  下降 {{Math.abs(scope.row.compare)}} 个职级
                 </span>
               </template>
             </el-table-column>
@@ -67,15 +68,26 @@
       </el-tabs>
     </el-card>
 
-    <el-card :body-style="{ padding: '10px' }">
-        <!-- <h5>因私出入境</h5> -->
+    <el-card :body-style="{ padding: '10px' }">        
 <abroadcompare></abroadcompare>
     </el-card>
+
+    <div class="flex">
+      <el-card :body-style="{ padding: '10px' }">
+          <estatcompare></estatcompare>
+      </el-card>
+  
+      <el-card :body-style="{ padding: '10px' }">
+          <businesscompare></businesscompare>
+      </el-card>
+    </div>
   </div>
 </template>
 
 <script>
 import Abroadcompare from '../Statisticalgraph/Abroadcompare'
+import Estatcompare from '../Statisticalgraph/Estatcompare'
+import Businesscompare from '../Statisticalgraph/Businesscompare'
 export default {
   data() {
     return {
@@ -130,6 +142,8 @@ export default {
   },
   components:{
       "abroadcompare":Abroadcompare,
+      "estatcompare":Estatcompare,
+      "businesscompare":Businesscompare,
   }
 };
 </script>
@@ -139,4 +153,8 @@ export default {
   display: flex;
   align-items: center;
 }
+// .flex{
+//   display:flex;
+//   // padding:0 10px;
+// }
 </style>

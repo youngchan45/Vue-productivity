@@ -1036,9 +1036,6 @@ export default {
       this.$router.go(-1);
     }
   }
-  //   watch: {
-  //       "$route":'getQuery'
-  //   },
 };
 </script>
 
