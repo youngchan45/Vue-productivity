@@ -25,6 +25,7 @@
       ></el-input>
       <el-button size="mini" type="primary" @click="getList">搜索</el-button>
     </div>
+
     <el-table
       ref="filterTable"
       :data="archivesTableData"
@@ -75,7 +76,7 @@
 
 <script>
 // const archivesinfo = () => import("./Archivesinfo.vue");
-import { eventBus} from '../../assets/Vuebus'
+// import { eventBus} from '../../assets/Vuebus'
 export default {
   data() {
     return {
@@ -182,7 +183,7 @@ export default {
           dateYear: row.dateYear
         }
       });
-eventBus.$emit('rowMessage',row)
+// eventBus.$emit('rowMessage',row)
     },
   }
 };

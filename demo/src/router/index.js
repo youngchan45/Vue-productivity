@@ -20,9 +20,11 @@ const menumanagement = () => import("../components/Systemmanagement/Menumanageme
 const logmanagement = () => import('../components/Systemmanagement/Logmanagement.vue')
 const index = () => import('../components/Index.vue')
 const archivesmanagement = () => import('../components/Archivesmanagement/Archivesmanagement.vue')
-const archivesinfo=()=>import('../components/Archivesmanagement/Archivesinfo.vue')
-const recordcomparison=()=>import('../components/Archivesmanagement/Recordcomparison.vue')
-const socialRelations=()=>import('../components/Archivesmanagement/SocialRelations.vue')
+const archivesinfo = () => import('../components/Archivesmanagement/Archivesinfo.vue')
+const recordcomparison = () => import('../components/Archivesmanagement/Recordcomparison.vue')
+const socialRelations = () => import('../components/Archivesmanagement/SocialRelations.vue')
+const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
+const leaflet = () => import('../components/Leaflet/Leaflet.vue')
 
 const routes = [
   {
@@ -38,8 +40,16 @@ const routes = [
         component: index
       },
       {
+        path: '/colligateSearch/colligateSearch',
+        component: colligateSearch
+      },
+      {
         path: "/userManagement/accountManagement",
         component: accountmanagement
+      },
+      {
+        path: '/staffLeaflet/staffLeaflet',
+        component: leaflet
       },
       {
         path: "/userManagement/organizationStructure",
@@ -66,8 +76,8 @@ const routes = [
         component: archivesmanagement
       },
       {
-        path:'/archive/infoPerson',
-        component:archivesinfo
+        path: '/archive/infoPerson',
+        component: archivesinfo
       },
       // {
       //   path:'/archive/infoPerson:type:idcard:dateYear',
@@ -84,12 +94,12 @@ const routes = [
       //   component:archivesinfo
       // }
       {
-        path:'/archive/recordcomparison',
-        component:recordcomparison
+        path: '/archive/recordcomparison',
+        component: recordcomparison
       },
       {
-        path:'/archive/socialRelations',
-        component:socialRelations
+        path: '/archive/socialRelations',
+        component: socialRelations
       }
     ]
   },

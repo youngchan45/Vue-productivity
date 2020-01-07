@@ -10,7 +10,7 @@
           <el-button plain size="mini" @click="goBack">返回</el-button>
       </div>
       <div>
-          <el-button plain size="mini" type='primary' @click="goBack">导出excel</el-button>
+          <el-button plain size="mini" type='primary' @click="goBack"><i class="el-icon-upload el-icon--right"></i>导出excel</el-button>
           <el-button plain size="mini" @click="userDefinedVisible = true" type='success'>自定义列</el-button>
 <el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
   <el-checkbox-group v-model="userDefinedChecked" class="flex">
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { eventBus} from '../../assets/Vuebus'
+// import { eventBus} from '../../assets/Vuebus'
 export default {
   data() {
     return {
@@ -103,9 +103,9 @@ export default {
   },
   created() {
     this.getRelationsList();
-    eventBus.$on('rowMessage', (message) => {
-        console.log(message)
-    })
+    // eventBus.$on('rowMessage', (message) => {
+    //     console.log(message)
+    // })
   },
   methods: {
     goBack() {
