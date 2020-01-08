@@ -180,9 +180,10 @@
         </el-form-item>
         <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
           <el-select v-model="unitAddForm.rankName" multiple filterable placeholder="请输入搜索或单击选择">
+            <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
-              v-for="item in unitAddForm.rankOptions"
-              :key="item.rankId"
+              v-for="(item,index) in unitAddForm.rankOptions"
+              :key="index"
               :label="item.rankName"
               :value="item.rankId"
             ></el-option>
@@ -248,7 +249,8 @@ export default {
       },
       value: "unit",
       unitShow: true,
-      rankShow: false
+      rankShow: false,
+      checked: false
     };
   },
   created() {
@@ -282,6 +284,23 @@ export default {
           console.log("卡片3", res);
           this.warnList = res.data.data.slice(0, 5);
         });
+    },
+    selectAll() {
+      this.unitAddForm.rankName = [];
+      if (this.checked) {
+        this.unitAddForm.rankOptions.map(item => {
+          this.unitAddForm.rankName.push(item.rankName);
+        });
+      } else {
+        this.unitAddForm.rankName = [];
+      }
+    },
+    changeSelect(val) {
+      if (val.length === this.unitAddForm.rankOptions.length) {
+        this.checked = true;
+      } else {
+        this.checked = false;
+      }
     },
     addUnit() {
       this.unitAddVisible = true;

@@ -175,13 +175,11 @@ export default {
         }
       });
     },
+    //点击按钮时把row的信息传过去，跳转到页面时请求接口拿到亲戚数据，接口需要的参数依旧从url带的参数里面拿
     goRelations(row) {
       this.$router.push({
         path: "/archive/socialRelations",
-        query: {
-          idcard: row.idcard,
-          dateYear: row.dateYear
-        }
+        query: row
       });
 // eventBus.$emit('rowMessage',row)
     },

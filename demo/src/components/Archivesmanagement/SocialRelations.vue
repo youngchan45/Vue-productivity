@@ -1,46 +1,47 @@
 <template>
-  <div>
+  <div class="container">
     <div class="archivesTitle">
       <div class="archivesTitle1">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/home/index' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>档案管理</el-breadcrumb-item>
-            <el-breadcrumb-item>社会关系</el-breadcrumb-item>
-          </el-breadcrumb>
-          <el-button plain size="mini" @click="goBack">返回</el-button>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/home/index' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item>档案管理</el-breadcrumb-item>
+          <el-breadcrumb-item>社会关系</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-button plain size="mini" @click="goBack">返回</el-button>
       </div>
       <div>
-          <el-button plain size="mini" type='primary' @click="goBack"><i class="el-icon-upload el-icon--right"></i>导出excel</el-button>
-          <el-button plain size="mini" @click="userDefinedVisible = true" type='success'>自定义列</el-button>
-<el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
-  <el-checkbox-group v-model="userDefinedChecked" class="flex">
-    <el-checkbox label="姓名"></el-checkbox>
-    <el-checkbox label="与本人关系"></el-checkbox>
-    <el-checkbox label="性别"></el-checkbox>
-    <el-checkbox label="民族" ></el-checkbox>
-    <el-checkbox label="政治面貌" ></el-checkbox>
-    <el-checkbox label="工作单位"></el-checkbox>
-    <el-checkbox label="婚姻状况"></el-checkbox>
-    <el-checkbox label="身份证号"></el-checkbox>
-    <el-checkbox label="户籍地址" ></el-checkbox>
-    <el-checkbox label="籍贯" ></el-checkbox>
-    <el-checkbox label="出生地" ></el-checkbox>
-    <el-checkbox label="参加工作地址"></el-checkbox>
-    <el-checkbox label="专业技术职称"></el-checkbox>
-    <el-checkbox label="入党时间"></el-checkbox>
-    <el-checkbox label="手机号码" ></el-checkbox>
-    <el-checkbox label="职务" ></el-checkbox>
-    <el-checkbox label="级别" ></el-checkbox>
-    <el-checkbox label="是否市管干部"></el-checkbox>
-    <el-checkbox label="是否本单位/下属单位党政一把手"></el-checkbox>
-    <el-checkbox label="是否专职纪检(监察)干部"></el-checkbox>
-    <el-checkbox label="任线级别时间" ></el-checkbox>
-    <el-checkbox label="分管部门(岗位职责)" ></el-checkbox>
-    
-  </el-checkbox-group>
-  <el-button  plain size="mini" @click="userDefinedVisible = false">取消</el-button>
-    <el-button type='primary' plain size="mini" @click="userDefinedVisible = false">确定</el-button>
-</el-dialog>
+        <el-button plain size="mini" type="primary" @click="goBack">
+          <i class="el-icon-upload el-icon--right"></i>导出excel
+        </el-button>
+        <el-button plain size="mini" @click="userDefinedVisible = true" type="success">自定义列</el-button>
+        <el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
+          <el-checkbox-group v-model="userDefinedChecked" class="flex">
+            <el-checkbox label="姓名"></el-checkbox>
+            <el-checkbox label="与本人关系"></el-checkbox>
+            <el-checkbox label="性别"></el-checkbox>
+            <el-checkbox label="民族"></el-checkbox>
+            <el-checkbox label="政治面貌"></el-checkbox>
+            <el-checkbox label="工作单位"></el-checkbox>
+            <el-checkbox label="婚姻状况"></el-checkbox>
+            <el-checkbox label="身份证号"></el-checkbox>
+            <el-checkbox label="户籍地址"></el-checkbox>
+            <el-checkbox label="籍贯"></el-checkbox>
+            <el-checkbox label="出生地"></el-checkbox>
+            <el-checkbox label="参加工作地址"></el-checkbox>
+            <el-checkbox label="专业技术职称"></el-checkbox>
+            <el-checkbox label="入党时间"></el-checkbox>
+            <el-checkbox label="手机号码"></el-checkbox>
+            <el-checkbox label="职务"></el-checkbox>
+            <el-checkbox label="级别"></el-checkbox>
+            <el-checkbox label="是否市管干部"></el-checkbox>
+            <el-checkbox label="是否本单位/下属单位党政一把手"></el-checkbox>
+            <el-checkbox label="是否专职纪检(监察)干部"></el-checkbox>
+            <el-checkbox label="任线级别时间"></el-checkbox>
+            <el-checkbox label="分管部门(岗位职责)"></el-checkbox>
+          </el-checkbox-group>
+          <el-button plain size="mini" @click="userDefinedVisible = false">取消</el-button>
+          <el-button type="primary" plain size="mini" @click="userDefinedVisible = false">确定</el-button>
+        </el-dialog>
       </div>
     </div>
     <table>
@@ -53,21 +54,23 @@
         <th>级别</th>
         <th>查看</th>
       </tr>
-      <tr>
-          <td>11</td>
-          <td>11</td>
-          <td>11</td>
-          <td>11</td>
-          <td>11</td>
-          <td>11</td>
-          <td><el-button  disabled plain size="mini">详情</el-button>
+      <!-- <tr v-for="(item,index) in ownInfo" :key="index"> -->
+      <!--易错点！！！此处bug想了一小时 这个bug从以前刚学vue时就犯过错误，如果只是把数组里面的一个对象渲染到页面的话，是不需要用v-for循环的，直接把{{对象名.属性}}渲染进去就可以了-->
+        <tr>
+        <td>{{ownInfo.name}}</td>
+        <td>&nbsp;</td>
+        <td>{{ownInfo.present_post}}</td>
+        <td>{{ownInfo.unit_name}}</td>
+        <td>{{ownInfo.present_post}}</td>
+        <td>{{ownInfo.present_rank}}</td>
+        <td>
           <el-button
-            
             type="primary"
             plain
             size="mini"
-            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
-          >详情</el-button></td>
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)" 
+          >详情</el-button>
+        </td>
       </tr>
       <tr v-for="(item,index) in relationsData" :key="index">
         <td>{{item.name}}</td>
@@ -97,8 +100,16 @@ export default {
   data() {
     return {
       relationsData: [],
-      userDefinedVisible:true,
-      userDefinedChecked:['姓名','与本人关系','政治面貌','工作单位','职务','级别'],
+      userDefinedVisible: false,
+      userDefinedChecked: [
+        "姓名",
+        "与本人关系",
+        "政治面貌",
+        "工作单位",
+        "职务",
+        "级别"
+      ],
+      ownInfo: [],
     };
   },
   created() {
@@ -106,6 +117,7 @@ export default {
     // eventBus.$on('rowMessage', (message) => {
     //     console.log(message)
     // })
+    this.getOwnInfo();
   },
   methods: {
     goBack() {
@@ -120,9 +132,18 @@ export default {
           }
         })
         .then(res => {
-          console.log(res);
+          console.log('亲戚',res);
           this.relationsData = res.data.data;
         });
+    },
+    getOwnInfo() {
+      // var arr = this.$route.query
+      // arr.forEach(item => {
+      //     this.ownInfo.push(item)})
+
+      this.ownInfo = this.$route.query;
+      console.log("自己", this.$route.query);
+      console.log('类型',typeof(this.$route.query))
     }
   }
 };
@@ -133,38 +154,34 @@ export default {
   display: flex;
   justify-content: space-between;
   .archivesTitle1 {
+    display: flex;
+    align-items: center;
+  }
+}
+.userDialog {
+  width: 500px;
+  position: fixed;
+}
+.flex {
   display: flex;
-  align-items: center;
-}
-}
-.userDialog{
-    width:500px;
-    position: fixed;
-    }
-.flex{
-    display:flex;
-    flex-direction: column;
-    max-height: 250px;
-    overflow-y: scroll;
+  flex-direction: column;
+  max-height: 250px;
+  overflow-y: scroll;
 }
 
-table{
-    border: 1px solid rgb(233, 230, 230);
-    border-collapse:collapse;
-    
-tr{    
-    font-size:13px;
+table {
+  border: 1px solid rgb(233, 230, 230);
+  border-collapse: collapse;
+
+  tr {
+    font-size: 13px;
     text-align: left;
-    td{    
-	width:120px;
-	height:60px;
-    vertical-align: middle;
-    position: relative;
-    
+    td {
+      width: 120px;
+      height: 60px;
+      vertical-align: middle;
+      position: relative;
+    }
+  }
 }
-}
-}
-
-
-
 </style>
