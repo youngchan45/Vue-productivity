@@ -83,39 +83,25 @@
         <i class="el-icon-plus"></i>自定义群体
       </el-button>
     </div>
-    <el-row>
-      <el-col :span="6" v-for="(item,index) in unitAddForm" :key="index">
-        <el-card>
-          <div slot="header">
-            <span>{{item.inputunitName}}</span>
-          </div>
-          <div>
-            <!-- <span class="card1Count1">{{item.unitName.length}}</span> -->
-            <span>人</span>
-          </div>
-          <div class="card1Count2">
-            <a>编辑</a>
-            <a>删除</a>
-          </div>
-        </el-card>
-      </el-col>
-
-      <!-- <el-col :span="6">
-        <el-card>
-          <div slot="header">
-            <span>{{unitAddForm.inputunitName}}</span>
-          </div>
-          <div>
-            <span class="card1Count1">{{unitAddForm.rankName.length}}</span>
-            <span>人</span>
-          </div>
-          <div class="card1Count2">
-            <a>编辑</a>
-            <a>删除</a>
-          </div>
-        </el-card>
-      </el-col>-->
-    </el-row>
+<el-row>
+    <div v-for="(item,index) in entity" :key="index">     
+        <el-col :span='6'>
+          <el-card>
+            <div slot="header">
+              <span>{{item.groupName}}</span>
+            </div>
+            <div>
+              <!-- <span class="card1Count1">{{item.unitName.length}}</span> -->
+              <span>人</span>
+            </div>
+            <div class="card1Count2">
+              <a>编辑</a>
+              <a>删除</a>
+            </div>
+          </el-card>
+        </el-col>     
+    </div>
+</el-row>
     <div class="warn">
       <h3>预警信息</h3>
       <div>更多</div>
@@ -146,7 +132,7 @@
       <el-form
         ref="unitFormRef"
         statue-icon
-        :model="unitAddForm"
+        :model="entity"
         :rules="unitFormRules"
         :inline="true"
         class="demo-form-inline"
@@ -154,7 +140,7 @@
         size="small"
       >
         <el-form-item label="群体名称" prop="unitName" clearable>
-          <el-input v-model="unitAddForm.inputunitName"></el-input>
+          <el-input v-model="entity.groupName"></el-input>
         </el-form-item>
         <el-form-item label="类型">
           <el-select v-model="value" clearable placeholder="请选择" @change="currentSel">
@@ -169,9 +155,9 @@
         </el-form-item>
 
         <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable prop="unitName">
-          <el-select v-model="unitAddForm.unitName" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-select v-model="entity.unitName" multiple filterable placeholder="请输入搜索或单击选择">
             <el-option
-              v-for="item in unitAddForm.unitOptions"
+              v-for="item in unitOptions"
               :key="item.unitId"
               :label="item.unitName"
               :value="item.unitId"
@@ -179,10 +165,10 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
-          <el-select v-model="unitAddForm.rankName" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-select v-model="entity.rankName" multiple filterable placeholder="请输入搜索或单击选择">
             <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
-              v-for="(item,index) in unitAddForm.rankOptions"
+              v-for="(item,index) in rankOptions"
               :key="index"
               :label="item.rankName"
               :value="item.rankId"
@@ -233,13 +219,16 @@ export default {
         { label: "级别", value: "rank" }
       ],
       selValId: "",
-      unitAddForm: {
-        inputunitName: "",
-        id: "",
-        unitName: [],
-        rankName: [],
-        unitOptions: [],
-        rankOptions: []
+      unitOptions: [],
+        rankOptions: [],
+      entity: {
+        groupName: "",
+        groupId: "",
+        type:1,
+        list: [{
+          rankId:'',
+        }],
+        // rankName: [],        
       },
       unitFormRules: {
         inputunitName: "",
@@ -250,7 +239,10 @@ export default {
       value: "unit",
       unitShow: true,
       rankShow: false,
-      checked: false
+      checked: false,
+      nextGround:{
+
+      }
     };
   },
   created() {
@@ -343,12 +335,17 @@ export default {
         this.unitShow = false;
       }
     },
+    //1.先在页面新建占位符表单nextGround
+    //2.建立要提交的表单entity
+    //3.把表单push进nextGround
+    //4.v-for渲染nextGround
     saveUnitAdd() {
       this.$http
         .post("/index/newCustomizeGroup", this.unitAddForm)
         .then(res => {
           // console.log(res);
           if (res.data.status == 200) {
+            this.nextGround.push(this.entity)
             this.$message.success("新建群体成功");
             this.unitAddVisible = false;
           }

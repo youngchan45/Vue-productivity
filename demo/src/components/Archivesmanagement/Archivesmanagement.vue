@@ -176,6 +176,12 @@ export default {
       });
     },
     //点击按钮时把row的信息传过去，跳转到页面时请求接口拿到亲戚数据，接口需要的参数依旧从url带的参数里面拿
+    //由于动态路由也是传递params的，所以在 this.$router.push() 方法中 path不能和params一起使用，否则params将无效。需要用name来指定页面；
+    //query要用path来引入，params要用name来引入
+//1.query传参，传参的参数会在地址栏中展示，可携带任意类型参数，通过this.$route.query获取；该方式的弊端在于，在页面间跳转可正常使用，如info、isTrue、func，但是在进行页面刷新时，所有参数值会转化为字符串，如对象info会转化为字符串'[Object Object]'，布尔值isTrue会转化为'false'，从而导致使用错误
+//2.params传参，也可携带任意类型数据，参数在地址栏不可见，通过this.$route.params获取；页面刷新后参数消失
+//3.在路由中定义参数：path:"/archive/recordcomparison/:id/:info",参数会被全部转化为字符串，在地址栏中可见，通过this.$route.params获取；页面刷新后参数不会消失
+//4.query更加类似于我们ajax中get传参，params则类似于post
     goRelations(row) {
       this.$router.push({
         path: "/archive/socialRelations",

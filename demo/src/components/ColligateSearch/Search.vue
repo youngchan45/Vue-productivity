@@ -25,7 +25,8 @@
         size="small"
         @clear="getList"
       ></el-input>
-      <el-button size="small" type="primary" @click="getList(btnType =button1)">查询</el-button>
+      <!--自定义传参，参数用括号括起来-->
+      <el-button size="small" type="primary" @click="getList('button1')">查询</el-button>
       <el-button size="small" type="text" @click="getList">高级搜索</el-button>
     </div>
 
@@ -64,14 +65,21 @@
           <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>至
           <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="级别" prop="rankList">
-          <el-select v-model="archivesQuery.rankList" multiple filterable placeholder="请输入搜索或单击选择">
+        <el-form-item label="级别">
+          <el-select
+            v-model="archivesQuery.rankList"
+            multiple
+            filterable
+            clearable
+            placeholder="请输入搜索或单击选择"
+            @change="currenRankSel"
+          >
             <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
               v-for="(item,index) in rankOptions"
               :key="index"
               :label="item.rankName"
-              :value="item.rankId"
+              :value="item.rankName"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -79,18 +87,22 @@
           <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>至
           <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="工作单位" placeholder="请搜索单位" clearable prop="unitList">
+        <el-form-item label="工作单位" placeholder="请搜索单位" clearable>
           <el-select v-model="archivesQuery.unitList" multiple filterable placeholder="请输入搜索或单击选择">
             <el-option
               v-for="item in unitOptions"
               :key="item.unitId"
               :label="item.unitName"
-              :value="item.unitId"
+              :value="item.unitName"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="谈话处分" prop="punishmentList">
-          <el-checkbox-group v-model="archivesQuery.punishmentList" class="flex" @change="checkedBox">
+          <el-checkbox-group
+            v-model="archivesQuery.punishmentList"
+            class="flex"
+            @change="checkedBox"
+          >
             <el-checkbox label="谈话函询"></el-checkbox>
             <el-checkbox label="诫勉谈话"></el-checkbox>
             <el-checkbox label="党纪政务处分"></el-checkbox>
@@ -115,7 +127,7 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="resetSearch" plain type="primary">重置</el-button>
-          <el-button @click="getList(btnType)" type="primary">搜索</el-button>
+          <el-button @click="getList('button2')" type="primary">搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -139,21 +151,22 @@ export default {
       rankOptions: [],
       unitOptions: [],
       searchSel: "",
+      rankListArr: "",
       archivesQuery: {
         userId: window.sessionStorage.getItem("userId"),
         deptId: window.sessionStorage.getItem("deptId"),
         dateYear: "",
         idCard: "",
         userName: "",
-        rankList: "",
+        rankList: [],
         area: "",
         carNum: "",
         estateNum: "",
         goboard: "",
         salary: "",
         punishmentList: [],
-        unitList: "",
-        button: "button1",
+        unitList: [],
+        button: "",
         type: 1, //搜索下拉框
         condition: "", //搜索框里的关键词
         pageIndex: 1,
@@ -172,37 +185,40 @@ export default {
   methods: {
     getList(btnType) {
       if (btnType == "button1") {
-        this.archivesQuery.button = "button1";
+        // this.archivesQuery.button = "button1";
         this.$http
           .get("/query/complexQuery", {
             params: this.archivesQuery
           })
           .then(res => {
-            this.archivesTableData = res.data.data[0].list;
-            this.paging = res.data.data[0];
+            // this.archivesQuery = res.data.data[0].list;
+            console.log("搜索结果1", res);
+            // this.paging = res.data.data[0];
             console.log("btn", this.archivesQuery.button);
           });
-      } else {
+      } else if (btnType == "button2") {
         this.archivesQuery.button = "button2";
+        console.log("------", this.archivesQuery.rankList);
         this.$http
           .get("/query/complexQuery", {
-            params: this.archivesQuery
+            params: JSON.stringify(this.archivesQuery)
           })
           .then(res => {
-            this.archivesTableData = res.data.data[0].list;
-            this.paging = res.data.data[0];
+            console.log("搜索结果2", res);
+            // this.archivesTableData = res.data.data[0].list;
+            // this.paging = res.data.data[0];
             console.log("btn", this.archivesQuery.button);
           });
       }
     },
-    checkedBox(selVal){
-      console.log('已勾选',selVal)
-      console.log('已勾选组合',this.archivesQuery.punishmentList)
+    checkedBox(selVal) {
+      console.log("已勾选", selVal);
+      console.log("已勾选组合", this.archivesQuery.punishmentList);
     },
 
     currenSel(selVal) {
-      this.searchSel = selVal;
-      console.log("sel", selVal);
+      // this.searchSel = selVal;
+      console.log("sel", selVal, this.archivesQuery.dateYear);
     },
     getYear() {
       this.$http.get("/basic/getSearchDate").then(res => {
@@ -271,6 +287,12 @@ export default {
       } else {
         this.checked = false;
       }
+    },
+    currenRankSel(val) {
+      // this.archivesQuery.rankList = val;
+      console.log("已选------", this.archivesQuery.rankList);
+      console.log("已选1", val);
+      // this.archivesQuery.rankList.push(val)
     }
   }
 };

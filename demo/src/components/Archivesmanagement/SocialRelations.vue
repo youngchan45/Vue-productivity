@@ -44,8 +44,42 @@
         </el-dialog>
       </div>
     </div>
-    <table>
-      <tr>
+    <el-table
+      ref="ownDataRef"
+      :data="ownData"
+      style="width: 100%"
+      stripe
+      border
+      max-height="470px"
+      show-overflow-tooltip
+    >
+      <el-table-column label="姓名" prop="name" width="100"></el-table-column>
+      <el-table-column label="与本人关系" width="120"></el-table-column>
+      <el-table-column label="面貌" prop="political" width="100"></el-table-column>
+      <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
+      <el-table-column label="职务" prop="present_post" width="120"></el-table-column>
+      <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
+      <el-table-column label="查看" align="center" width="260">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+          >详情</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goComparison(scope.row.dateYear,scope.row.idcard)"
+          >历年对比</el-button>
+          <el-button type="primary" plain size="mini" @click="goRelations(scope.row)">社会关系</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- <table> -->
+    <!-- <tr>
         <th>姓名</th>
         <th>与本人关系</th>
         <th>面貌</th>
@@ -53,10 +87,10 @@
         <th>职务</th>
         <th>级别</th>
         <th>查看</th>
-      </tr>
-      <!-- <tr v-for="(item,index) in ownInfo" :key="index"> -->
-      <!--易错点！！！此处bug想了一小时 这个bug从以前刚学vue时就犯过错误，如果只是把数组里面的一个对象渲染到页面的话，是不需要用v-for循环的，直接把{{对象名.属性}}渲染进去就可以了-->
-        <tr>
+    </tr>-->
+    <!-- <tr v-for="(item,index) in ownInfo" :key="index"> -->
+    <!--易错点！！！此处bug想了一小时 这个bug从以前刚学vue时就犯过错误，如果只是把数组里面的一个对象渲染到页面的话，是不需要用v-for循环的，直接把{{对象名.属性}}渲染进去就可以了-->
+    <!-- <tr>
         <td>{{ownInfo.name}}</td>
         <td>&nbsp;</td>
         <td>{{ownInfo.present_post}}</td>
@@ -68,11 +102,11 @@
             type="primary"
             plain
             size="mini"
-            @click="goInfo(scope.row.dateYear,scope.row.idcard)" 
+            @click="goInfo(item,$event)" 
           >详情</el-button>
         </td>
-      </tr>
-      <tr v-for="(item,index) in relationsData" :key="index">
+    </tr>-->
+    <!-- <tr v-for="(item,index) in relationsData" :key="index">
         <td>{{item.name}}</td>
         <td>{{item.relationship}}</td>
         <td>{{item.political}}</td>
@@ -90,7 +124,43 @@
           >详情</el-button>
         </td>
       </tr>
-    </table>
+    </table>-->
+    <el-table
+      ref="filterTable"
+      :data="relationsData"
+      style="width: 100%"
+      stripe
+      border
+      max-height="470px"
+      show-overflow-tooltip
+      :show-header="false"
+    >
+      <el-table-column label="姓名" prop="name" width="100"></el-table-column>
+      <el-table-column label="与本人关系" prop="relationship" width="120"></el-table-column>
+      <el-table-column label="面貌" prop="political" width="100"></el-table-column>
+      <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
+      <el-table-column label="职务" prop="present_post" width="120"></el-table-column>
+      <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
+      <el-table-column label="查看" align="center" width="260">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+            v-if="scope.row.exsit==0"
+            disabled
+          >详情</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+            v-if="scope.row.exsit==1"
+          >详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -100,6 +170,9 @@ export default {
   data() {
     return {
       relationsData: [],
+      ownData: [
+        // {name:'111'}
+      ],
       userDefinedVisible: false,
       userDefinedChecked: [
         "姓名",
@@ -108,15 +181,11 @@ export default {
         "工作单位",
         "职务",
         "级别"
-      ],
-      ownInfo: [],
+      ]
     };
   },
   created() {
     this.getRelationsList();
-    // eventBus.$on('rowMessage', (message) => {
-    //     console.log(message)
-    // })
     this.getOwnInfo();
   },
   methods: {
@@ -132,18 +201,37 @@ export default {
           }
         })
         .then(res => {
-          console.log('亲戚',res);
+          console.log("亲戚", res);
           this.relationsData = res.data.data;
         });
     },
     getOwnInfo() {
-      // var arr = this.$route.query
-      // arr.forEach(item => {
-      //     this.ownInfo.push(item)})
-
-      this.ownInfo = this.$route.query;
-      console.log("自己", this.$route.query);
-      console.log('类型',typeof(this.$route.query))
+      // let a =this.$route[4]
+      // this.$route[4].forEach(item=>{
+        //依旧是老错误，只有一个对象的话 不需要循环 直接放进去；数组拿值才用下标 对象拿值用点
+        this.ownData.push(this.$route.query);
+      // })
+      // this.ownData = this.$route.query;
+      console.log("自己0", this.$route);
+      console.log("自己1", this.$route.query);
+      console.log("自己2", this.ownData[0]);
+      // console.log("类型", typeof (this.ownData));
+    },
+    goInfo(dateYear, idcard) {
+      this.$router.push(
+        //path和query需要放在同一个对象里面
+        {
+          path: "/archive/infoPerson",
+          query: {
+            type: 0,
+            idcard: idcard,
+            dateYear: dateYear
+          }
+          // component: archivesinfo
+        }
+      );
+      console.log("发送", idcard);
+      console.log("发送", dateYear);
     }
   }
 };
