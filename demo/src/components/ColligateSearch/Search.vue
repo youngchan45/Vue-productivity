@@ -93,7 +93,7 @@
               v-for="item in unitOptions"
               :key="item.unitId"
               :label="item.unitName"
-              :value="item.unitName"
+              :value="item.unitCode"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -103,9 +103,9 @@
             class="flex"
             @change="checkedBox"
           >
-            <el-checkbox label="谈话函询"></el-checkbox>
-            <el-checkbox label="诫勉谈话"></el-checkbox>
-            <el-checkbox label="党纪政务处分"></el-checkbox>
+            <el-checkbox label="1">谈话函询</el-checkbox>
+            <el-checkbox label="2">诫勉谈话</el-checkbox>
+            <el-checkbox label="3">党纪政务处分</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="年份" prop="searchSel">
@@ -131,6 +131,53 @@
         </el-form-item>
       </el-form>
     </div>
+
+<el-table
+      ref="filterTable"
+      :data="searchResult"
+      style="width: 100%"
+      stripe
+      border
+      max-height="470px"
+      show-overflow-tooltip
+    >
+      <el-table-column type="index" label="#" width="50"></el-table-column>
+      <el-table-column label="姓名" prop="name" width="100"></el-table-column>
+      <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
+      <el-table-column label="职务" prop="present_post" width="100"></el-table-column>
+      <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
+      <el-table-column label="提交时间" width="200" sortable>
+        <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
+      </el-table-column>
+      <el-table-column label="查看" align="center" width="260" fixed="right">
+        <template slot-scope="scope">
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+          >详情</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goComparison(scope.row.dateYear,scope.row.idcard)"
+          >历年对比</el-button>
+          <el-button type="primary" plain size="mini" @click="goRelations(scope.row)">社会关系</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="archivesQuery.pageIndex"
+        :page-sizes="[10, 20, 30]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="paging.totalRow"
+      ></el-pagination>
+     </div> -->
+
   </div>
 </template>
 
@@ -155,7 +202,7 @@ export default {
       archivesQuery: {
         userId: window.sessionStorage.getItem("userId"),
         deptId: window.sessionStorage.getItem("deptId"),
-        dateYear: "",
+        dateYear: "2019", //此处不能写死，to-do
         idCard: "",
         userName: "",
         rankList: [],
@@ -175,8 +222,9 @@ export default {
       years: [
         // {label:'2018',value:0},
         // {label:'2019',value:1}
-      ]
-    };
+      ],
+      searchResult:[],    
+      };
   },
   created() {
     this.getYear();
@@ -201,19 +249,42 @@ export default {
         console.log("------", this.archivesQuery.rankList);
         this.$http
           .get("/query/complexQuery", {
-            params: JSON.stringify(this.archivesQuery)
+            params: {
+              userId: window.sessionStorage.getItem("userId"),
+              deptId: window.sessionStorage.getItem("deptId"),
+              dateYear: this.archivesQuery.dateYear,
+              idCard: "",
+              userName: "",
+              rankList: JSON.stringify(this.archivesQuery.rankList),
+              area: "",
+              carNum: "",
+              estateNum: "",
+              goboard: "",
+              salary: "",
+              punishmentList: JSON.stringify(this.archivesQuery.punishmentList),
+              unitList: JSON.stringify(this.archivesQuery.unitList),
+              button: this.archivesQuery.button,
+              type: 1, //搜索下拉框
+              condition: "", //搜索框里的关键词
+              pageIndex: 1,
+              pagesize: 10
+            }
           })
           .then(res => {
             console.log("搜索结果2", res);
             // this.archivesTableData = res.data.data[0].list;
             // this.paging = res.data.data[0];
-            console.log("btn", this.archivesQuery.button);
+            // console.log("btn", this.archivesQuery.button);
+            //1.把点击搜索之后返回的数据保存起来searchResult
+            //2.搜索结果界面v-for渲染searchResult
+            this.searchResult=res.data.data[0].list;
+            console.log("搜索结果3", this.searchResult);
           });
       }
     },
     checkedBox(selVal) {
       console.log("已勾选", selVal);
-      console.log("已勾选组合", this.archivesQuery.punishmentList);
+      // console.log("已勾选组合", this.archivesQuery.punishmentList);
     },
 
     currenSel(selVal) {
