@@ -3,28 +3,21 @@
     <div class="filter">
       <h2>快速搜索</h2>
       <el-select
-        v-model="archivesQuery.searchSel"
-        @change="currenSel"
+        v-model="searchSel"
+        @change="currenSearchSel"
         clearable
         placeholder="全部"
         size="small"
-        @clear="getList"
       >
         <el-option
           v-for="item in searchOpts"
           :key="item.label"
           :label="item.label"
-          :value="item.label"
+          :value="item.value"
           size="small"
         ></el-option>
       </el-select>
-      <el-input
-        placeholder="请输入关键字"
-        v-model="archivesQuery.condition"
-        clearable
-        size="small"
-        @clear="getList"
-      ></el-input>
+      <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable size="small"></el-input>
       <!--自定义传参，参数用括号括起来-->
       <el-button size="small" type="primary" @click="getList('button1')">查询</el-button>
       <el-button size="small" type="text" @click="getList">高级搜索</el-button>
@@ -111,7 +104,7 @@
         <el-form-item label="年份" prop="searchSel">
           <el-select
             v-model="archivesQuery.dateYear"
-            @change="currenSel"
+            @change="currenYearSel"
             clearable
             placeholder="全部"
             size="small"
@@ -132,52 +125,54 @@
       </el-form>
     </div>
 
-<el-table
-      ref="filterTable"
-      :data="searchResult"
-      style="width: 100%"
-      stripe
-      border
-      max-height="470px"
-      show-overflow-tooltip
-    >
-      <el-table-column type="index" label="#" width="50"></el-table-column>
-      <el-table-column label="姓名" prop="name" width="100"></el-table-column>
-      <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
-      <el-table-column label="职务" prop="present_post" width="100"></el-table-column>
-      <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
-      <el-table-column label="提交时间" width="200" sortable>
-        <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
-      </el-table-column>
-      <el-table-column label="查看" align="center" width="260" fixed="right">
-        <template slot-scope="scope">
-          <el-button
-            type="primary"
-            plain
-            size="mini"
-            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
-          >详情</el-button>
-          <el-button
-            type="primary"
-            plain
-            size="mini"
-            @click="goComparison(scope.row.dateYear,scope.row.idcard)"
-          >历年对比</el-button>
-          <el-button type="primary" plain size="mini" @click="goRelations(scope.row)">社会关系</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="archivesQuery.pageIndex"
-        :page-sizes="[10, 20, 30]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="paging.totalRow"
-      ></el-pagination>
-     </div> -->
-
+    <div :class="{'searchDisplay':searchDisplay}">
+      <el-table
+        ref="filterTable"
+        :data="searchResult"
+        style="width: 100%"
+        stripe
+        border
+        max-height="470px"
+        show-overflow-tooltip
+      >
+        >
+        <el-table-column type="index" label="#" width="50"></el-table-column>
+        <el-table-column label="姓名" prop="name" width="100"></el-table-column>
+        <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
+        <el-table-column label="职务" prop="present_post" width="100"></el-table-column>
+        <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
+        <el-table-column label="提交时间" width="200" sortable>
+          <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
+        </el-table-column>
+        <el-table-column label="查看" align="center" width="260" fixed="right">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              plain
+              size="mini"
+              @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+            >详情</el-button>
+            <el-button
+              type="primary"
+              plain
+              size="mini"
+              @click="goComparison(scope.row.dateYear,scope.row.idcard)"
+            >历年对比</el-button>
+            <el-button type="primary" plain size="mini" @click="goRelations(scope.row)">社会关系</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="archivesQuery.pageIndex"
+          :page-sizes="[10, 20, 30]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="paging.totalRow"
+        ></el-pagination>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -199,6 +194,8 @@ export default {
       unitOptions: [],
       searchSel: "",
       rankListArr: "",
+      searchDisplay: true,
+      paging: "",
       archivesQuery: {
         userId: window.sessionStorage.getItem("userId"),
         deptId: window.sessionStorage.getItem("deptId"),
@@ -223,8 +220,8 @@ export default {
         // {label:'2018',value:0},
         // {label:'2019',value:1}
       ],
-      searchResult:[],    
-      };
+      searchResult: []
+    };
   },
   created() {
     this.getYear();
@@ -233,15 +230,36 @@ export default {
   methods: {
     getList(btnType) {
       if (btnType == "button1") {
-        // this.archivesQuery.button = "button1";
+        this.archivesQuery.button = "button1";
         this.$http
           .get("/query/complexQuery", {
-            params: this.archivesQuery
+            params: {
+              userId: window.sessionStorage.getItem("userId"),
+              deptId: window.sessionStorage.getItem("deptId"),
+              dateYear: "",
+              idCard: this.archivesQuery.idCard,
+              userName: this.archivesQuery.userName,
+              rankList: JSON.stringify(this.archivesQuery.rankList),
+              area: this.archivesQuery.area,
+              carNum: this.archivesQuery.carNum,
+              estateNum: this.archivesQuery.estateNum,
+              goboard: this.archivesQuery.goboard,
+              salary: this.archivesQuery.salary,
+              punishmentList: JSON.stringify(this.archivesQuery.punishmentList),
+              unitList: JSON.stringify(this.archivesQuery.unitList),
+              button: this.archivesQuery.button,
+              type: this.archivesQuery.type, //搜索下拉框
+              condition: this.archivesQuery.condition, //搜索框里的关键词
+              pageIndex: 1,
+              pagesize: 10
+            }
           })
           .then(res => {
+            this.searchResult = res.data.data[0].list;
+            this.searchDisplay = false;
             // this.archivesQuery = res.data.data[0].list;
             console.log("搜索结果1", res);
-            // this.paging = res.data.data[0];
+            this.paging = res.data.data[0];
             console.log("btn", this.archivesQuery.button);
           });
       } else if (btnType == "button2") {
@@ -253,19 +271,19 @@ export default {
               userId: window.sessionStorage.getItem("userId"),
               deptId: window.sessionStorage.getItem("deptId"),
               dateYear: this.archivesQuery.dateYear,
-              idCard: "",
-              userName: "",
+              idCard: this.archivesQuery.idCard,
+              userName: this.archivesQuery.userName,
               rankList: JSON.stringify(this.archivesQuery.rankList),
-              area: "",
-              carNum: "",
-              estateNum: "",
-              goboard: "",
-              salary: "",
+              area: this.archivesQuery.area,
+              carNum: this.archivesQuery.carNum,
+              estateNum: this.archivesQuery.estateNum,
+              goboard: this.archivesQuery.goboard,
+              salary: this.archivesQuery.salary,
               punishmentList: JSON.stringify(this.archivesQuery.punishmentList),
               unitList: JSON.stringify(this.archivesQuery.unitList),
               button: this.archivesQuery.button,
               type: 1, //搜索下拉框
-              condition: "", //搜索框里的关键词
+              condition: this.archivesQuery.condition, //搜索框里的关键词
               pageIndex: 1,
               pagesize: 10
             }
@@ -273,11 +291,13 @@ export default {
           .then(res => {
             console.log("搜索结果2", res);
             // this.archivesTableData = res.data.data[0].list;
-            // this.paging = res.data.data[0];
+
             // console.log("btn", this.archivesQuery.button);
             //1.把点击搜索之后返回的数据保存起来searchResult
             //2.搜索结果界面v-for渲染searchResult
-            this.searchResult=res.data.data[0].list;
+            this.searchResult = res.data.data[0].list;
+            this.paging = res.data.data[0];
+            this.searchDisplay = false;
             console.log("搜索结果3", this.searchResult);
           });
       }
@@ -287,9 +307,14 @@ export default {
       // console.log("已勾选组合", this.archivesQuery.punishmentList);
     },
 
-    currenSel(selVal) {
+    currenYearSel(selVal) {
       // this.searchSel = selVal;
       console.log("sel", selVal, this.archivesQuery.dateYear);
+    },
+    currenSearchSel(selVal) {
+      // this.searchSel = selVal;
+      console.log("简易搜索", selVal);
+      this.archivesQuery.type = selVal;
     },
     getYear() {
       this.$http.get("/basic/getSearchDate").then(res => {
@@ -364,10 +389,23 @@ export default {
       console.log("已选------", this.archivesQuery.rankList);
       console.log("已选1", val);
       // this.archivesQuery.rankList.push(val)
+    },
+    handleSizeChange(newSide) {
+      console.log("每页条", newSide);
+      this.archivesQuery.pagesize = newSide;
+      this.getList();
+    },
+    handleCurrentChange(newPage) {
+      console.log(`当前页: ${newPage}`);
+      this.archivesQuery.pageIndex = newPage;
+      this.getList();
     }
   }
 };
 </script>
 
 <style lang='less' scoped>
+.searchDisplay {
+  display: none;
+}
 </style>
