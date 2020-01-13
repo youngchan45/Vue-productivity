@@ -84,14 +84,15 @@
       </el-button>
     </div>
     <el-row>
-      <div v-for="(item,index) in entity" :key="index">
+      <div v-for="(item,index) in groundList" :key="index">
         <el-col :span="6">
-          <el-card :class="{'nextGround':display}">
+          <!-- <el-card :class="{'nextGround':display}"> -->
+            <el-card>
             <div slot="header">
               <span>{{item.groupName}}</span>
             </div>
             <div>
-              <span class="card1Count1">{{item.list.length}}</span>
+              <span class="card1Count1">{{item.personCount}}</span>
               <span>人</span>
             </div>
             <div class="card1Count2">
@@ -239,6 +240,7 @@ export default {
         // rankName: [],
         }        
       },
+      groundList:[],
       unitFormRules: {
         inputunitName: "",
         id: "",
@@ -260,6 +262,7 @@ export default {
     // this.entity.entity.operator=this.operator;
     // debugger;
     // console.log('idddd',this.entity.entity.operator)
+    this.getGround();
   },
   methods: {
     getCard1() {
@@ -368,7 +371,17 @@ export default {
         this.display=false;
         // }
       });
-    }
+    },
+    getGround(){
+      this.$http.get('/index/getCustomizeGroup',{
+        params:{
+userId:window.sessionStorage.getItem("userId")
+        }
+      }).then(res=>{
+        console.log(res);
+        this.groundList=res.data.data
+      })
+    },
   }
 };
 </script>
