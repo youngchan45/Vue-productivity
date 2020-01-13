@@ -83,15 +83,15 @@
         <i class="el-icon-plus"></i>自定义群体
       </el-button>
     </div>
-<el-row>
-    <div v-for="(item,index) in entity" :key="index">     
-        <el-col :span='6'>
-          <el-card>
+    <el-row>
+      <div v-for="(item,index) in entity" :key="index">
+        <el-col :span="6">
+          <el-card :class="{'nextGround':display}">
             <div slot="header">
               <span>{{item.groupName}}</span>
             </div>
             <div>
-              <!-- <span class="card1Count1">{{item.unitName.length}}</span> -->
+              <span class="card1Count1">{{item.list.length}}</span>
               <span>人</span>
             </div>
             <div class="card1Count2">
@@ -99,9 +99,9 @@
               <a>删除</a>
             </div>
           </el-card>
-        </el-col>     
-    </div>
-</el-row>
+        </el-col>
+      </div>
+    </el-row>
     <div class="warn">
       <h3>预警信息</h3>
       <div>更多</div>
@@ -140,10 +140,10 @@
         size="small"
       >
         <el-form-item label="群体名称" prop="unitName" clearable>
-          <el-input v-model="entity.groupName"></el-input>
+          <el-input v-model="entity.entity.groupName"></el-input>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="value" clearable placeholder="请选择" @change="currentSel">
+          <el-select v-model="entity.entity.type" clearable placeholder="请选择" @change="curTypeSel">
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -153,25 +153,30 @@
             <div></div>
           </el-select>
         </el-form-item>
-
         <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable prop="unitName">
-          <el-select v-model="entity.unitName" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-select
+            v-model="entity.entity.list"
+            multiple
+            filterable
+            placeholder="请输入搜索或单击选择"
+            @change="unitSel"
+          >
             <el-option
               v-for="item in unitOptions"
-              :key="item.unitId"
+              :key="item.unitCode"
               :label="item.unitName"
-              :value="item.unitId"
+              :value="item.unitCode"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
-          <el-select v-model="entity.rankName" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-select v-model="entity.entity.list" multiple filterable placeholder="请输入搜索或单击选择">
             <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
               v-for="(item,index) in rankOptions"
               :key="index"
               :label="item.rankName"
-              :value="item.rankId"
+              :value="item.rankCode"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -183,7 +188,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -215,20 +219,25 @@ export default {
       ],
       activeName: "0",
       typeOptions: [
-        { label: "单位", value: "unit" },
-        { label: "级别", value: "rank" }
+        { label: "单位", value: "1" },
+        { label: "级别", value: "0" }
       ],
-      selValId: "",
       unitOptions: [],
-        rankOptions: [],
+      rankOptions: [],
+      selValId: "",
+       operator: window.sessionStorage.getItem("userId"),
       entity: {
-        groupName: "",
-        groupId: "",
-        type:1,
-        list: [{
-          rankId:'',
-        }],
-        // rankName: [],        
+        entity:{
+          //新建自定义群体要提交的表单
+        groupName: "", //自定义群体名称
+        // operator: "", //本地存储userId
+        operator:window.sessionStorage.getItem("userId"), //本地存储userId，易错点:切记和deptId分开
+        //  operator:'',
+        //这里无法直接用operator: this.operator，this作用域不同
+        type: "1", //单位1，级别0，这里是易错点：传送的是value，需要默认显示label的话，将value加上双引号即可
+        list: []
+        // rankName: [],
+        }        
       },
       unitFormRules: {
         inputunitName: "",
@@ -240,14 +249,17 @@ export default {
       unitShow: true,
       rankShow: false,
       checked: false,
-      nextGround:{
-
-      }
+      nextGround: {},
+      deptId: window.sessionStorage.getItem("deptId"), 
+      display:true,    
     };
   },
   created() {
     this.getCard1();
     this.getWarnInfo();
+    // this.entity.entity.operator=this.operator;
+    // debugger;
+    // console.log('idddd',this.entity.entity.operator)
   },
   methods: {
     getCard1() {
@@ -278,13 +290,13 @@ export default {
         });
     },
     selectAll() {
-      this.unitAddForm.rankName = [];
+      this.entity.rankName = [];
       if (this.checked) {
-        this.unitAddForm.rankOptions.map(item => {
-          this.unitAddForm.rankName.push(item.rankName);
+        this.entity.rankOptions.map(item => {
+          this.entity.rankName.push(item.rankName);
         });
       } else {
-        this.unitAddForm.rankName = [];
+        this.entity.rankName = [];
       }
     },
     changeSelect(val) {
@@ -297,59 +309,65 @@ export default {
     addUnit() {
       this.unitAddVisible = true;
       //获取单位列表
-      var deptId = window.sessionStorage.getItem("deptId");
       this.$http
         .get("/index/findUnitCode", {
           params: {
-            deptId: deptId,
+            deptId: this.deptId,
             unitName: ""
           }
         })
         .then(res => {
           console.log("单位", res);
-          console.log("id", deptId);
-          this.unitAddForm.unitOptions = res.data.data;
+          console.log("id", this.deptId);
+          this.unitOptions = res.data.data;
         });
       //获取级别列表
       this.$http
         .get("/index/findUnitCodeOrRankId", {
           params: {
-            deptId: deptId,
+            deptId: this.deptId,
             type: "" //旧级别：0，新级别：1
           }
         })
         .then(res => {
           console.log("级别", res);
-          this.unitAddForm.rankOptions = res.data.data;
+          this.rankOptions = res.data.data;
         });
     },
-    currentSel(selVal) {
-      console.log("来", selVal);
+    curTypeSel(selVal) {
+      console.log("来", this.entity.type);
       this.selValId = selVal;
-      if (this.selValId == "unit") {
+      if (this.selValId == 1) {
         this.unitShow = true;
         this.rankShow = false;
+        this.entity.entity.type = selVal;
       }
-      if (this.selValId == "rank") {
+      if (this.selValId == 0) {
         this.rankShow = true;
         this.unitShow = false;
+        this.entity.entity.type = selVal;
       }
     },
     //1.先在页面新建占位符表单nextGround
     //2.建立要提交的表单entity
-    //3.把表单push进nextGround
+    //3.把表单entity给push进nextGround
     //4.v-for渲染nextGround
+    unitSel(selVal) {
+      console.log("选中单位code", selVal);
+      // this.entity.list.push(selVal);
+      console.log("选中单位code1", this.entity.list);
+    },
     saveUnitAdd() {
-      this.$http
-        .post("/index/newCustomizeGroup", this.unitAddForm)
-        .then(res => {
-          // console.log(res);
-          if (res.data.status == 200) {
-            this.nextGround.push(this.entity)
-            this.$message.success("新建群体成功");
-            this.unitAddVisible = false;
-          }
-        });
+      this.$http.post("/index/newCustomizeGroup", this.entity).then(res => {
+        // console.log(res);
+        // if (res.data.status == 200) {
+        console.log(res);
+        // this.entity.push(this.nextGround);
+        this.$message.success(res.data.message);
+        this.unitAddVisible = false;
+        this.display=false;
+        // }
+      });
     }
   }
 };
@@ -375,5 +393,8 @@ export default {
   //   // height: 16px;
   //   text-align: center;
   // }
+}
+.nextGround{
+  display:none;
 }
 </style>

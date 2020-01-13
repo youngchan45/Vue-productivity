@@ -20,10 +20,10 @@
       <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable size="small"></el-input>
       <!--自定义传参，参数用括号括起来-->
       <el-button size="small" type="primary" @click="getList('button1')">查询</el-button>
-      <el-button size="small" type="text" @click="getList">高级搜索</el-button>
+      <el-button size="small" type="text"  @click="toggleShow">高级搜索</el-button>
     </div>
-
-    <div>
+<!-- 熟记动态css语法 -->
+    <div :class='{"advancedSearch":display}'>
       <h2>高级搜索</h2>
       <el-form ref="searchRef" :model="archivesQuery" label-width="80px" class="demo-form-inline">
         <el-form-item label="姓名" prop="userName">
@@ -91,11 +91,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="谈话处分" prop="punishmentList">
-          <el-checkbox-group
-            v-model="archivesQuery.punishmentList"
-            class="flex"
-            @change="checkedBox"
-          >
+          <el-checkbox-group v-model="archivesQuery.punishmentList" @change="checkedBox">
             <el-checkbox label="1">谈话函询</el-checkbox>
             <el-checkbox label="2">诫勉谈话</el-checkbox>
             <el-checkbox label="3">党纪政务处分</el-checkbox>
@@ -126,6 +122,21 @@
     </div>
 
     <div :class="{'searchDisplay':searchDisplay}">
+      <div class="titleFlex">
+        <h2>搜索结果</h2>
+        <div>
+          <el-button plain size="mini" type="primary">
+            <i class="el-icon-upload el-icon--right"></i>导出excel
+          </el-button>
+          <el-button plain size="mini" @click="openUserDefine" type="success">自定义列</el-button>
+        </div>
+      </div>
+      <el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
+        <!-- :style="{top:top+ &quot;px&quot;,left:left+ &quot;px&quot;}" -->
+        <el-checkbox-group v-model="userDefinedChecked" class="flex">
+          <el-checkbox v-for="(item,index) in userDefinedBox" :key="index" :label="item"></el-checkbox>
+        </el-checkbox-group>
+      </el-dialog>
       <el-table
         ref="filterTable"
         :data="searchResult"
@@ -135,15 +146,29 @@
         max-height="470px"
         show-overflow-tooltip
       >
-        >
         <el-table-column type="index" label="#" width="50"></el-table-column>
-        <el-table-column label="姓名" prop="name" width="100"></el-table-column>
-        <el-table-column label="工作单位" prop="unit_name" width="120"></el-table-column>
-        <el-table-column label="职务" prop="present_post" width="100"></el-table-column>
-        <el-table-column label="级别" prop="present_rank" width="120"></el-table-column>
-        <el-table-column label="提交时间" width="200" sortable>
-          <template slot-scope="scope">{{scope.row.submit_time | timeset}}</template>
-        </el-table-column>
+        <el-table-column label="姓名" prop="name" v-if="colData[0].istrue"></el-table-column>
+        <el-table-column label="与本人关系" prop="political" v-if="colData[1].istrue"></el-table-column>
+        <el-table-column label="性别" prop="sex" v-if="colData[2].istrue"></el-table-column>
+        <el-table-column label="民族" prop="nationals" v-if="colData[3].istrue"></el-table-column>
+        <el-table-column label="政治面貌" prop="political" v-if="colData[4].istrue"></el-table-column>
+        <el-table-column label="工作单位" prop="unit_name" v-if="colData[5].istrue"></el-table-column>
+        <el-table-column label="婚姻状况" prop="marital" v-if="colData[6].istrue"></el-table-column>
+        <el-table-column label="身份证号" prop="idcard" v-if="colData[7].istrue"></el-table-column>
+        <el-table-column label="户籍地址" prop="huji_adress" v-if="colData[8].istrue"></el-table-column>
+        <el-table-column label="籍贯" prop="native_place" v-if="colData[9].istrue"></el-table-column>
+        <el-table-column label="出生地" prop="birthday_place" v-if="colData[10].istrue"></el-table-column>
+        <el-table-column label="参加工作地址" prop="unit_name" v-if="colData[11].istrue"></el-table-column>
+        <el-table-column label="专业技术职称" prop="school_and_major" v-if="colData[12].istrue"></el-table-column>
+        <el-table-column label="入党时间" prop="party_time" v-if="colData[13].istrue"></el-table-column>
+        <el-table-column label="手机号码" prop="mobile" v-if="colData[14].istrue"></el-table-column>
+        <el-table-column label="职务" prop="present_post" v-if="colData[15].istrue"></el-table-column>
+        <el-table-column label="级别" prop="present_rank" v-if="colData[16].istrue"></el-table-column>
+        <el-table-column label="是否市管干部" prop="city_leader" v-if="colData[17].istrue"></el-table-column>
+        <el-table-column label="是否本单位/下属单位党政一把手" prop="leader" v-if="colData[18].istrue"></el-table-column>
+        <el-table-column label="是否专职纪检(监察)干部" prop="censor_leader" v-if="colData[19].istrue"></el-table-column>
+        <el-table-column label="任现级别时间" prop="unit_name" v-if="colData[20].istrue"></el-table-column>
+        <el-table-column label="分管部门(岗位职责)" prop="duty" v-if="colData[21].istrue"></el-table-column>
         <el-table-column label="查看" align="center" width="260" fixed="right">
           <template slot-scope="scope">
             <el-button
@@ -189,7 +214,6 @@ export default {
         { label: "工作单位", value: "4" },
         { label: "级别", value: "5" }
       ],
-      userDefinedChecked: [],
       rankOptions: [],
       unitOptions: [],
       searchSel: "",
@@ -220,7 +244,61 @@ export default {
         // {label:'2018',value:0},
         // {label:'2019',value:1}
       ],
-      searchResult: []
+      searchResult: [],
+      userDefinedVisible: false,
+      //循环被选数组里面的每一项和表头数组里面对应的每一项，用indexOf处理，如果对应得到，则属性为true
+      userDefinedChecked: ["姓名", "与本人关系", "性别", "民族", "政治面貌"],
+      // top: "",
+      // left: "",
+      userDefinedBox: [
+        "姓名",
+        "与本人关系",
+        "性别",
+        "民族",
+        "政治面貌",
+        "工作单位",
+        "婚姻状况",
+        "身份证号",
+        "户籍地址",
+        "籍贯",
+        "出生地",
+        "参加工作地址",
+        "专业技术职称",
+        "入党时间",
+        "手机号码",
+        "职务",
+        "级别",
+        "是否市管干部",
+        "是否本单位/下属单位党政一把手",
+        "是否专职纪检(监察)干部",
+        "任现级别时间",
+        "分管部门(岗位职责)"
+      ],
+      colData: [
+        { title: "姓名", istrue: true },
+        { title: "与本人关系", istrue: true }, // true：初始化表格时显示这个表头列，false：不显示
+        { title: "性别", istrue: false },
+        { title: "民族", istrue: false },
+        { title: "政治面貌", istrue: true },
+        { title: "工作单位", istrue: true },
+        { title: "婚姻状况", istrue: false },
+        { title: "身份证号", istrue: false },
+        { title: "户籍地址", istrue: false },
+        { title: "籍贯", istrue: false },
+        { title: "出生地", istrue: false },
+        { title: "参加工作地址", istrue: false },
+        { title: "专业技术职称", istrue: false },
+        { title: "入党时间", istrue: false },
+        { title: "手机号码", istrue: false },
+        { title: "职务", istrue: true },
+        { title: "级别", istrue: true },
+        { title: "是否市管干部", istrue: false },
+        { title: "是否本单位/下属单位党政一把手", istrue: false },
+        { title: "是否专职纪检(监察)干部", istrue: false },
+        { title: "任现级别时间", istrue: false },
+        { title: "分管部门(岗位职责)", istrue: false }
+      ],
+      display:true,
     };
   },
   created() {
@@ -306,7 +384,6 @@ export default {
       console.log("已勾选", selVal);
       // console.log("已勾选组合", this.archivesQuery.punishmentList);
     },
-
     currenYearSel(selVal) {
       // this.searchSel = selVal;
       console.log("sel", selVal, this.archivesQuery.dateYear);
@@ -319,12 +396,10 @@ export default {
     getYear() {
       this.$http.get("/basic/getSearchDate").then(res => {
         console.log("返回", res);
-
         res.data.data.forEach(item => {
           this.years.push({ label: item, value: item });
           console.log("forEach", this.years);
         });
-
         // for(var i =0; i<res.data.data.length;i++){
         //   this.years.push(res.data.data[i])
         //   console.log('for',this.years)
@@ -399,13 +474,75 @@ export default {
       console.log(`当前页: ${newPage}`);
       this.archivesQuery.pageIndex = newPage;
       this.getList();
+    },
+    openUserDefine() {
+      this.userDefinedVisible = true;
+    },
+    goInfo(dateYear, idcard) {
+      this.$router.push(
+        //path和query需要放在同一个对象里面
+        {
+          path: "/archive/infoPerson",
+          query: {
+            type: 0,
+            idcard: idcard,
+            dateYear: dateYear
+          }
+          // component: archivesinfo
+        }
+      );
+      console.log("发送", idcard);
+      console.log("发送", dateYear);
+    },
+    goComparison(dateYear, idcard) {
+      this.$router.push({
+        path: "/archive/recordcomparison",
+        query: {
+          type: 0,
+          idcard: idcard,
+          dateYear: dateYear
+        }
+      });
+    },
+    goRelations(row) {
+      this.$router.push({
+        path: "/archive/socialRelations",
+        query: row
+      });
+    },
+    toggleShow(){
+      this.display=!this.display;
+    }
+  },
+  watch: {
+    userDefinedChecked: {
+      handler: function(valArr) {
+        this.colData.filter(i => {
+          if (valArr.indexOf(i.title) !== -1) {
+            i.istrue = true;
+          } else {
+            i.istrue = false;
+          }
+        });
+      },immediate:true
     }
   }
 };
 </script>
 
 <style lang='less' scoped>
-.searchDisplay {
+.searchDisplay, .advancedSearch{
   display: none;
+}
+.titleFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex {
+  display: flex;
+  flex-direction: column;
+  max-height: 250px;
+  overflow-y: scroll;
 }
 </style>

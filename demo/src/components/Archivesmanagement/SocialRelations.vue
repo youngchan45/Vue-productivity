@@ -14,12 +14,9 @@
           <i class="el-icon-upload el-icon--right"></i>导出excel
         </el-button>
         <el-button plain size="mini" @click="openUserDefine" type="success">自定义列</el-button>
-        <el-dialog
-          title="自定义列"
-          :visible.sync="userDefinedVisible"
-          class="userDialog">
+        <el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
           <!-- :style="{top:top+ &quot;px&quot;,left:left+ &quot;px&quot;}" -->
-        
+
           <el-checkbox-group v-model="userDefinedChecked" class="flex">
             <el-checkbox v-for="(item,index) in userDefinedBox" :key="index" :label="item"></el-checkbox>
             <!-- <el-checkbox label="姓名"></el-checkbox>
@@ -71,17 +68,17 @@
       <el-table-column label="籍贯" prop="native_place" v-if="colData[9].istrue"></el-table-column>
       <el-table-column label="出生地" prop="birthday_place" v-if="colData[10].istrue"></el-table-column>
       <el-table-column label="参加工作地址" prop="unit_name" v-if="colData[11].istrue"></el-table-column>
-      <el-table-column label="专业技术职称" prop="school_and_major" v-if="colData[0].istrue"></el-table-column>
-      <el-table-column label="入党时间" prop="party_time" v-if="colData[12].istrue"></el-table-column>
-      <el-table-column label="手机号码" prop="mobile" v-if="colData[13].istrue"></el-table-column>
-      <el-table-column label="职务" prop="present_post" v-if="colData[14].istrue"></el-table-column>
-      <el-table-column label="级别" prop="present_rank" v-if="colData[15].istrue"></el-table-column>
-      <el-table-column label="是否市管干部" prop="city_leader" v-if="colData[16].istrue"></el-table-column>
-      <el-table-column label="是否本单位/下属单位党政一把手" prop="leader" v-if="colData[17].istrue"></el-table-column>
-      <el-table-column label="是否专职纪检(监察)干部" prop="censor_leader" v-if="colData[18].istrue"></el-table-column>
-      <el-table-column label="任现级别时间" prop="unit_name" v-if="colData[19].istrue"></el-table-column>
-      <el-table-column label="分管部门(岗位职责)" prop="duty" v-if="colData[20].istrue"></el-table-column>
-      <el-table-column label="查看" align="center" >
+      <el-table-column label="专业技术职称" prop="school_and_major" v-if="colData[12].istrue"></el-table-column>
+      <el-table-column label="入党时间" prop="party_time" v-if="colData[13].istrue"></el-table-column>
+      <el-table-column label="手机号码" prop="mobile" v-if="colData[14].istrue"></el-table-column>
+      <el-table-column label="职务" prop="present_post" v-if="colData[15].istrue"></el-table-column>
+      <el-table-column label="级别" prop="present_rank" v-if="colData[16].istrue"></el-table-column>
+      <el-table-column label="是否市管干部" prop="city_leader" v-if="colData[17].istrue"></el-table-column>
+      <el-table-column label="是否本单位/下属单位党政一把手" prop="leader" v-if="colData[18].istrue"></el-table-column>
+      <el-table-column label="是否专职纪检(监察)干部" prop="censor_leader" v-if="colData[19].istrue"></el-table-column>
+      <el-table-column label="任现级别时间" prop="unit_name" v-if="colData[20].istrue"></el-table-column>
+      <el-table-column label="分管部门(岗位职责)" prop="duty" v-if="colData[21].istrue"></el-table-column>
+      <el-table-column label="查看" align="center">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -162,16 +159,16 @@
       <el-table-column label="籍贯" prop="native_place" v-if="colData[9].istrue"></el-table-column>
       <el-table-column label="出生地" prop="birthday_place" v-if="colData[10].istrue"></el-table-column>
       <el-table-column label="参加工作地址" prop="unit_name" v-if="colData[11].istrue"></el-table-column>
-      <el-table-column label="专业技术职称" prop="school_and_major" v-if="colData[0].istrue"></el-table-column>
-      <el-table-column label="入党时间" prop="party_time" v-if="colData[12].istrue"></el-table-column>
-      <el-table-column label="手机号码" prop="mobile" v-if="colData[13].istrue"></el-table-column>
-      <el-table-column label="职务" prop="present_post" v-if="colData[14].istrue"></el-table-column>
-      <el-table-column label="级别" prop="present_rank" v-if="colData[15].istrue"></el-table-column>
-      <el-table-column label="是否市管干部" prop="city_leader" v-if="colData[16].istrue"></el-table-column>
-      <el-table-column label="是否本单位/下属单位党政一把手" prop="leader" v-if="colData[17].istrue"></el-table-column>
-      <el-table-column label="是否专职纪检(监察)干部" prop="censor_leader" v-if="colData[18].istrue"></el-table-column>
-      <el-table-column label="任现级别时间" prop="unit_name" v-if="colData[19].istrue"></el-table-column>
-      <el-table-column label="分管部门(岗位职责)" prop="duty" v-if="colData[20].istrue"></el-table-column>
+      <el-table-column label="专业技术职称" prop="school_and_major" v-if="colData[12].istrue"></el-table-column>
+      <el-table-column label="入党时间" prop="party_time" v-if="colData[13].istrue"></el-table-column>
+      <el-table-column label="手机号码" prop="mobile" v-if="colData[14].istrue"></el-table-column>
+      <el-table-column label="职务" prop="present_post" v-if="colData[15].istrue"></el-table-column>
+      <el-table-column label="级别" prop="present_rank" v-if="colData[16].istrue"></el-table-column>
+      <el-table-column label="是否市管干部" prop="city_leader" v-if="colData[17].istrue"></el-table-column>
+      <el-table-column label="是否本单位/下属单位党政一把手" prop="leader" v-if="colData[18].istrue"></el-table-column>
+      <el-table-column label="是否专职纪检(监察)干部" prop="censor_leader" v-if="colData[19].istrue"></el-table-column>
+      <el-table-column label="任现级别时间" prop="unit_name" v-if="colData[20].istrue"></el-table-column>
+      <el-table-column label="分管部门(岗位职责)" prop="duty" v-if="colData[21].istrue"></el-table-column>
       <el-table-column label="查看" align="center">
         <template slot-scope="scope">
           <el-button
@@ -205,12 +202,13 @@ export default {
         // {name:'111'}
       ],
       userDefinedVisible: false,
+      //循环被选数组里面的每一项和表头数组里面对应的每一项，用indexOf处理，如果对应得到，则属性为true
       userDefinedChecked: [
-         "姓名",
+        "姓名",
         "与本人关系",
         "性别",
         "民族",
-        "政治面貌",
+        "政治面貌"
         // "工作单位",
         // "婚姻状况",
         // "身份证号",
@@ -255,30 +253,30 @@ export default {
         "任现级别时间",
         "分管部门(岗位职责)"
       ],
-      colData:[
-        { title: '姓名', istrue: true },
-        { title: '与本人关系', istrue: true },  // true：初始化表格时显示这个表头列，false：不显示
-        { title: '性别', istrue: false },
-        { title: '民族', istrue: false },
-        { title: '政治面貌', istrue: true },
-        { title: '工作单位', istrue: true },
-        { title: '婚姻状况', istrue: false },
-        { title: '身份证号', istrue: false },
-        { title: '户籍地址', istrue: false },
-        { title: '籍贯', istrue: false },
-        { title: '出生地', istrue: false },
-        { title: '参加工作地址', istrue: false },
-        { title: '专业技术职称', istrue: false },
-        { title: '入党时间', istrue: false },
-        { title: '手机号码', istrue: false },
-        { title: '职务', istrue: true },
-        { title: '级别', istrue: true },
-        { title: '是否市管干部', istrue: false },
-        { title: '是否本单位/下属单位党政一把手', istrue: false },
-        { title: '是否专职纪检(监察)干部', istrue: false },
-        { title: '任现级别时间', istrue: false },
-        { title: '分管部门(岗位职责)', istrue: false },
-      ],
+      colData: [
+        { title: "姓名", istrue: true },
+        { title: "与本人关系", istrue: true }, // true：初始化表格时显示这个表头列，false：不显示
+        { title: "性别", istrue: false },
+        { title: "民族", istrue: false },
+        { title: "政治面貌", istrue: true },
+        { title: "工作单位", istrue: true },
+        { title: "婚姻状况", istrue: false },
+        { title: "身份证号", istrue: false },
+        { title: "户籍地址", istrue: false },
+        { title: "籍贯", istrue: false },
+        { title: "出生地", istrue: false },
+        { title: "参加工作地址", istrue: false },
+        { title: "专业技术职称", istrue: false },
+        { title: "入党时间", istrue: false },
+        { title: "手机号码", istrue: false },
+        { title: "职务", istrue: true },
+        { title: "级别", istrue: true },
+        { title: "是否市管干部", istrue: false },
+        { title: "是否本单位/下属单位党政一把手", istrue: false },
+        { title: "是否专职纪检(监察)干部", istrue: false },
+        { title: "任现级别时间", istrue: false },
+        { title: "分管部门(岗位职责)", istrue: false }
+      ]
     };
   },
   created() {
@@ -334,7 +332,7 @@ export default {
       this.userDefinedVisible = true;
       // document.addEventListener('click', this.foo)
       // 获取鼠标点坐标
-    },
+    }
     // foo() {
     //   this.top = event.clientY
     //   this.left = event.clientX
@@ -342,17 +340,36 @@ export default {
     // }
   },
   watch: {
-    userDefinedChecked(valArr) {
-      var arr = this.userDefinedBox.filter(i => valArr.indexOf(i) < 0) // 未选中
-      this.colData.filter(i => {
-        if (arr.indexOf(i.title) !== -1) {
-          i.istrue = false
-        } else {
-          i.istrue = true
-        }
-      })
+    // userDefinedChecked(valArr) {
+    //   var arr = this.userDefinedBox.filter(i => valArr.indexOf(i) < 0) // 未选中
+    //   this.colData.filter(i => {
+    //     if (arr.indexOf(i.title) !== -1) {
+    //       i.istrue = false
+    //     } else {
+    //       i.istrue = true
+    //     }
+    //   })
+    // },
+    // 把userDefinedChecked的监听函数写到这里来
+    //对value属性的监听会在value第一次变化后开始进行监听，如果我们想在创建时监听value，要使用 handler  和 immediate
+    //注意语法
+    //把
+    userDefinedChecked: {
+      handler: function(valArr) {
+        // var arr = this.userDefinedBox.filter(i => valArr.indexOf(i) < 0); // 未选中
+        this.colData.filter(i => {
+          // debugger;
+          if (valArr.indexOf(i.title) !== -1) {
+            i.istrue = true;
+          } else {
+            i.istrue = false;
+          }
+        });
+      },
+      immediate: true
     }
-  },
+    //
+  }
 };
 </script>
 
