@@ -26,7 +26,7 @@
       <el-tab-pane label="个人基本情况" class="inTabs" name="first">
         <div>
           <h4>基础资料</h4>
-          <el-card class="basic everyLine">
+          <el-card class="basicEveryLine">
             <el-row>
               <el-row>
                 <el-col :span="21">
@@ -1073,6 +1073,10 @@ export default {
   }
   .everyLine {
     line-height: 40px;
+  }
+  .basicEveryLine el-col::after{
+    content: ":";
+    position: absolute;
   }
 }
 </style>

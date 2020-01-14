@@ -56,3 +56,11 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+Vue.filter('ellipsis',value=>{
+if(!value) return ''
+if(value.length>6){
+  return value.slice(0,5)+'...'
+}
+return value;
+})

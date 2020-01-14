@@ -45,3 +45,7 @@ thead {
 .el-card,.el-card__body{
   height: 100%;
 }
+/* .basicEveryLine .el-col::after{
+  content: ":";
+  position: absolute;
+} */

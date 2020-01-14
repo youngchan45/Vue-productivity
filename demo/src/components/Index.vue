@@ -87,16 +87,18 @@
       <div v-for="(item,index) in groundList" :key="index">
         <el-col :span="6">
           <!-- <el-card :class="{'nextGround':display}"> -->
-            <el-card>
+          <el-card>
             <div slot="header">
-              <span>{{item.groupName}}</span>
+              <!--新知识点，不用执着于使用css实现悬浮显示整个文字，直接用title属性-->
+              <span :title="item.groupName">{{item.groupName | ellipsis }}</span>
             </div>
             <div>
               <span class="card1Count1">{{item.personCount}}</span>
               <span>人</span>
             </div>
             <div class="card1Count2">
-              <a>编辑</a>
+              <!--易错点：传送id的时候 不一定要传送绑定在表单上的数据，只要后台有返回这个数据，就可以用item.xx传过去，或者直接传item-->
+              <a @click="showEdit(item.groupId)">编辑</a>
               <a>删除</a>
             </div>
           </el-card>
@@ -171,19 +173,99 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
-          <el-select v-model="entity.entity.list" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-select
+            v-model="entity.entity.list"
+            multiple
+            filterable
+            placeholder="请输入搜索或单击选择"
+            @change="rankSel"
+          >
             <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
-              v-for="(item,index) in rankOptions"
-              :key="index"
+              v-for="item in rankOptions"
+              :key="item.rankId"
               :label="item.rankName"
-              :value="item.rankCode"
+              :value="item.rankId"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="addBtn">
           <el-button @click="unitAddVisible = false">取消</el-button>
           <el-button type="primary" @click="saveUnitAdd">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <!--编辑群体弹窗-->
+    <el-dialog
+      class="dialog"
+      title="自定义群体"
+      :visible.sync="unitEditVisible"
+      width="470px"
+      :close-on-click-modal="true"
+      :close-on-press-escape="true"
+      :show-close="true"
+    >
+      <!--编辑群体弹窗内容-->
+      <el-form
+        ref="unitEditFormRef"
+        statue-icon
+        :model="editEntity"
+        :rules="unitFormRules"
+        :inline="true"
+        class="demo-form-inline"
+        label-width="100px"
+        size="small"
+      >
+        <el-form-item label="群体名称" prop="unitName" clearable>
+          <el-input v-model="editEntity.entity.groupName"></el-input>
+        </el-form-item>
+        <el-form-item label="类型">
+          <el-select
+            v-model="editEntity.entity.type"
+            clearable
+            placeholder="请选择"
+            @change="curTypeSel"
+          >
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+            <div></div>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable prop="unitName">
+          <el-select
+            v-model="editEntity.entity.list"
+            multiple
+            filterable
+            placeholder="请输入搜索或单击选择"
+            @change="unitSel"
+          >
+            <el-option
+              v-for="item in unitOptions"
+              :key="item.unitCode"
+              :label="item.unitName"
+              :value="item.unitCode"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
+          <el-select v-model="editEntity.entity.list" multiple filterable placeholder="请输入搜索或单击选择">
+            <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
+            <el-option
+              v-for="item in rankOptions"
+              :key="item.rankId"
+              :label="item.rankName"
+              :value="item.rankId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="addBtn">
+          <el-button @click="unitEditVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveUnitEdit(this.editEntity.entity.type)">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -226,21 +308,21 @@ export default {
       unitOptions: [],
       rankOptions: [],
       selValId: "",
-       operator: window.sessionStorage.getItem("userId"),
+      operator: window.sessionStorage.getItem("userId"),
       entity: {
-        entity:{
+        entity: {
           //新建自定义群体要提交的表单
-        groupName: "", //自定义群体名称
-        // operator: "", //本地存储userId
-        operator:window.sessionStorage.getItem("userId"), //本地存储userId，易错点:切记和deptId分开
-        //  operator:'',
-        //这里无法直接用operator: this.operator，this作用域不同
-        type: "1", //单位1，级别0，这里是易错点：传送的是value，需要默认显示label的话，将value加上双引号即可
-        list: []
-        // rankName: [],
-        }        
+          groupName: "", //自定义群体名称
+          // operator: "", //本地存储userId
+          operator: window.sessionStorage.getItem("userId"), //本地存储userId，易错点:切记和deptId分开
+          //  operator:'',
+          //这里无法直接用operator: this.operator，this作用域不同
+          type: "1", //单位1，级别0，这里是易错点：传送的是value，需要默认显示label的话，将value加上双引号即可
+          list: []
+          // rankName: [],
+        }
       },
-      groundList:[],
+      groundList: [],
       unitFormRules: {
         inputunitName: "",
         id: "",
@@ -252,8 +334,18 @@ export default {
       rankShow: false,
       checked: false,
       nextGround: {},
-      deptId: window.sessionStorage.getItem("deptId"), 
-      display:true,    
+      deptId: window.sessionStorage.getItem("deptId"),
+      display: true,
+      unitEditVisible: false,
+      editEntity: {
+        entity: {
+          //编辑自定义群体要提交的单位表单
+          groupName: "",
+          operator: window.sessionStorage.getItem("userId"),
+          type: "1",
+          list: []
+        }
+      }
     };
   },
   created() {
@@ -293,24 +385,23 @@ export default {
         });
     },
     selectAll() {
-      this.entity.rankName = [];
+      this.entity.entity.list = [];
       if (this.checked) {
-        this.entity.rankOptions.map(item => {
-          this.entity.rankName.push(item.rankName);
+        this.rankOptions.map(item => {
+          this.entity.entity.list.push(item.rankId);
         });
       } else {
-        this.entity.rankName = [];
+        this.entity.entity.list = [];
       }
     },
     changeSelect(val) {
-      if (val.length === this.unitAddForm.rankOptions.length) {
+      if (val.length === this.rankOptions.length) {
         this.checked = true;
       } else {
         this.checked = false;
       }
     },
-    addUnit() {
-      this.unitAddVisible = true;
+    getAllUnit() {
       //获取单位列表
       this.$http
         .get("/index/findUnitCode", {
@@ -324,6 +415,8 @@ export default {
           console.log("id", this.deptId);
           this.unitOptions = res.data.data;
         });
+    },
+    getAllRank() {
       //获取级别列表
       this.$http
         .get("/index/findUnitCodeOrRankId", {
@@ -337,8 +430,13 @@ export default {
           this.rankOptions = res.data.data;
         });
     },
+    addUnit() {
+      this.unitAddVisible = true;
+      this.getAllUnit();
+      this.getAllRank();
+    },
     curTypeSel(selVal) {
-      console.log("来", this.entity.type);
+      console.log("来", this.entity.entity.type);
       this.selValId = selVal;
       if (this.selValId == 1) {
         this.unitShow = true;
@@ -356,9 +454,16 @@ export default {
     //3.把表单entity给push进nextGround
     //4.v-for渲染nextGround
     unitSel(selVal) {
+      //1.新建群体传送的是list:['unitCode']
+      //2.编辑群体获取的是list:[{unitName:'',unitCode:''}]
+      //3.下拉框里面传送的是list:['unitCode']
+      //4.编辑接口和新建接口所需要传送的数据类型不同。。。所以编辑中的下拉框所提交的数据类型得另写一个
       console.log("选中单位code", selVal);
-      // this.entity.list.push(selVal);
-      console.log("选中单位code1", this.entity.list);
+      console.log("选中单位code1", this.editEntity.entity.list);
+    },
+    rankSel(selVal) {
+      console.log("选中级别id", selVal);
+      // console.log("选中级别id1", this.editEntity.entity.unitList);
     },
     saveUnitAdd() {
       this.$http.post("/index/newCustomizeGroup", this.entity).then(res => {
@@ -368,25 +473,114 @@ export default {
         // this.entity.push(this.nextGround);
         this.$message.success(res.data.message);
         this.unitAddVisible = false;
-        this.display=false;
+        this.display = false;
+        this.getGround();
         // }
       });
     },
-    getGround(){
-      this.$http.get('/index/getCustomizeGroup',{
-        params:{
-userId:window.sessionStorage.getItem("userId")
-        }
-      }).then(res=>{
-        console.log(res);
-        this.groundList=res.data.data
-      })
+    getGround() {
+      this.$http
+        .get("/index/getCustomizeGroup", {
+          params: {
+            userId: window.sessionStorage.getItem("userId")
+          }
+        })
+        .then(res => {
+          console.log(res);
+          this.groundList = res.data.data;
+        });
     },
+    showEdit(id) {
+      this.unitEditVisible = true;
+      this.getAllUnit();
+      this.getAllRank();
+      this.$http
+        .get("/index/getCustomizeGroupById/" + id, this.editEntity)
+        .then(res => {
+          // this.curTypeSel();
+          console.log("编辑", id);
+          // this.editEntity.entity=res.data.data
+          this.editEntity.entity.groupName = res.data.data.groupName;
+          this.editEntity.entity.type = res.data.data.type;
+          if (res.data.data.type == 1) {
+          this.unitShow = true;
+          this.rankShow = false;
+          //绑定已选单位
+          // res.data.data.list.forEach(item => {
+          //易错点：要看清楚框架里面需要的是什么数据格式，接口返回的又是什么数据格式，像这里 下拉框需要的格式是字符串数组['unitCode',]，而接口返回的是对象数组[{name:'',unitCode:';}],而我们只需要unitCode，所以这里应该只传递其中的item.unitCode，而不是把整个list传递进去这样的弊端是，返回的数据组每一个都需要单独赋值
+          // console.log(item)
+          let unitArr1 = [];
+          let unitArr2 = [];
+          // let unitArr2=[];
+          res.data.data.list.forEach(item => {
+            unitArr1.push(item.unitCode);
+            console.log("1234345", item.unitCode);
+          });
+          unitArr1.forEach(item => {
+            unitArr2.push(item);
+          });
+          this.editEntity.entity.list = unitArr2;
+          console.log("已选单位code", unitArr2);
+          
+          // );
+          console.log("!!!!!!", this.editEntity.entity.list);
+}
+          if (res.data.data.type == 0) {
+          this.unitShow = false;
+          this.rankShow = true;
+          //绑定已选级别
+          let rankArr = [];
+          res.data.data.list.forEach(item => {
+            rankArr.push(parseInt(item));
+          });
+          rankArr.forEach(item => {
+            this.editEntity.entity.list.push(item.rankId);
+            console.log(item);
+          });
+          let arr1 = []; //存放接口返回的rankId
+          let arr2 = []; //存放处理成数字的rankId
+          res.data.data.list.forEach(item => {
+            arr1.push(item.rankId);
+          });
+          console.log("1111", arr1);
+          arr1.forEach(item => {
+            arr2.push(parseInt(item));
+          });
+          console.log("2222", arr2);
+          this.editEntity.entity.list = arr2;
+          // this.editEntity.entity.list=res.data.data.list
+          console.log("??????", this.editEntity.entity.list);
+          // }
+          }
+        });
+    },
+    saveUnitEdit() {
+      //        if(type==1){
+      // this.$http.post('/index/updateCustomizeGroup',{
+      //         entity: {
+      //           groupName: "",
+      //           operator: window.sessionStorage.getItem("userId"),
+      //           type: "1",
+      //           list: [],
+      //         }
+      //       }).then(res=>{console.log('单位',res,type)})
+      //        }
+      //        if(type==0){
+      //          this.$http.get('/index/updateCustomizeGroup',{
+      //         entity: {
+      //           groupName: "",
+      //           operator: window.sessionStorage.getItem("userId"),
+      //           type: "1",
+      //           list: [],
+      //         }
+      //       }).then(res=>{console.log('级别',res,type)})
+      //        }
+    }
   }
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .card1Count1 {
   font-size: 60px;
 }
@@ -407,7 +601,7 @@ userId:window.sessionStorage.getItem("userId")
   //   text-align: center;
   // }
 }
-.nextGround{
-  display:none;
+.nextGround {
+  display: none;
 }
 </style>
