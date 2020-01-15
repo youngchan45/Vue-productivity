@@ -222,6 +222,7 @@
         </el-form-item>
         <el-form-item label="类型">
           <el-select
+            disabled
             v-model="editEntity.entity.type"
             clearable
             placeholder="请选择"
@@ -265,7 +266,7 @@
         </el-form-item>
         <el-form-item class="addBtn">
           <el-button @click="unitEditVisible = false">取消</el-button>
-          <el-button type="primary" @click="saveUnitEdit(this.editEntity.entity.type)">保存</el-button>
+          <el-button type="primary" @click="saveUnitEdit">保存</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -339,7 +340,8 @@ export default {
       unitEditVisible: false,
       editEntity: {
         entity: {
-          //编辑自定义群体要提交的单位表单
+          //编辑自定义群体要提交的表单
+          groupId: "",
           groupName: "",
           operator: window.sessionStorage.getItem("userId"),
           type: "1",
@@ -449,10 +451,14 @@ export default {
         this.entity.entity.type = selVal;
       }
     },
+    //易错点：错误想法
     //1.先在页面新建占位符表单nextGround
     //2.建立要提交的表单entity
     //3.把表单entity给push进nextGround
     //4.v-for渲染nextGround
+    //正确想法
+    //1.直接把要提交的对象post过去
+    //2.重新提交刷新页面即可（就跟表格的新增一样）
     unitSel(selVal) {
       //1.新建群体传送的是list:['unitCode']
       //2.编辑群体获取的是list:[{unitName:'',unitCode:''}]
@@ -501,80 +507,74 @@ export default {
           console.log("编辑", id);
           // this.editEntity.entity=res.data.data
           this.editEntity.entity.groupName = res.data.data.groupName;
+          this.editEntity.entity.groupId = res.data.data.id;
           this.editEntity.entity.type = res.data.data.type;
           if (res.data.data.type == 1) {
-          this.unitShow = true;
-          this.rankShow = false;
-          //绑定已选单位
-          // res.data.data.list.forEach(item => {
-          //易错点：要看清楚框架里面需要的是什么数据格式，接口返回的又是什么数据格式，像这里 下拉框需要的格式是字符串数组['unitCode',]，而接口返回的是对象数组[{name:'',unitCode:';}],而我们只需要unitCode，所以这里应该只传递其中的item.unitCode，而不是把整个list传递进去这样的弊端是，返回的数据组每一个都需要单独赋值
-          // console.log(item)
-          let unitArr1 = [];
-          let unitArr2 = [];
-          // let unitArr2=[];
-          res.data.data.list.forEach(item => {
-            unitArr1.push(item.unitCode);
-            console.log("1234345", item.unitCode);
-          });
-          unitArr1.forEach(item => {
-            unitArr2.push(item);
-          });
-          this.editEntity.entity.list = unitArr2;
-          console.log("已选单位code", unitArr2);
-          
-          // );
-          console.log("!!!!!!", this.editEntity.entity.list);
-}
+            this.unitShow = true;
+            this.rankShow = false;
+            //绑定已选单位
+            // res.data.data.list.forEach(item => {
+            //易错点：要看清楚框架里面需要的是什么数据格式，接口返回的又是什么数据格式，像这里 下拉框需要的格式是字符串数组['unitCode',]，而接口返回的是对象数组[{name:'',unitCode:';}],而我们只需要unitCode，所以这里应该只传递其中的item.unitCode，而不是把整个list传递进去这样的弊端是，返回的数据组每一个都需要单独赋值
+            // console.log(item)
+            let unitArr1 = [];
+            let unitArr2 = [];
+            // let unitArr2=[];
+            res.data.data.list.forEach(item => {
+              unitArr1.push(item.unitCode);
+              console.log("1234345", item.unitCode);
+            });
+            unitArr1.forEach(item => {
+              unitArr2.push(item);
+            });
+            this.editEntity.entity.list = unitArr2;
+            console.log("已选单位code", unitArr2);
+
+            // );
+            console.log("!!!!!!", this.editEntity.entity.list);
+             console.log('groupId',this.editEntity.entity.groupId)
+          }
           if (res.data.data.type == 0) {
-          this.unitShow = false;
-          this.rankShow = true;
-          //绑定已选级别
-          let rankArr = [];
-          res.data.data.list.forEach(item => {
-            rankArr.push(parseInt(item));
-          });
-          rankArr.forEach(item => {
-            this.editEntity.entity.list.push(item.rankId);
-            console.log(item);
-          });
-          let arr1 = []; //存放接口返回的rankId
-          let arr2 = []; //存放处理成数字的rankId
-          res.data.data.list.forEach(item => {
-            arr1.push(item.rankId);
-          });
-          console.log("1111", arr1);
-          arr1.forEach(item => {
-            arr2.push(parseInt(item));
-          });
-          console.log("2222", arr2);
-          this.editEntity.entity.list = arr2;
-          // this.editEntity.entity.list=res.data.data.list
-          console.log("??????", this.editEntity.entity.list);
-          // }
+            this.unitShow = false;
+            this.rankShow = true;
+            //绑定已选级别
+            let rankArr = [];
+            res.data.data.list.forEach(item => {
+              rankArr.push(parseInt(item));
+            });
+            rankArr.forEach(item => {
+              this.editEntity.entity.list.push(item.rankId);
+              console.log(item);
+            });
+            let arr1 = []; //存放接口返回的rankId
+            let arr2 = []; //存放处理成数字的rankId
+            res.data.data.list.forEach(item => {
+              arr1.push(item.rankId);
+            });
+            console.log("1111", arr1);
+            arr1.forEach(item => {
+              arr2.push(parseInt(item));
+            });
+            console.log("2222", arr2);
+            this.editEntity.entity.list = arr2;
+            // this.editEntity.entity.list=res.data.data.list
+            console.log("??????", this.editEntity.entity.list);
+             console.log('groupId',this.editEntity.entity.groupId)
+            // }
           }
         });
     },
     saveUnitEdit() {
-      //        if(type==1){
-      // this.$http.post('/index/updateCustomizeGroup',{
-      //         entity: {
-      //           groupName: "",
-      //           operator: window.sessionStorage.getItem("userId"),
-      //           type: "1",
-      //           list: [],
-      //         }
-      //       }).then(res=>{console.log('单位',res,type)})
-      //        }
-      //        if(type==0){
-      //          this.$http.get('/index/updateCustomizeGroup',{
-      //         entity: {
-      //           groupName: "",
-      //           operator: window.sessionStorage.getItem("userId"),
-      //           type: "1",
-      //           list: [],
-      //         }
-      //       }).then(res=>{console.log('级别',res,type)})
-      //        }
+      this.$http
+        .post("/index/updateCustomizeGroup", this.editEntity)
+        .then(res => {
+           console.log('groupId',this.editEntity.entity.groupId)
+          console.log('修改',res)
+          if (res.status === 200) {
+            this.$message.success(res.data.message);
+             this.unitEditVisible = false;
+             this.getGround();
+          }
+        });
     }
   }
 };
