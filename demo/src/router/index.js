@@ -25,6 +25,7 @@ const recordcomparison = () => import('../components/Archivesmanagement/Recordco
 const socialRelations = () => import('../components/Archivesmanagement/SocialRelations.vue')
 const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
 const leaflet = () => import('../components/Leaflet/Leaflet.vue')
+const basicInformation = () => import("../components/Subjectanalysis/Project1/Basicinformation.vue")
 
 const routes = [
   {
@@ -100,6 +101,10 @@ const routes = [
       {
         path: '/archive/socialRelations',
         component: socialRelations
+      },
+      {
+        path: '/special/basetest',
+        conponent: basicInformation
       }
     ]
   },

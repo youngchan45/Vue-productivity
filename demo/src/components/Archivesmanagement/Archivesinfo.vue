@@ -62,7 +62,7 @@
                 </el-col>
                 <el-col :span="3">
                   <div class="photo">
-                    <img :src="personList.photoPath" alt="个人证件照" />
+                    <img :src="'http://itlead.vicp.net:9905'+personList.photoPath.toString()" alt="个人证件照" />
                   </div>
                 </el-col>
               </el-row>
