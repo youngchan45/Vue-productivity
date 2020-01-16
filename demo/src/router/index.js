@@ -25,8 +25,8 @@ const recordcomparison = () => import('../components/Archivesmanagement/Recordco
 const socialRelations = () => import('../components/Archivesmanagement/SocialRelations.vue')
 const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
 const leaflet = () => import('../components/Leaflet/Leaflet.vue')
-const basicInformation = () => import("../components/Subjectanalysis/Project1/Basicinformation.vue")
-
+const entrance = () => import('../components/Subjectanalysis/Entrance.vue')
+const earlyWarning=()=>('../components/Earlywarning/Earlywarning.vue')
 const routes = [
   {
     path: '/login',
@@ -47,6 +47,10 @@ const routes = [
       {
         path: "/userManagement/accountManagement",
         component: accountmanagement
+      },
+      {
+        path:'/alertManagement/alertManagement',
+        conponent:earlyWarning
       },
       {
         path: '/staffLeaflet/staffLeaflet',
@@ -80,20 +84,6 @@ const routes = [
         path: '/archive/infoPerson',
         component: archivesinfo
       },
-      // {
-      //   path:'/archive/infoPerson:type:idcard:dateYear',
-      //   component:archivesinfo
-      // },
-      // {
-      //   path:'/archive/infoPerson,{
-      //     params:{
-      //       type:'',
-      //       idcard:'',
-      //       dateYear:'',
-      //     }
-      //   }',
-      //   component:archivesinfo
-      // }
       {
         path: '/archive/recordcomparison',
         component: recordcomparison
@@ -103,8 +93,9 @@ const routes = [
         component: socialRelations
       },
       {
-        path: '/special/basetest',
-        conponent: basicInformation
+        path: '/special/base',
+        query:{page: "1"},
+        component: entrance
       }
     ]
   },
