@@ -20,9 +20,9 @@
       <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable size="small"></el-input>
       <!--自定义传参，参数用括号括起来-->
       <el-button size="small" type="primary" @click="getList('button1')">查询</el-button>
-      <el-button size="small" type="text"  @click="toggleShow">高级搜索</el-button>
+      <el-button size="small" type="text" @click="toggleShow">高级搜索</el-button>
     </div>
-<!-- 熟记动态css语法 -->
+    <!-- 熟记动态css语法 -->
     <div :class='{"advancedSearch":display}'>
       <h2>高级搜索</h2>
       <el-form ref="searchRef" :model="archivesQuery" label-width="80px" class="demo-form-inline">
@@ -120,7 +120,6 @@
         </el-form-item>
       </el-form>
     </div>
-
     <div :class="{'searchDisplay':searchDisplay}">
       <div class="titleFlex">
         <h2>搜索结果</h2>
@@ -298,7 +297,7 @@ export default {
         { title: "任现级别时间", istrue: false },
         { title: "分管部门(岗位职责)", istrue: false }
       ],
-      display:true,
+      display: true
     };
   },
   created() {
@@ -369,7 +368,6 @@ export default {
           .then(res => {
             console.log("搜索结果2", res);
             // this.archivesTableData = res.data.data[0].list;
-
             // console.log("btn", this.archivesQuery.button);
             //1.把点击搜索之后返回的数据保存起来searchResult
             //2.搜索结果界面v-for渲染searchResult
@@ -510,8 +508,8 @@ export default {
         query: row
       });
     },
-    toggleShow(){
-      this.display=!this.display;
+    toggleShow() {
+      this.display = !this.display;
     }
   },
   watch: {
@@ -524,14 +522,16 @@ export default {
             i.istrue = false;
           }
         });
-      },immediate:true
+      },
+      immediate: true
     }
   }
 };
 </script>
 
 <style lang='less' scoped>
-.searchDisplay, .advancedSearch{
+.searchDisplay,
+.advancedSearch {
   display: none;
 }
 .titleFlex {

@@ -99,7 +99,15 @@
             <div class="card1Count2">
               <!--易错点：传送id的时候 不一定要传送绑定在表单上的数据，只要后台有返回这个数据，就可以用item.xx传过去，或者直接传item-->
               <a @click="showEdit(item.groupId)">编辑</a>
-              <a>删除</a>
+              <a @click="showDel(item.groupId)">删除</a>
+              <!-- <el-popover placement="top" width="160" v-model="visible">
+                <p>确定删除吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+                </div>
+                <el-button slot="reference">删除</el-button>
+              </el-popover>-->
             </div>
           </el-card>
         </el-col>
@@ -133,7 +141,7 @@
     >
       <!--新增群体弹窗内容-->
       <el-form
-        ref="unitFormRef"
+        ref="unitAddFormRef"
         statue-icon
         :model="entity"
         :rules="unitFormRules"
@@ -142,7 +150,7 @@
         label-width="100px"
         size="small"
       >
-        <el-form-item label="群体名称" prop="unitName" clearable>
+        <el-form-item label="群体名称" prop="groupName" clearable>
           <el-input v-model="entity.entity.groupName"></el-input>
         </el-form-item>
         <el-form-item label="类型">
@@ -156,7 +164,7 @@
             <div></div>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable prop="unitName">
+        <el-form-item v-show="unitShow" label="单位" placeholder="请搜索单位" clearable>
           <el-select
             v-model="entity.entity.list"
             multiple
@@ -172,7 +180,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
+        <el-form-item v-show="rankShow" label="级别" clearable>
           <el-select
             v-model="entity.entity.list"
             multiple
@@ -190,7 +198,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="addBtn">
-          <el-button @click="unitAddVisible = false">取消</el-button>
+          <el-button @click="cancelUnitAdd">取消</el-button>
           <el-button type="primary" @click="saveUnitAdd">保存</el-button>
         </el-form-item>
       </el-form>
@@ -208,7 +216,6 @@
     >
       <!--编辑群体弹窗内容-->
       <el-form
-        ref="unitEditFormRef"
         statue-icon
         :model="editEntity"
         :rules="unitFormRules"
@@ -217,7 +224,7 @@
         label-width="100px"
         size="small"
       >
-        <el-form-item label="群体名称" prop="unitName" clearable>
+        <el-form-item label="群体名称" prop="groupName" clearable>
           <el-input v-model="editEntity.entity.groupName"></el-input>
         </el-form-item>
         <el-form-item label="类型">
@@ -253,7 +260,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="rankShow" label="级别" clearable prop="rankName">
+        <el-form-item v-show="rankShow" label="级别" prop="rankName">
           <el-select v-model="editEntity.entity.list" multiple filterable placeholder="请输入搜索或单击选择">
             <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
             <el-option
@@ -347,6 +354,9 @@ export default {
           type: "1",
           list: []
         }
+      },
+      unitAddFormRef: {
+        groupName: ""
       }
     };
   },
@@ -441,11 +451,13 @@ export default {
       console.log("来", this.entity.entity.type);
       this.selValId = selVal;
       if (this.selValId == 1) {
+        this.entity.entity.list = [];
         this.unitShow = true;
         this.rankShow = false;
         this.entity.entity.type = selVal;
       }
       if (this.selValId == 0) {
+        this.entity.entity.list = [];
         this.rankShow = true;
         this.unitShow = false;
         this.entity.entity.type = selVal;
@@ -473,16 +485,53 @@ export default {
     },
     saveUnitAdd() {
       this.$http.post("/index/newCustomizeGroup", this.entity).then(res => {
-        // console.log(res);
-        // if (res.data.status == 200) {
         console.log(res);
-        // this.entity.push(this.nextGround);
         this.$message.success(res.data.message);
+        this.entity.entity.groupName = "";
+        this.entity.entity.list = [];
         this.unitAddVisible = false;
         this.display = false;
         this.getGround();
-        // }
       });
+    },
+    cancelUnitAdd() {
+      // console.log(this.$refs.unitFormRef.resetFields)
+      // this.$refs.unitAddFormRef.resetFields();
+      // this.$nextTick(() => {
+      //   this.$refs.unitAddFormRef.resetFields();
+      // });
+      this.unitAddVisible = false;
+      this.entity.entity.groupName = "";
+      this.entity.entity.list = [];
+    },
+    showDel(id) {
+      // this.$http.delete("/index/deleteCustomizeGroup/" + id).then(res => {
+      //   if (res.status === 200) {
+      //     this.$message.success(res.data.message);
+      //     this.getGround();
+      //   }
+      // });
+      this.$confirm("确定删除吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$http.delete("/index/deleteCustomizeGroup/" + id).then(res => {
+            // console.log('删除',res)
+            if (!res.status === 200) {
+              return this.$message.error("删除失败");
+            }
+            this.$message.success("删除成功");
+            this.getGround();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     getGround() {
       this.$http
@@ -531,7 +580,7 @@ export default {
 
             // );
             console.log("!!!!!!", this.editEntity.entity.list);
-             console.log('groupId',this.editEntity.entity.groupId)
+            console.log("groupId", this.editEntity.entity.groupId);
           }
           if (res.data.data.type == 0) {
             this.unitShow = false;
@@ -558,7 +607,7 @@ export default {
             this.editEntity.entity.list = arr2;
             // this.editEntity.entity.list=res.data.data.list
             console.log("??????", this.editEntity.entity.list);
-             console.log('groupId',this.editEntity.entity.groupId)
+            console.log("groupId", this.editEntity.entity.groupId);
             // }
           }
         });
@@ -567,12 +616,12 @@ export default {
       this.$http
         .post("/index/updateCustomizeGroup", this.editEntity)
         .then(res => {
-           console.log('groupId',this.editEntity.entity.groupId)
-          console.log('修改',res)
+          console.log("groupId", this.editEntity.entity.groupId);
+          console.log("修改", res);
           if (res.status === 200) {
             this.$message.success(res.data.message);
-             this.unitEditVisible = false;
-             this.getGround();
+            this.unitEditVisible = false;
+            this.getGround();
           }
         });
     }
