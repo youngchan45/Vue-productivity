@@ -26,7 +26,8 @@ const socialRelations = () => import('../components/Archivesmanagement/SocialRel
 const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
 const leaflet = () => import('../components/Leaflet/Leaflet.vue')
 const entrance = () => import('../components/Subjectanalysis/Entrance.vue')
-const earlyWarning=()=>('../components/Earlywarning/Earlywarning.vue')
+const earlyWarning =()=>import("../components/Earlywarning/EarlyWarning.vue")
+
 const routes = [
   {
     path: '/login',
@@ -47,10 +48,6 @@ const routes = [
       {
         path: "/userManagement/accountManagement",
         component: accountmanagement
-      },
-      {
-        path:'/alertManagement/alertManagement',
-        conponent:earlyWarning
       },
       {
         path: '/staffLeaflet/staffLeaflet',
@@ -94,15 +91,39 @@ const routes = [
       },
       {
         path: '/special/base',
-        query:{page: "1"},
+        query: { page: "1" },
         component: entrance
+      },
+      {
+        path: '/special/base',
+        query: { page: "2" },
+        component: entrance
+      },
+      {
+        path: '/special/base',
+        query: { page: "3" },
+        component: entrance
+      },
+      {
+        path: '/special/base',
+        query: { page: "4" },
+        component: entrance
+      },
+      {
+        path: '/special/base',
+        query: { page: "5" },
+        component: menumanagement
+      },
+      {
+        path:'/alertManagement/alertManagement',
+        component:earlyWarning
       }
     ]
   },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'history',//去掉#号
   base: process.env.BASE_URL,
   routes
 })

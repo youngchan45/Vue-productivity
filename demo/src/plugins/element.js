@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Button, form, formItem, input, checkbox, message, Menu, submenu, MenuItemGroup, menuItem, container, header, main, footer, aside, dialog, popconfirm, popover, table, tableColumn, pagination, card, tag, datePicker, MessageBox, select,option,tree,col,row,tabs,tabPane,link,optionGroup,breadcrumb,breadcrumbItem,checkboxGroup  } from 'element-ui'
+import { Button, form, formItem, input, checkbox, message, Menu, submenu, MenuItemGroup, menuItem, container, header, main, footer, aside, dialog, popconfirm, popover, table, tableColumn, pagination, card, tag, datePicker, MessageBox, select,option,tree,col,row,tabs,tabPane,link,optionGroup,breadcrumb,breadcrumbItem,checkboxGroup,radio  } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(form)
@@ -39,3 +39,4 @@ Vue.use(optionGroup)
 Vue.use(breadcrumb)
 Vue.use(breadcrumbItem)
 Vue.use(checkboxGroup)
+Vue.use(radio)
