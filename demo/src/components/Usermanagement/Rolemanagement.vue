@@ -261,14 +261,19 @@ export default {
         }
       });
     },
-    handleCheckChange(treeSelVal) {
-      console.log("treeSel", treeSelVal);
-      this.roleEditForm.checkedBox.push(treeSelVal.id)
-      // this.checkedBox=treeSelVal.id;
-      console.log('编辑树',this.roleEditForm.checkedBox);
-      this.roleAddForm.checkedBox.push(treeSelVal.id)
-      console.log('新建树',this.roleAddForm.checkedBox);
-    },
+handleCheckChange(data, checked, indeterminate) {
+        console.log(data, checked, indeterminate);
+      },
+
+    // handleCheckChange(treeSelVal) {
+    //   console.log("treeSel", treeSelVal);
+
+    //   this.roleEditForm.checkedBox.push(treeSelVal.id)
+    //   console.log('编辑树',this.roleEditForm.checkedBox);
+
+    //   this.roleAddForm.checkedBox.push(treeSelVal.id)
+    //   console.log('新建树',this.roleAddForm.checkedBox);
+    // },
     //弹窗全选权限树
     checkAll() {
       console.log(this.$refs.sourceTree.setCheckedNodes(this.sourceData));
@@ -277,6 +282,9 @@ export default {
     resetTree() {
       console.log(this.$refs.sourceTree.setCheckedKeys([]));
     },
+    // getCheckedNodes() {
+    //     console.log(this.$refs.sourceTree.getCheckedNodes());
+    //   },
     //保存新建角色
     saveAddRole() {
       this.$http
@@ -288,7 +296,7 @@ export default {
           ids: this.roleAddForm.checkedBox
         })
         .then(res => {
-          if (res.status != 200) {
+          if (res.data.status != 0) {
             return this.$message.success("新建角色失败");
           }
           this.$message.success("新增角色成功");
@@ -308,6 +316,7 @@ export default {
           this.roleEditForm.roleName = res.data.data[0].roleName;
           this.roleEditForm.roleId = res.data.data[0].roleId;
           this.roleEditForm.checkedBox = res.data.data[0].ids;
+          console.log('已选',this.roleEditForm.checkedBox)
         });
     },
     //保存编辑角色

@@ -2,6 +2,7 @@
   <div>
     <el-tree
       :data="menuData"
+      :props="treeProps"
       node-key="id"
       @node-click="handleNodeClick"
       highlight-current
@@ -16,7 +17,11 @@
 export default {
   data() {
     return {
-      menuData: []
+      menuData: [],
+      treeProps: {
+        label: "menuName",
+        children: "childrens"
+      }
     };
   },
   created() {
@@ -38,6 +43,8 @@ export default {
     },
     async getTree() {
       await this.$http.get("/menu/getMenu").then(res => {
+        console.log("look", res.data.data);
+        this.menuData = res.data.data;
         // if(res.status!=200){
         //     this.$message.error('获取菜单失败');
         //     // return;
@@ -60,24 +67,27 @@ export default {
         //     this.menuList[i].children[j].children=res.data.data[i].childrens[j].childrens;
         //   }
         // }
-        for (let i = 0; i < res.data.data.length; i++) {
-          let obj = {
-            label: res.data.data[i].menuName,
-            children: []
-          };
-          this.menuData.push(obj);
-        }
-        
-        for (let i = 0; i < res.data.data.length; i++) {
-          for (let j = 0; j < res.data.data[i].childrens.length; j++) {
-            let childObj = {
-              label: res.data.data[i].childrens[j].menuName,
-              children: []
-            };
-            this.menuData[i].children.push(childObj);
-            console.log('look',res.data.data[6].childrens[2].menuName)
-          }
-        }
+
+        //不可删！！！！！
+        // for (let i = 0; i < res.data.data.length; i++) {
+        //   let obj = {
+        //     label: res.data.data[i].menuName,
+        //     children: []
+        //   };
+        //   this.menuData.push(obj);
+        // }
+
+        // for (let i = 0; i < res.data.data.length; i++) {
+        //   for (let j = 0; j < res.data.data[i].childrens.length; j++) {
+        //     let childObj = {
+        //       label: res.data.data[i].childrens[j].menuName,
+        //       children: []
+        //     };
+        //     this.menuData[i].children.push(childObj);
+        //     // console.log("look", res.data.data[6].childrens[2].menuName);
+        //
+        //   }
+        // }
       });
     }
   }
