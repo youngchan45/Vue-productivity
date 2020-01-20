@@ -51,7 +51,7 @@
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button type="primary" plain size="mini" @click="editRole(scope.row.roleId)">编辑</el-button>
-          <el-button type="danger" plain size="mini">删除</el-button>
+          <el-button type="danger" plain size="mini" @click="showDel(scope.row.roleId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -192,8 +192,7 @@ export default {
       roleEditVisible: false,
       //弹窗内权限列表数据
       sourceData: [],
-      totalRow: 1,
-      
+      totalRow: 1
     };
   },
 
@@ -261,19 +260,19 @@ export default {
         }
       });
     },
-handleCheckChange(data, checked, indeterminate) {
-        console.log(data, checked, indeterminate);
-      },
-
-    // handleCheckChange(treeSelVal) {
-    //   console.log("treeSel", treeSelVal);
-
-    //   this.roleEditForm.checkedBox.push(treeSelVal.id)
-    //   console.log('编辑树',this.roleEditForm.checkedBox);
-
-    //   this.roleAddForm.checkedBox.push(treeSelVal.id)
-    //   console.log('新建树',this.roleAddForm.checkedBox);
+    // handleCheckChange(data, checked, indeterminate) {
+    //   console.log(data, checked, indeterminate);
     // },
+
+    handleCheckChange(treeSelVal) {
+      console.log("treeSel", treeSelVal);
+
+      this.roleEditForm.checkedBox.push(treeSelVal.id);
+      console.log("编辑树", this.roleEditForm.checkedBox);
+
+      this.roleAddForm.checkedBox.push(treeSelVal.id);
+      console.log("新建树", this.roleAddForm.checkedBox);
+    },
     //弹窗全选权限树
     checkAll() {
       console.log(this.$refs.sourceTree.setCheckedNodes(this.sourceData));
@@ -316,7 +315,7 @@ handleCheckChange(data, checked, indeterminate) {
           this.roleEditForm.roleName = res.data.data[0].roleName;
           this.roleEditForm.roleId = res.data.data[0].roleId;
           this.roleEditForm.checkedBox = res.data.data[0].ids;
-          console.log('已选',this.roleEditForm.checkedBox)
+          console.log("已选", this.roleEditForm.checkedBox);
         });
     },
     //保存编辑角色
@@ -337,6 +336,29 @@ handleCheckChange(data, checked, indeterminate) {
           this.roleEditVisible = false;
           this.getList();
         });
+    },
+    showDel(id) {
+    //记住格式..
+      this.$confirm("确认删除此角色？",  "提示",{
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$http.delete("/role/deleteRole", {
+            params: {
+              roleId: id
+            }
+          }) .then(res => {
+          console.log(res)
+          // if (!res.status === 200) {
+          //   return this.$message.error("删除失败");
+          // }
+          // this.$message.success("删除成功");
+          // this.getList();
+        });
+        })
+       
     }
   }
 };

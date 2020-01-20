@@ -26,7 +26,7 @@ const socialRelations = () => import('../components/Archivesmanagement/SocialRel
 const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
 const leaflet = () => import('../components/Leaflet/Leaflet.vue')
 const entrance = () => import('../components/Subjectanalysis/Entrance.vue')
-const earlyWarning = () => import('../components/Earlywarning/Earlywarning.vue')
+const earlyWarning = () => import('../components/Earlywarning/EarlyWarning.vue')
 
 const routes = [
   {
