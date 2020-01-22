@@ -18,7 +18,7 @@
       </div>
     </div>
     <el-table
-      :data="waringData0"
+      :data="waringData"
       :span-method="objectSpanMethod"
       border
       style="width: 100%; margin-top: 20px"
@@ -92,7 +92,7 @@
               :label="item.label"
               :value="item.value"
             ></el-option>
-          </el-select> -->
+          </el-select>-->
         </el-form-item>
 
         <el-form-item label="建筑面积(m²)" class="el_font_size">
@@ -123,7 +123,8 @@
 export default {
   data() {
     return {
-      waringData0: [
+      waringData1: [],
+      waringData: [
         {
           officialType: "裸官",
           warnName: "疑似裸官预警",
@@ -232,15 +233,38 @@ export default {
           }
         })
         .then(res => {
-          console.log("预警列表", res);
-          res.data.data.forEach(item => {
-            this.waringData0.push(item);
-          });
-          for (var i = 0; i++; i < res.data.data.length) {
-            for (var j = 0; j++; j < i) {
-              this.waringData0[i].conditions =
-                res.data.data[i].warnConditions[j].conditions;
-            }
+          // res.data.data.forEach(item => {
+          //   this.waringData.push(item);
+          //   console.log("父亲", this.waringData);
+          //   let arr = [];
+          //   // res.data.data.forEach(item => {
+          //   arr.push(item.warnConditions);
+          //   console.log("儿子", arr);
+          //   // });
+          //   let arr1 = [];
+          //   arr[0].forEach(item => {
+          //     arr1.push(item.conditions);
+          //     console.log("孙子", arr1);
+          //   });
+          //   //  this.waringData.conditions=arr1;
+          //   for (var i = 3;  i < this.waringData.length;i++) {
+          //      console.log('???', this.waringData[i].conditions)
+          //     for (var j = 0;  j < arr1.length;j++) {
+          //       console.log('要循环的数组',arr1[j])
+          //       this.waringData[i].conditions = arr1[j];
+          //     }
+          //   }
+          // });
+          console.log("1", res);
+          for (var i = 0; i < this.waringData.length; i++) {
+            res.data.data.forEach(item => {
+              this.waringData.push({
+                officialType: "111",
+                warnName: item.warnName,
+                conditions: item.warnConditions.conditions,
+                content: item.warnConditions.content
+              });
+            });
           }
         });
     },
@@ -305,11 +329,11 @@ export default {
       console.log("save", this.addInfo);
       this.$http.post("/warn/creatWarn", this.addInfo).then(res => {
         console.log(res);
-        if(!res.statue===200){
-          return this.$message.error('保存失败')
+        if (!res.statue === 200) {
+          return this.$message.error("保存失败");
         }
-        this.$message.success('保存成功');
-        this.warningAddVisible=false;
+        this.$message.success("保存成功");
+        this.warningAddVisible = false;
         this.getWaringList();
       });
     }

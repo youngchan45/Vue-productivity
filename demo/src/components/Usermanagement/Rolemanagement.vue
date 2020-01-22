@@ -345,7 +345,7 @@ this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
       })
         .then(() => {
           this.$http.get("/role/deleteRole",{
-            params:{
+            params:{                                                                                                                   
               roleId:id
             }
           }).then(res => {
