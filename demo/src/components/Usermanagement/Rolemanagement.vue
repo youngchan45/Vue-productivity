@@ -337,29 +337,33 @@ export default {
           this.getList();
         });
     },
-    showDel(id) {
-    //记住格式..
-      this.$confirm("确认删除此角色？",  "提示",{
+    showDel(id){
+this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          this.$http.delete("/role/deleteRole", {
-            params: {
-              roleId: id
+          this.$http.get("/role/deleteRole",{
+            params:{
+              roleId:id
             }
-          }) .then(res => {
-          console.log(res)
-          // if (!res.status === 200) {
-          //   return this.$message.error("删除失败");
-          // }
-          // this.$message.success("删除成功");
-          // this.getList();
-        });
+          }).then(res => {
+            console.log('删除',res)
+            if (!res.status === 200) {
+              return this.$message.error("删除失败");
+            }
+            this.$message.success("删除成功");
+            this.getList();
+          });
         })
-       
-    }
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
   }
 };
 </script>
