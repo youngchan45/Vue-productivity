@@ -1,6 +1,6 @@
 <template>
   <div>
-    分析入口{{da}}
+    分析入口{{now}}
     <group></group>
   </div>
 </template>
@@ -10,7 +10,7 @@ import group from "../publicUse/Group";
 export default {
   data() {
     return {
-      da: ""
+      now: ""
     };
   },
   created() {
@@ -33,7 +33,7 @@ export default {
       handler: function(val, oldVal) {
         console.log(val, oldVal);
         this.$forceUpdate();
-        this.da = this.$route.query.page;
+        this.now = this.$route.query.page;
       },
       immediate: true
     }

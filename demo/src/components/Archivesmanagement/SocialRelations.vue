@@ -10,7 +10,7 @@
         <el-button plain size="mini" @click="goBack">返回</el-button>
       </div>
       <div>
-        <el-button plain size="mini" type="primary" @click="goBack">
+        <el-button plain size="mini" type="primary" @click="exportExcel">
           <i class="el-icon-upload el-icon--right"></i>导出excel
         </el-button>
         <el-button plain size="mini" @click="openUserDefine" type="success">自定义列</el-button>
@@ -55,6 +55,7 @@
       border
       max-height="470px"
       show-overflow-tooltip
+      id="relationTable"
     >
       <el-table-column label="姓名" prop="name" v-if="colData[0].istrue"></el-table-column>
       <el-table-column label="与本人关系" prop="political" v-if="colData[1].istrue"></el-table-column>
@@ -194,6 +195,8 @@
 
 <script>
 // import { eventBus} from '../../assets/Vuebus'
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
   data() {
     return {
@@ -202,12 +205,13 @@ export default {
         // {name:'111'}
       ],
       userDefinedVisible: false,
+      // relationShow:true,
       //循环被选数组里面的每一项和表头数组里面对应的每一项，用indexOf处理，如果对应得到，则属性为true
       userDefinedChecked: [
         "姓名",
         "与本人关系",
         "性别",
-        "民族",
+        // "民族",
         "政治面貌"
         // "工作单位",
         // "婚姻状况",
@@ -297,7 +301,12 @@ export default {
         })
         .then(res => {
           console.log("亲戚", res);
-          this.relationsData = res.data.data;
+          // this.relationsData = res.data.data;
+          //如果没有亲戚列表，则不用加载亲戚列表，有的话就追加在ownList上
+          if(res.data.data.length==0){
+            return;
+          }
+          this.ownData.push(res.data.data);
         });
     },
     getOwnInfo() {
@@ -332,12 +341,66 @@ export default {
       this.userDefinedVisible = true;
       // document.addEventListener('click', this.foo)
       // 获取鼠标点坐标
-    }
+    },
     // foo() {
     //   this.top = event.clientY
     //   this.left = event.clientX
     //   // document.removeEventListener('click', this.foo) // 取消监听事件
     // }
+    exportExcel() {
+      this.$http
+        .post("/archive/exportExcel", {
+          // params:{
+          module: 1,
+          colum: [
+            { key: "姓名", value: "name" },
+            { key: "与本人关系", value: "relationship" },
+            { key: "性别", value: "sex" },
+            { key: "政治面貌", value: "political" }
+          ],
+          card: this.$route.query.idCard,
+          year: this.$route.query.dateYear,
+          deptId: window.sessionStorage.getItem("deptId"),
+          userId: window.sessionStorage.getItem("userId"),
+          dateYear: "",
+          idCard: "",
+          userName: "",
+          rankName: "",
+          area: "",
+          carNum: "",
+          estateNum: "",
+          goboard: "",
+          salary: "",
+          button: "button1",
+          condition: "",
+          type: "",
+          unitList: [],
+          punishmentList: []
+          // }
+        })
+        .then(res => {
+          console.log("导出", res);
+          /* out-table关联导出的dom节点 */
+          var wb = XLSX.utils.table_to_book(
+            document.querySelector("#relationTable")
+          );
+          /* get binary string as output */
+          var wbout = XLSX.write(wb, {
+            bookType: "xlsx",
+            bookSST: true,
+            type: "array"
+          });
+          try {
+            FileSaver.saveAs(
+              new Blob([wbout], { type: "application/octet-stream" }),
+              "报告人社会关系图.xlsx"
+            );
+          } catch (e) {
+            if (typeof console !== "undefined") console.log(e, wbout);
+          }
+          return wbout;
+        });
+    }
   },
   watch: {
     // userDefinedChecked(valArr) {

@@ -44,8 +44,8 @@
           <el-table-column type="index" label="序号" width="70"></el-table-column>
           <el-table-column label="姓名" prop="name"></el-table-column>
           <el-table-column label="身份证" prop="unit_name" show-overflow-tooltip></el-table-column>
-          <el-table-column label="级别" prop="present_post" show-overflow-tooltip></el-table-column >
-          <el-table-column label="单位" prop="present_rank" ></el-table-column>
+          <el-table-column label="级别" prop="present_post" show-overflow-tooltip></el-table-column>
+          <el-table-column label="单位" prop="present_rank"></el-table-column>
         </el-table>
         <div class="block">
           <el-pagination
@@ -64,7 +64,7 @@
       <div class="leafTab">
         <el-tabs stretch class>
           <el-tab-pane label="专题分析">
-            <el-checkbox-group v-model="leafChecked" class="checkFlex">
+            <el-checkbox-group v-model="leafChecked" class="checkFlex" >
               <el-checkbox label="个人基本情况"></el-checkbox>
               <el-checkbox label="
 因私出入境情况"></el-checkbox>
@@ -100,7 +100,7 @@ export default {
         { label: "工作单位", value: "4" },
         { label: "级别", value: "5" }
       ],
-      multipleSelection:[],
+      multipleSelection: [],
       input: "",
       leafChecked: [],
       leafChecked1: [],
@@ -157,10 +157,10 @@ export default {
       this.archivesQuery.pageIndex = newPage;
       this.getList();
     },
-     handleSelectionChange(val) {
-        this.multipleSelection = val;
-        console.log('val',this.multipleSelection)
-      }
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      console.log("val", this.multipleSelection);
+    }
   }
 };
 </script>

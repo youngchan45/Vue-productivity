@@ -85,14 +85,14 @@
               :value="item.value"
             ></el-option>
           </el-select>
-          <el-select v-model="addInfo.warnConditions[1].content" placeholder="请选择" size="small">
+          <!-- <el-select v-model="addInfo.warnConditions[1].content" placeholder="请选择" size="small">
             <el-option
               v-for="item in cityOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             ></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
 
         <el-form-item label="建筑面积(m²)" class="el_font_size">
@@ -123,7 +123,6 @@
 export default {
   data() {
     return {
-      
       waringData0: [
         {
           officialType: "裸官",
@@ -154,7 +153,7 @@ export default {
         id: "",
         warnName: "",
         type: 0,
-        createTime: new Date()  ,
+        createTime: new Date(),
         updateTime: new Date(),
         userId: window.sessionStorage.getItem("userId"),
         warnConditions: [
@@ -169,7 +168,7 @@ export default {
             id: "",
             selects: "",
             conditions: "地址",
-            content: "",
+            content: "广东省-广州市",
             warnId: ""
           },
           {
@@ -300,10 +299,19 @@ export default {
       this.areaStrings = this.area.area1 + "-" + this.area.area2;
       this.addInfo.warnConditions[2].content = this.areaStrings;
       this.tradeStrings = this.trade.trade1 + "-" + this.trade.trade2;
-      this.addInfo.warnConditions[3].content = this.areaStrings;
+      this.addInfo.warnConditions[3].content = this.tradeStrings;
       this.numStrings = this.num.num1 + "-" + this.num.num2;
-      this.addInfo.warnConditions[4].content = this.areaStrings;
-      console.log(this.addInfo)
+      this.addInfo.warnConditions[4].content = this.numStrings;
+      console.log("save", this.addInfo);
+      this.$http.post("/warn/creatWarn", this.addInfo).then(res => {
+        console.log(res);
+        if(!res.statue===200){
+          return this.$message.error('保存失败')
+        }
+        this.$message.success('保存成功');
+        this.warningAddVisible=false;
+        this.getWaringList();
+      });
     }
   }
 };
@@ -314,7 +322,7 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-.el_font_size > label{
+.el_font_size > label {
   font-size: 12px !important;
 }
 .inline {
