@@ -1,10 +1,7 @@
 <template>
-  <!-- <navmenu></navmenu> -->
-  <!-- <router-view></router-view> -->
   <el-container class="homeContainer">
     <el-header class="topBarContainer">
       <div>
-        <!-- <img :src="logo" alt /> -->
         <span>广州市政治生态感知应用平台（领导干部）</span>
       </div>
       <div class="topSet">
@@ -24,7 +21,6 @@
         </el-popover>
       </div>
     </el-header>
-    <!--按钮身上有个事件，点击时把布尔值传递给子组件，子组件身上也有个布尔参数，但这个参数取决于子组件传过来的布尔值-->
     <el-container>
       <!-- 侧边栏菜单区域 -->
       <el-aside width="180px">
@@ -37,13 +33,13 @@
           unique-opened
           router
         >
-        <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" />
+          <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" />
           <!-- 一级菜单 -->
           <!-- <el-submenu :index="item.pageUrl+''" v-for="(item,menuId) in menuList" :key="menuId">
-            <template slot="title">{{item.menuName}}</template> -->
+          <template slot="title">{{item.menuName}}</template>-->
 
-            <!-- 二级菜单 -->
-            <!-- <el-submenu
+          <!-- 二级菜单 -->
+          <!-- <el-submenu
               :index="item1.pageUrl+''"
               v-for="(item1,menuId1) in item.childrens"
               :key="menuId1"
@@ -51,8 +47,8 @@
             >{{item1.menuName}}</el-submenu>
           </el-submenu>-->
 
- <!-- <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" /> -->
- <!-- <template v-if="item.childrens.length == 0">
+          <!-- <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" /> -->
+          <!-- <template v-if="item.childrens.length == 0">
         <el-menu-item :index="item.pageUrl">
           <i class="el-icon-menu"></i>
           {{item.menuName}}
@@ -76,17 +72,19 @@
         </el-menu-item>
       </template>
     </el-submenu>
-    </div></div> -->
-        </el-menu> 
-
+          </div></div>-->
+        </el-menu>
       </el-aside>
+
       <el-container>
-        <el-main>
+        <el-main class="main">
           <el-card class="box-card">
             <router-view></router-view>
           </el-card>
         </el-main>
-        <el-footer style="height: 38px;">Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
+        <el-footer
+          style="height: 38px;"
+        >Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
       </el-container>
     </el-container>
     <el-dialog
@@ -135,9 +133,7 @@
 </template>
 
 <script>
-// import changePsw from "./publicUse/changePsw";
-// import Navmenu from '../components/NavMenu/Navmenu'
-import SidebarItem from './NavMenu/Sidebar'
+import SidebarItem from "./NavMenu/Sidebar";
 export default {
   data() {
     return {
@@ -183,33 +179,16 @@ export default {
           }
         ]
       },
-      //       var validatePass1=(rule,value,callback)=>{
-      //         var a =(?=.*?[0-9])
-      //         if((?=.*?[0-9])){
-      // callback(new Error('请输入密码'))
-      // ),
-      //         })
-      activePath: "",
-    }
+      activePath: ""
+    };
   },
-   name:'Sidebar',
+  name: "Sidebar",
   components: { SidebarItem },
-  // props:{
-  //   menuList: {
-  //     type: Array,
-  //     required: true
-  //   }
-  // },
   created() {
     this.getMenuList();
     // this.forcedToModify();
     this.activePath = window.sessionStorage.getItem("activePath");
   },
-  // components: {
-  //   // navmenu:Navmenu,
-  //   // changepsw: changePsw
-  //   sidebaritem:sidebar-item
-  // },
   methods: {
     tishi() {
       this.dialogFormVisible = false;
@@ -224,21 +203,6 @@ export default {
       // console.log("重置", this);
       this.$refs.pswFormRef.resetFields();
     },
-    // showlDialog(data){
-    //       console.log(data)
-    //     if(data == 'false'){
-    //       this.isShow = false;
-    //     }else{
-    //       this.isShow = true;
-    //     }
-    //      console.log('是否弹窗布尔',this.isShow)
-    // },
-    // oppenModel () {
-    //   this.showModel = true
-    // },
-    // closeModel (res) {
-    //   this.showModel = res
-    // },
     loginOut() {
       window.sessionStorage.clear();
       this.$router.push("/login");
@@ -252,18 +216,11 @@ export default {
       } else {
         this.dialogFormVisible = true;
       }
-      // console.log('弹窗')
     },
-    // handleOpen(key, keyPath) {
-    //   console.log(key, keyPath);
-    // },
-    // handleClose(key, keyPath) {
-    //   console.log(key, keyPath);
-    // },
     async getMenuList() {
       await this.$http.get("menu/getMenu").then(res => {
         this.menuList = res.data.data;
-        console.log('导航栏',res);
+        console.log("导航栏", res);
       });
     },
     saveNavState(activePath) {
@@ -274,8 +231,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.homeContainer {
-  height: 100%;
+// .homeContainer {
+//   height: 100%;
+// }
+.main{
+  height: clac(100% - 60px - 38px);
 }
 // .el-header,
 .el-footer {
@@ -287,11 +247,13 @@ export default {
 }
 
 .el-aside {
-  background-color: #545c64;
+  // background-color: #545c64;
+  height: calc(100% - 60px);
 }
 
 .el-main {
   background-color: #e9eef3;
+  height: calc(100% - 60px);
 }
 .topBarContainer {
   display: flex;
@@ -301,11 +263,6 @@ export default {
   padding: 20px 20px;
   background-color: #545c64;
   color: #fff;
-  // position: fixed;
-  //     top:0px;
-  //   width: 100%;
-  //   min-height: 30px;
-  //   overflow: hidden;
   .topSet {
     font-size: 14px;
     align-self: center;
@@ -336,7 +293,6 @@ export default {
   }
   .box-card {
     width: 480px;
-    
   }
 }
 </style>

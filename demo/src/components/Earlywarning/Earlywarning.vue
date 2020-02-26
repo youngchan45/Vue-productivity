@@ -264,6 +264,7 @@ export default {
                 conditions: item.warnConditions.conditions,
                 content: item.warnConditions.content
               });
+              console.log('222',this.waringData)
             });
           }
         });

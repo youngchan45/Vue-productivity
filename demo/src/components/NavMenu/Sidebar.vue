@@ -51,7 +51,7 @@ export default {
 
 <style lang="less" scoped>
 .el-menu-vertical-demo {
-  width: 160px;
+  width: 180px;
   // position: fixed;
   // top:30px;
 }

@@ -1,7 +1,6 @@
 <template>
   <div>
     <group></group>
-
     <div class="warn">
       <h3>预警信息</h3>
       <div>更多</div>
@@ -26,8 +25,8 @@ import Group from "../components/publicUse/Group";
 export default {
   data() {
     return {
-activeName: "0",
-warnQuery: {
+      activeName: "0",
+      warnQuery: {
         deptId: 1,
         type: ""
       },
@@ -36,12 +35,12 @@ warnQuery: {
         { label: "房产预警", name: "0", type: "0" },
         { label: "涉及裸官", name: "1", type: "1" },
         { label: "疑似经商办企业", name: "2", type: "2" }
-      ],
+      ]
     };
   },
-created() {
-  this.getWarnInfo();
-},
+  created() {
+    this.getWarnInfo();
+  },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
