@@ -1,21 +1,23 @@
 <template>
-  <div class="loginContainer">
+  <div class="container">
     <div class="loginBox">
-      <el-form :model="loginForm" :rules="loginFormRules" ref="loginFormRef" >
+      <el-form :model="loginForm" :rules="loginFormRules" ref="loginFormRef" class="loginForm">
         <el-form-item prop="username">
           <el-input placeholder="请输入用户名" v-model="loginForm.username" clearable>
             <i slot="suffix" class="el-icon-user"></i>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input placeholder="请输入密码" show-password v-model="loginForm.password" clearable @keyup.enter.native='onSubmit'></el-input>
+          <el-input
+            placeholder="请输入密码"
+            show-password
+            v-model="loginForm.password"
+            clearable
+            @keyup.enter.native="onSubmit"
+          ></el-input>
         </el-form-item>
-        <!-- <div class="keep">
-          <el-checkbox v-model="checked" @click="keepPsw">记住密码</el-checkbox>
-          <span class="forgetPsw" @click="forgetPsw">忘记密码</span>
-        </div>-->
         <el-form-item>
-          <el-button type="primary" class="onSubmit" @click="onSubmit">登录</el-button>
+          <el-button type="primary" class="onSubmit" @click="onSubmit" >登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -55,7 +57,7 @@ export default {
         //解构赋值data
         // const { data: res } = await this.$http.post("login", this.loginForm);
         const res = await this.$http.post("login", this.loginForm);
-        console.log("------login",res );
+        console.log("------login", res);
 
         if (res.status !== 200) {
           this.$message.error("登录失败");
@@ -63,9 +65,12 @@ export default {
           window.sessionStorage.setItem("token", res.data.data.token);
           window.sessionStorage.setItem("userId", res.data.data.userId);
           window.sessionStorage.setItem("deptName", res.data.data.deptName);
-          window.sessionStorage.setItem("chineseName", res.data.data.chineseName);
-          window.sessionStorage.setItem("changePw",res.data.data.changePw)
-          window.sessionStorage.setItem('deptId',res.data.data.deptId)
+          window.sessionStorage.setItem(
+            "chineseName",
+            res.data.data.chineseName
+          );
+          window.sessionStorage.setItem("changePw", res.data.data.changePw);
+          window.sessionStorage.setItem("deptId", res.data.data.deptId);
           this.$message.success("登录成功");
           this.$router.push("/home/index");
         }
@@ -81,24 +86,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.loginContainer {
+.container {
   background-color: #236795;
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   .loginBox {
-    background-color: aliceblue;
-    width: 300px;
+    width:20%;
+    background-color: #fff;
     min-height: 180px;
+    min-width: 250px;
     border-radius: 4px;
-    align-self: center;
     padding: 20px;
-    .onSubmit {
-      width: 100%;
+    display: flex;
+    justify-content: center;
+  align-items: center;
+    .loginForm{
+      display: flex;
+      flex-direction: column;
+    justify-content: center;
+  align-items: center;
     }
-    .el-input__inner{
-      width: 100%;
+    .el-button{
+      width:220px;
     }
+
   }
 }
 </style>

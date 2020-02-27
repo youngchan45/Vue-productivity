@@ -150,6 +150,7 @@ export default {
   width: 100%;
   background-color: #545c64;
   color: #fff;
+  font-size: 20px;
 }
 .topBarContainer {
   display: flex;
@@ -157,7 +158,7 @@ export default {
   align-items: center;
   padding: 10px 20px;
 }
-.topSet >*{
+.topSet > * {
   padding: 0 5px;
   font-size: 14px;
 }

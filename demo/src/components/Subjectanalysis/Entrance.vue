@@ -13,19 +13,9 @@ export default {
       now: ""
     };
   },
-  created() {
-     
+  created() {   
     console.warn("into page");
-    console.log(this.$route.query.page);
-    
-  },
-
-  updated() {
-    console.warn("into page");
-  },
-  mounted() {
-    console.warn("into page");
-    // this.getGround();
+    console.log(this.$route.query.page);    
   },
   methods: {},
   watch: {

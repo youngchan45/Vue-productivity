@@ -6,7 +6,7 @@ body,
   margin: 0;
   padding: 0;
   font-family: "Microsoft YaHei";
-  /* overflow:hidden; */
+  color:#333;
 }
 
 .el-menu {
@@ -45,7 +45,3 @@ thead {
 .el-card,.el-card__body{
   height: 100%;
 }
-/* .basicEveryLine .el-col::after{
-  content: ":";
-  position: absolute;
-} */

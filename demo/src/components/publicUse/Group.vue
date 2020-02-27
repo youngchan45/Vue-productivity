@@ -3,31 +3,30 @@
     <h3>领导干部群体</h3>
     <el-row>
       <el-col :span="6">
-        <el-card>
+        <el-card class="cardFlex">
           <div slot="header">
-            <div>市管一把手</div>
+            <span>市管一把手</span>
           </div>
-          <div>
-            <div>
-              <span class="card1Count1">{{cardList1.count1}}</span>
-              <span>人</span>
-            </div>
-            <div class="card1Count2">
-              <span>同比上年</span>
-              <img v-show="rate.rate1 =='0'" :src="equal" alt="img-equal" />
-              <img v-show="rate.rate1 >'0'" :src="up" alt="img-up" />
-              <img v-show="rate.rate1 <'0'" :src="down" alt="img-down" />
-              <span>{{Math.abs(rate.rate1)*100+'%'}}</span>
-            </div>
+          <div class="cardData">
+            <span class="card1Count1">{{cardList1.count1}}</span>
+            <span>人</span>
+          </div>
+          <div class="card1Count2">
+            <span>同比上年</span>
+            <img v-show="rate.rate1 =='0'" :src="equal" alt="img-equal" />
+            <img v-show="rate.rate1 >'0'" :src="up" alt="img-up" />
+            <img v-show="rate.rate1 <'0'" :src="down" alt="img-down" />
+            <span>{{Math.abs(rate.rate1)*100+'%'}}</span>
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="6">
-        <el-card>
+        <el-card class="cardFlex">
           <div slot="header">
             <span>市管非一把手</span>
           </div>
-          <div>
+          <div class="cardData">
             <span class="card1Count1">{{cardList1.count2}}</span>
             <span>人</span>
           </div>
@@ -40,12 +39,13 @@
           </div>
         </el-card>
       </el-col>
+
       <el-col :span="6">
-        <el-card>
+        <el-card class="cardFlex">
           <div slot="header">
-            <div>非市管初级</div>
+            <span>非市管初级</span>
           </div>
-          <div class="card1Count2">
+          <div class="cardData">
             <span class="card1Count1">{{cardList1.count3}}</span>
             <span>人</span>
           </div>
@@ -59,11 +59,11 @@
         </el-card>
       </el-col>
       <el-col :span="6">
-        <el-card>
+        <el-card class="cardFlex">
           <div slot="header">
-            <div>市管非一把手</div>
+            <span>市管非一把手</span>
           </div>
-          <div>
+          <div class="cardData">
             <span class="card1Count1">{{cardList1.count4}}</span>
             <span>人</span>
           </div>
@@ -86,28 +86,19 @@
     <el-row>
       <div v-for="(item,index) in groundList" :key="index">
         <el-col :span="6">
-          <!-- <el-card :class="{'nextGround':display}"> -->
-          <el-card>
+          <el-card class="cardFlex">
             <div slot="header">
               <!--新知识点，不用执着于使用css实现悬浮显示整个文字，直接用title属性-->
               <span :title="item.groupName">{{item.groupName | ellipsis }}</span>
             </div>
-            <div>
+            <div class="cardData">
               <span class="card1Count1">{{item.personCount}}</span>
               <span>人</span>
             </div>
-            <div class="card1Count2">
+            <div class="card1Count3">
               <!--易错点：传送id的时候 不一定要传送绑定在表单上的数据，只要后台有返回这个数据，就可以用item.xx传过去，或者直接传item-->
               <a @click="showEdit(item.groupId)">编辑</a>
               <a @click="showDel(item.groupId)">删除</a>
-              <!-- <el-popover placement="top" width="160" v-model="visible">
-                <p>确定删除吗？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
-                </div>
-                <el-button slot="reference">删除</el-button>
-              </el-popover>-->
             </div>
           </el-card>
         </el-col>
@@ -284,8 +275,7 @@ export default {
         year: ""
       },
       cardList1: [],
-      
-      
+
       typeOptions: [
         { label: "单位", value: "1" },
         { label: "级别", value: "0" }
@@ -339,10 +329,6 @@ export default {
   },
   created() {
     this.getCard1();
-    
-    // this.entity.entity.operator=this.operator;
-    // debugger;
-    // console.log('idddd',this.entity.entity.operator)
     this.getGround();
   },
   methods: {
@@ -592,11 +578,32 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.cardFlex,
+.cardData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cardFlex {
+  flex-direction: column;
+}
 .card1Count1 {
   font-size: 60px;
 }
-.card1Count2 {
+.card1Count2,
+.card1Count3 {
   font-size: 10px;
+}
+.card1Count3 {
+  > * {
+    padding: 0 10px;
+  }
+  a:nth-child(1) {
+    color: green;
+  }
+  a:nth-child(2) {
+    color: red;
+  }
 }
 .nextGround {
   display: none;

@@ -21,6 +21,7 @@
           unique-opened
           router
         >
+        <!-- 自定义组件名首字母大写，但用在标签里面用时，则只能识别小写，再因为这个词是由两个单词组成，为了语义化所以用-连接，合起来的话不容易看 -->
           <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" />
         </el-menu>
       </el-aside>
@@ -73,6 +74,7 @@ export default {
 <style lang="less" scoped>
 .home {
   height: 100%;
+  min-width:860px;
   display: flex;
   flex-direction: column;
 }
@@ -86,15 +88,12 @@ export default {
 }
 
 .left {
-  width: 180px;
   overflow-x: hidden;
-  // height: calc(100% - 60px);
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .el-menu {
   overflow-x: hidden;
-  // height: calc(100% - 60px);
   overflow-y: auto;
 }
 

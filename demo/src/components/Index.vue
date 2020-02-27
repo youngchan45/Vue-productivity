@@ -70,4 +70,7 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+.el-link{
+  padding:4px 0;
+}
 </style>
