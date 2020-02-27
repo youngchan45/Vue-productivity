@@ -1,29 +1,17 @@
 <template>
-  <el-container class="homeContainer">
-    <el-header class="topBarContainer">
-      <div>
-        <span>广州市政治生态感知应用平台（领导干部）</span>
-      </div>
-      <div class="topSet">
-        <span>
-          <i class="el-icon-user"></i>
-          您好，({{this.deptName1}}){{this.chineseName1}}
-        </span>
-        <span @click="changePsw">修改密码</span>
-
-        <el-popover placement="top" width="160" v-model="visible">
-          <p>确定要退出平台吗？</p>
-          <div style="text-align: right; margin: 0">
-            <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-            <el-button type="primary" size="mini" @click="loginOut">确定</el-button>
-          </div>
-          <span slot="reference">退出</span>
-        </el-popover>
-      </div>
-    </el-header>
-    <el-container>
+  <!-- 总容器 -->
+  <el-container class="home">
+    <!-- 顶部容器 -->
+    <el-container class="top">
+      <topbar></topbar>
+    </el-container>
+    <!-- 下半部分容器 -->
+    <!-- 新知识！！！！：如何控制页面在里面滚动
+    1. （父级）大总体设置overflow:hidden
+    2.（子级孙级都可以）需要内部滚动的区域设置overflow:auto-->
+    <el-container class="bottom">
       <!-- 侧边栏菜单区域 -->
-      <el-aside width="180px">
+      <el-aside width="180px" class="left">
         <el-menu
           :default-active="this.$route.path"
           class="el-menu-vertical-demo"
@@ -34,189 +22,41 @@
           router
         >
           <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" />
-          <!-- 一级菜单 -->
-          <!-- <el-submenu :index="item.pageUrl+''" v-for="(item,menuId) in menuList" :key="menuId">
-          <template slot="title">{{item.menuName}}</template>-->
-
-          <!-- 二级菜单 -->
-          <!-- <el-submenu
-              :index="item1.pageUrl+''"
-              v-for="(item1,menuId1) in item.childrens"
-              :key="menuId1"
-              @click="saveNavState(item1.pageUrl+'')"
-            >{{item1.menuName}}</el-submenu>
-          </el-submenu>-->
-
-          <!-- <sidebar-item v-for="menu in menuList" :key="menu.pageUrl" :item="menu" /> -->
-          <!-- <template v-if="item.childrens.length == 0">
-        <el-menu-item :index="item.pageUrl">
-          <i class="el-icon-menu"></i>
-          {{item.menuName}}
-        </el-menu-item>
-    </template>
-
-    <el-submenu v-else :index="item.pageUrl">
-      <template slot="title" >
-        <i class="el-icon-menu"></i>
-        {{item.menuName}}
-      </template>
-
-      <template v-for="child in item.childrens">
-        <sidebar-item
-          v-if="child.childrens&&child.childrens.length>0"
-          :item="child"
-          :key="child.pageUrl"/>
-        <el-menu-item v-else :key="child.pageUrl" :index="child.pageUrl">
-          <i class="el-icon-location"></i>
-          {{child.menuName}}
-        </el-menu-item>
-      </template>
-    </el-submenu>
-          </div></div>-->
         </el-menu>
       </el-aside>
-
-      <el-container>
-        <el-main class="main">
-          <el-card class="box-card">
-            <router-view></router-view>
-          </el-card>
-        </el-main>
+      <!-- 左边主体区域 -->
+      <el-container class="right">
+        <!-- 内容区域 -->
+        <el-card class="main">
+          <router-view></router-view>
+        </el-card>
+        <!-- 脚部区域 -->
         <el-footer
           style="height: 38px;"
         >Copyright© GZPC All Rights Reserved 广州市纪委 版权所有 粤ICP备05052239号-1</el-footer>
       </el-container>
     </el-container>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogFormVisible"
-      width="30%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
-    >
-      <!--弹窗内容-->
-      <span>新用户强制改密码</span>
-      <span slot="footer" class="dialog-footer">
-        <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
-        <el-button type="primary" @click="tishi">去改密码</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="修改密码"
-      :visible.sync="dialogFormVisible1"
-      width="35%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="showClose"
-    >
-      <!--弹窗内容-->
-      <el-form ref="pswFormRef" statue-icon :model="pswForm" :rules="pswFormRules" :inline="true">
-        <el-form-item label="旧密码" prop="oldpass">
-          <el-input v-model="pswForm.oldpass" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="新密码" prop="newpass">
-          <el-input v-model="pswForm.newpass" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkpass">
-          <el-input v-model="pswForm.checkpass" clearable></el-input>
-        </el-form-item>
-        <!-- <span slot="footer" class="dialog-footer"> -->
-        <el-form-item>
-          <el-button @click="resetForm">重置</el-button>
-          <el-button type="primary" @click="dialogFormVisible1 = false">确 定</el-button>
-        </el-form-item>
-      </el-form>
-      <!-- </span> -->
-    </el-dialog>
   </el-container>
 </template>
 
 <script>
 import SidebarItem from "./NavMenu/Sidebar";
+import Topbar from "./NavMenu/Topbar";
 export default {
   data() {
     return {
-      visible: false,
       menuList: [],
-      deptName1: window.sessionStorage.getItem("deptName"),
-      chineseName1: window.sessionStorage.getItem("chineseName"),
-      dialogFormVisible: false,
-      dialogFormVisible1: false,
-      showClose: false,
-      pswForm: {
-        oldpass: "",
-        newpass: "",
-        checkpass: ""
-      },
-      pswFormRules: {
-        oldpass: [
-          {
-            required: true,
-            message: "请输入旧密码",
-            trigger: "blur"
-          },
-          {
-            min: 8,
-            message: "长度至少为8个字符",
-            trigger: "blur"
-          }
-        ],
-        newpass: [
-          { required: true, message: "请输入新密码" },
-          {
-            min: 8,
-            message: "长度至少为8个字符",
-            trigger: "blur"
-          }
-        ],
-        checkpass: [
-          { required: true, message: "请再次输入新密码" },
-          {
-            min: 8,
-            message: "长度至少为8个字符",
-            trigger: "blur"
-          }
-        ]
-      },
       activePath: ""
     };
   },
   name: "Sidebar",
-  components: { SidebarItem },
+  components: { SidebarItem, Topbar },
   created() {
     this.getMenuList();
     // this.forcedToModify();
     this.activePath = window.sessionStorage.getItem("activePath");
   },
   methods: {
-    tishi() {
-      this.dialogFormVisible = false;
-      this.dialogFormVisible1 = true;
-    },
-    changePsw() {
-      this.dialogFormVisible1 = true;
-      this.showClose = true;
-    },
-    //重置修改密码表单
-    resetForm() {
-      // console.log("重置", this);
-      this.$refs.pswFormRef.resetFields();
-    },
-    loginOut() {
-      window.sessionStorage.clear();
-      this.$router.push("/login");
-    },
-    forcedToModify() {
-      //changePw为0是新用户，修改保存后changePw为1
-      var oldNewUser = window.sessionStorage.getItem("changePw");
-      if (oldNewUser == 0) {
-        this.dialogFormVisible = true;
-        console.log(typeof oldNewUser);
-      } else {
-        this.dialogFormVisible = true;
-      }
-    },
     async getMenuList() {
       await this.$http.get("menu/getMenu").then(res => {
         this.menuList = res.data.data;
@@ -231,68 +71,55 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// .homeContainer {
-//   height: 100%;
-// }
-.main{
-  height: clac(100% - 60px - 38px);
+.home {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-// .el-header,
+.top {
+  width: 100%;
+}
+.bottom {
+  display: flex;
+  height: clac(100% -60px);
+  overflow: hidden;
+}
+
+.left {
+  width: 180px;
+  overflow-x: hidden;
+  // height: calc(100% - 60px);
+  overflow-y: auto;
+}
+
+.el-menu {
+  overflow-x: hidden;
+  // height: calc(100% - 60px);
+  overflow-y: auto;
+}
+
+// 必须记住：新知识点！！设置页面滚动但不显示滚动条！！
+.el-menu::-webkit-scrollbar {
+  width: 0;
+}
+
+.right {
+  height: clac(100% - 60px);
+}
+
+.main {
+  height: clac(100% - 60px - 38px);
+  overflow: auto;
+}
+
+.main::-webkit-scrollbar {
+  width: 0;
+}
 .el-footer {
   color: #999;
   font-size: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.el-aside {
-  // background-color: #545c64;
-  height: calc(100% - 60px);
-}
-
-.el-main {
-  background-color: #e9eef3;
-  height: calc(100% - 60px);
-}
-.topBarContainer {
-  display: flex;
-  justify-content: space-between;
-  font-size: 20px;
-  // font-weight: 800;
-  padding: 20px 20px;
-  background-color: #545c64;
-  color: #fff;
-  .topSet {
-    font-size: 14px;
-    align-self: center;
-    cursor: pointer;
-    :hover {
-      color: #ffd04b;
-    }
-    > * {
-      padding: 0 16px;
-    }
-  }
-
-  .text {
-    font-size: 14px;
-  }
-
-  .item {
-    margin-bottom: 18px;
-  }
-
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-  .clearfix:after {
-    clear: both;
-  }
-  .box-card {
-    width: 480px;
-  }
 }
 </style>
