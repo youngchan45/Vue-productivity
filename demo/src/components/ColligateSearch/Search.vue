@@ -1,125 +1,107 @@
-<template>
+<template>     
   <div>
-    <div class="filter">
-      <h2>快速搜索</h2>
-      <el-select
-        v-model="searchSel"
-        @change="currenSearchSel"
-        clearable
-        placeholder="全部"
-        size="small"
-      >
-        <el-option
-          v-for="item in searchOpts"
-          :key="item.label"
-          :label="item.label"
-          :value="item.value"
-          size="small"
-        ></el-option>
-      </el-select>
-      <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable size="small"></el-input>
-      <!--自定义传参，参数用括号括起来-->
-      <el-button size="small" type="primary" @click="getList('button1')">查询</el-button>
-      <el-button size="small" type="text" @click="toggleShow">高级搜索</el-button>
-    </div>
+     <h2>快速搜索</h2>
+    <div class="search"><quick-search></quick-search><el-button size="small" type="text" @click="advancedShow">高级搜索</el-button></div>
     <!-- 熟记动态css语法 -->
-    <div :class='{"advancedSearch":display}'>
-      <h2>高级搜索</h2>
-      <el-form ref="searchRef" :model="archivesQuery" label-width="80px" class="demo-form-inline">
-        <el-form-item label="姓名" prop="userName">
-          <el-input v-model="archivesQuery.userName" placeholder="请输入内容" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="房产面积" prop="area">
-          <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>至
-          <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="房产数量" prop="estateNum">
-          <el-input
-            v-model="archivesQuery.estateNum"
-            placeholder="请输入内容"
-            size="small"
-            type="number"
-          ></el-input>至
-          <el-input
-            v-model="archivesQuery.estateNum"
-            placeholder="请输入内容"
-            size="small"
-            type="number"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="身份证" prop="idCard">
-          <el-input v-model="archivesQuery.idCard" placeholder="请输入内容" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="汽车数量" prop="carNum">
-          <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>至
-          <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="奖金金额" prop="salary">
-          <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>至
-          <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="级别">
-          <el-select
-            v-model="archivesQuery.rankList"
-            multiple
-            filterable
-            clearable
-            placeholder="请输入搜索或单击选择"
-            @change="currenRankSel"
-          >
-            <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
-            <el-option
-              v-for="(item,index) in rankOptions"
-              :key="index"
-              :label="item.rankName"
-              :value="item.rankName"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="出境次数" prop="goboard">
-          <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>至
-          <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="工作单位" placeholder="请搜索单位" clearable>
-          <el-select v-model="archivesQuery.unitList" multiple filterable placeholder="请输入搜索或单击选择">
-            <el-option
-              v-for="item in unitOptions"
-              :key="item.unitId"
-              :label="item.unitName"
-              :value="item.unitCode"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="谈话处分" prop="punishmentList">
-          <el-checkbox-group v-model="archivesQuery.punishmentList" @change="checkedBox">
-            <el-checkbox label="1">谈话函询</el-checkbox>
-            <el-checkbox label="2">诫勉谈话</el-checkbox>
-            <el-checkbox label="3">党纪政务处分</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="年份" prop="searchSel">
-          <el-select
-            v-model="archivesQuery.dateYear"
-            @change="currenYearSel"
-            clearable
-            placeholder="全部"
-            size="small"
-          >
-            <el-option
-              v-for="item in years"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+      <div>
+        <div :class='{"advancedSearch":display}'>        
+        <h2>高级搜索</h2>
+        <el-form ref="searchRef" :model="archivesQuery" label-width="80px" class="demo-form-inline">
+          <el-form-item label="姓名" prop="userName">
+            <el-input v-model="archivesQuery.userName" placeholder="请输入内容" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="房产面积" prop="area">
+            <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="房产数量" prop="estateNum">
+            <el-input
+              v-model="archivesQuery.estateNum"
+              placeholder="请输入内容"
               size="small"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="resetSearch" plain type="primary">重置</el-button>
-          <el-button @click="getList('button2')" type="primary">搜索</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+              type="number"
+            ></el-input>至
+            <el-input
+              v-model="archivesQuery.estateNum"
+              placeholder="请输入内容"
+              size="small"
+              type="number"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="身份证" prop="idCard">
+            <el-input v-model="archivesQuery.idCard" placeholder="请输入内容" size="small"></el-input>
+          </el-form-item>
+          <el-form-item label="汽车数量" prop="carNum">
+            <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="奖金金额" prop="salary">
+            <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="级别">
+            <el-select
+              v-model="archivesQuery.rankList"
+              multiple
+              filterable
+              clearable
+              placeholder="请输入搜索或单击选择"
+              @change="currenRankSel"
+            >
+              <el-checkbox v-model="checked" @change="selectAll">全选</el-checkbox>
+              <el-option
+                v-for="(item,index) in rankOptions"
+                :key="index"
+                :label="item.rankName"
+                :value="item.rankName"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="出境次数" prop="goboard">
+            <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="工作单位" placeholder="请搜索单位" clearable>
+            <el-select v-model="archivesQuery.unitList" multiple filterable placeholder="请输入搜索或单击选择">
+              <el-option
+                v-for="item in unitOptions"
+                :key="item.unitId"
+                :label="item.unitName"
+                :value="item.unitCode"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="谈话处分" prop="punishmentList">
+            <el-checkbox-group v-model="archivesQuery.punishmentList" @change="checkedBox">
+              <el-checkbox label="1">谈话函询</el-checkbox>
+              <el-checkbox label="2">诫勉谈话</el-checkbox>
+              <el-checkbox label="3">党纪政务处分</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="年份" prop="searchSel">
+            <el-select
+              v-model="archivesQuery.dateYear"
+              @change="currenYearSel"
+              clearable
+              placeholder="全部"
+              size="small"
+            >
+              <el-option
+                v-for="item in years"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                size="small"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="resetSearch" plain type="primary">重置</el-button>
+            <el-button @click="getList('button2')" type="primary">搜索</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      </div>
     <div :class="{'searchDisplay':searchDisplay}">
       <div class="titleFlex">
         <h2>搜索结果</h2>
@@ -138,7 +120,7 @@
       </el-dialog>
       <el-table
         ref="filterTable"
-        :data="searchResult"
+        :data="archivesTableData"
         style="width: 100%"
         stripe
         border
@@ -201,21 +183,15 @@
 </template>
 
 <script>
+import quickSearch from '../publicUse/Quicksearch'
 export default {
   data() {
     return {
       checked: false,
       searchForm: {},
-      searchOpts: [
-        //1 全部
-        { label: "姓名", value: "2" },
-        { label: "身份证", value: "3" },
-        { label: "工作单位", value: "4" },
-        { label: "级别", value: "5" }
-      ],
       rankOptions: [],
       unitOptions: [],
-      searchSel: "",
+      // searchSel: "",
       rankListArr: "",
       searchDisplay: true,
       paging: "",
@@ -243,7 +219,7 @@ export default {
         // {label:'2018',value:0},
         // {label:'2019',value:1}
       ],
-      searchResult: [],
+      archivesTableData: [],
       userDefinedVisible: false,
       //循环被选数组里面的每一项和表头数组里面对应的每一项，用indexOf处理，如果对应得到，则属性为true
       userDefinedChecked: ["姓名", "与本人关系", "性别", "民族", "政治面貌"],
@@ -297,9 +273,11 @@ export default {
         { title: "任现级别时间", istrue: false },
         { title: "分管部门(岗位职责)", istrue: false }
       ],
-      display: true
+      display: true,
+      faShow:true
     };
   },
+  components:{quickSearch},
   created() {
     this.getYear();
     this.addUnit();
@@ -332,7 +310,7 @@ export default {
             }
           })
           .then(res => {
-            this.searchResult = res.data.data[0].list;
+            this.archivesTableData = res.data.data[0].list;
             this.searchDisplay = false;
             // this.archivesQuery = res.data.data[0].list;
             console.log("搜索结果1", res);
@@ -369,12 +347,12 @@ export default {
             console.log("搜索结果2", res);
             // this.archivesTableData = res.data.data[0].list;
             // console.log("btn", this.archivesQuery.button);
-            //1.把点击搜索之后返回的数据保存起来searchResult
-            //2.搜索结果界面v-for渲染searchResult
-            this.searchResult = res.data.data[0].list;
+            //1.把点击搜索之后返回的数据保存起来archivesTableData
+            //2.搜索结果界面v-for渲染archivesTableData
+            this.archivesTableData = res.data.data[0].list;
             this.paging = res.data.data[0];
             this.searchDisplay = false;
-            console.log("搜索结果3", this.searchResult);
+            console.log("搜索结果3", this.archivesTableData);
           });
       }
     },
@@ -385,11 +363,6 @@ export default {
     currenYearSel(selVal) {
       // this.searchSel = selVal;
       console.log("sel", selVal, this.archivesQuery.dateYear);
-    },
-    currenSearchSel(selVal) {
-      // this.searchSel = selVal;
-      console.log("简易搜索", selVal);
-      this.archivesQuery.type = selVal;
     },
     getYear() {
       this.$http.get("/basic/getSearchDate").then(res => {
@@ -508,8 +481,8 @@ export default {
         query: row
       });
     },
-    toggleShow() {
-      this.display = !this.display;
+    advancedShow() {
+      this.display = !this.display;    
     }
   },
   watch: {
@@ -533,6 +506,12 @@ export default {
 .searchDisplay,
 .advancedSearch {
   display: none;
+}
+.search{
+  display: flex;
+  >*{
+    padding-right:10px;
+  }
 }
 .titleFlex {
   display: flex;

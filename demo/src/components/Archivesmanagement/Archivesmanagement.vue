@@ -1,6 +1,6 @@
 3<template>
   <div>
-    <div class="filter">
+    <!-- <div class="filter">
       <el-select
         v-model="archivesQuery.searchSel"
         @change="currenSel"
@@ -24,8 +24,8 @@
         @clear="getList"
       ></el-input>
       <el-button size="mini" type="primary" @click="getList">搜索</el-button>
-    </div>
-
+    </div> -->
+<quick-search></quick-search>
     <el-table
       ref="filterTable"
       :data="archivesTableData"
@@ -76,7 +76,7 @@
 
 <script>
 // const archivesinfo = () => import("./Archivesinfo.vue");
-// import { eventBus} from '../../assets/Vuebus'
+import quickSearch from '../publicUse/Quicksearch'
 export default {
   data() {
     return {
@@ -117,6 +117,7 @@ export default {
       }
     };
   },
+   components:{quickSearch},
   created() {
     this.getList();
   },

@@ -132,13 +132,15 @@ const router = new VueRouter({
 //如果用户没有登录，但是直接通过url访问特定页面，需要重新导航到登录页面
 router.beforeEach((to, from, next) => {
   //to 将要访问的路径
-  //from 发表从哪个路径跳转而来
+  //from 当前导航即将要离开的路由对象
   //next 是一个函数，表示放行
   //next() 直接放行 next('/login') 强制跳转
   if (to.path === '/login') return next();
   //获取token
   const tokenstr = window.sessionStorage.getItem('token')
+  //如果用户信息不存在 则返回登录页
   if (!tokenstr) return next('/login')
+  //存在则放行
   next()
 })
 
