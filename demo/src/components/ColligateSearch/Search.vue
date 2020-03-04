@@ -1,29 +1,32 @@
-<template>     
+<template>
   <div>
-     <h2>快速搜索</h2>
-    <div class="search"><quick-search></quick-search><el-button size="small" type="text" @click="advancedShow">高级搜索</el-button></div>
+    <h2>快速搜索</h2>
+    <div class="search">
+      <quick-search @onGetList="getDataList"></quick-search>
+      <el-button size="small" type="text" @click="advancedShow">高级搜索</el-button>
+    </div>
     <!-- 熟记动态css语法 -->
-      <div>
-        <div :class='{"advancedSearch":display}'>        
+    <div>
+      <div :class="{'advancedSearch':display}">
         <h2>高级搜索</h2>
-        <el-form ref="searchRef" :model="archivesQuery" label-width="80px" class="demo-form-inline">
+        <el-form ref="searchRef" :model="archivesQuery" :rules="advancedRules" label-width="100px" class="demo-form-inline">
           <el-form-item label="姓名" prop="userName">
-            <el-input v-model="archivesQuery.userName" placeholder="请输入内容" size="small"></el-input>
+            <el-input v-model="archivesQuery.userName" placeholder="请输入姓名" size="small"></el-input>
           </el-form-item>
           <el-form-item label="房产面积" prop="area">
-            <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.area" placeholder="请输入内容" size="small" type="number"></el-input>
+            <el-input v-model="archivesQuery.area" placeholder="请输入面积" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.area" placeholder="请输入面积" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="房产数量" prop="estateNum">
             <el-input
               v-model="archivesQuery.estateNum"
-              placeholder="请输入内容"
+              placeholder="请输入数量"
               size="small"
               type="number"
             ></el-input>至
             <el-input
               v-model="archivesQuery.estateNum"
-              placeholder="请输入内容"
+              placeholder="请输入数量"
               size="small"
               type="number"
             ></el-input>
@@ -31,15 +34,15 @@
           <el-form-item label="身份证" prop="idCard">
             <el-input v-model="archivesQuery.idCard" placeholder="请输入内容" size="small"></el-input>
           </el-form-item>
-          <el-form-item label="汽车数量" prop="carNum">
-            <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.carNum" placeholder="请输入内容" size="small" type="number"></el-input>
+          <el-form-item label="汽车数量" prop="car">
+            <el-input v-model="archivesQuery.carNum" placeholder="请输入数量" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.carNum" placeholder="请输入数量" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="奖金金额" prop="salary">
-            <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.salary" placeholder="请输入内容" size="small" type="number"></el-input>
+            <el-input v-model="archivesQuery.salary" placeholder="请输入金额" size="small" type="number"></el-input>至
+            <el-input v-model="archivesQuery.salary" placeholder="请输入金额" size="small" type="number"></el-input>
           </el-form-item>
-          <el-form-item label="级别">
+          <el-form-item label="级别" prop="rank">
             <el-select
               v-model="archivesQuery.rankList"
               multiple
@@ -58,11 +61,26 @@
             </el-select>
           </el-form-item>
           <el-form-item label="出境次数" prop="goboard">
-            <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.goboard" placeholder="请输入内容" size="small" type="number"></el-input>
+            <el-input
+              v-model="archivesQuery.goboard"
+              placeholder="请输入数字"
+              size="small"
+              type="number"
+            ></el-input>至
+            <el-input
+              v-model="archivesQuery.goboard"
+              placeholder="请输入数字"
+              size="small"
+              type="number"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="工作单位" placeholder="请搜索单位" clearable>
-            <el-select v-model="archivesQuery.unitList" multiple filterable placeholder="请输入搜索或单击选择">
+          <el-form-item label="工作单位" placeholder="请搜索单位" clearable prop="unit">
+            <el-select
+              v-model="archivesQuery.unitList"
+              multiple
+              filterable
+              placeholder="请输入搜索或单击选择"
+            >
               <el-option
                 v-for="item in unitOptions"
                 :key="item.unitId"
@@ -71,14 +89,14 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="谈话处分" prop="punishmentList">
+          <el-form-item label="谈话处分" prop="punishment">
             <el-checkbox-group v-model="archivesQuery.punishmentList" @change="checkedBox">
               <el-checkbox label="1">谈话函询</el-checkbox>
               <el-checkbox label="2">诫勉谈话</el-checkbox>
               <el-checkbox label="3">党纪政务处分</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="年份" prop="searchSel">
+          <el-form-item label="年份" prop="dateYear">
             <el-select
               v-model="archivesQuery.dateYear"
               @change="currenYearSel"
@@ -97,11 +115,12 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="resetSearch" plain type="primary">重置</el-button>
-            <el-button @click="getList('button2')" type="primary">搜索</el-button>
+            <!--知识点： 传送一个字符串参数：@click="getAdvancedList('button2')" -->
+            <el-button @click="getAdvancedList" type="primary">搜索</el-button>
           </el-form-item>
         </el-form>
       </div>
-      </div>
+    </div>
     <div :class="{'searchDisplay':searchDisplay}">
       <div class="titleFlex">
         <h2>搜索结果</h2>
@@ -183,9 +202,12 @@
 </template>
 
 <script>
-import quickSearch from '../publicUse/Quicksearch'
+import quickSearch from "../publicUse/Quicksearch";
 export default {
   data() {
+//     var checkArea = (rule,value,callback)=>{
+// console.log(rule,value,callback)
+//       }
     return {
       checked: false,
       searchForm: {},
@@ -201,15 +223,17 @@ export default {
         dateYear: "2019", //此处不能写死，to-do
         idCard: "",
         userName: "",
+        // rankList: JSON.stringify(this.archivesQuery.rankList),
         rankList: [],
+        // rankList:[],
         area: "",
         carNum: "",
         estateNum: "",
         goboard: "",
         salary: "",
-        punishmentList: [],
-        unitList: [],
-        button: "",
+        punishmentList: ""+JSON.stringify([]),
+        unitList: ""+JSON.stringify([]),
+        button: "button2",
         type: 1, //搜索下拉框
         condition: "", //搜索框里的关键词
         pageIndex: 1,
@@ -274,87 +298,115 @@ export default {
         { title: "分管部门(岗位职责)", istrue: false }
       ],
       display: true,
-      faShow:true
+      faShow: true,
+     
+      advancedRules:{
+        //只能输入中文；最多4个字符
+        userName:[
+          {pattern: /^[\u2E80-\u9FFF]+$/, message:"只能输入中文",trigger:"blur"},
+          {max:4, message:"最多4个汉字",trigger:"blur"}
+        ],
+        //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
+        area:[
+          {pattern:/^\d+$/,message:"只能输入数字",trigger:"blur"},
+          {min:1,message:"不能小于1",trigger:"blur"},
+          // {validator:checkArea}
+        ],
+        //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
+        estateNum:[
+          {}
+        ],
+        //统一身份证验证规则
+        idCard:[
+          {}
+        ],
+        //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
+        car:[
+          {}
+        ],
+        //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
+        salary:[
+          {}
+        ],
+        rank:[
+          {}
+        ],
+        //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
+        goboard:[
+          {}
+        ],
+        unit:[
+          {}
+        ],
+        punishment:[
+          {}
+        ],
+        dateYear:[
+          {}
+        ],
+      }
     };
   },
-  components:{quickSearch},
+  
+  components: { quickSearch },
   created() {
     this.getYear();
     this.addUnit();
   },
   methods: {
-    getList(btnType) {
-      if (btnType == "button1") {
-        this.archivesQuery.button = "button1";
-        this.$http
-          .get("/query/complexQuery", {
-            params: {
-              userId: window.sessionStorage.getItem("userId"),
-              deptId: window.sessionStorage.getItem("deptId"),
-              dateYear: "",
-              idCard: this.archivesQuery.idCard,
-              userName: this.archivesQuery.userName,
-              rankList: JSON.stringify(this.archivesQuery.rankList),
-              area: this.archivesQuery.area,
-              carNum: this.archivesQuery.carNum,
-              estateNum: this.archivesQuery.estateNum,
-              goboard: this.archivesQuery.goboard,
-              salary: this.archivesQuery.salary,
-              punishmentList: JSON.stringify(this.archivesQuery.punishmentList),
-              unitList: JSON.stringify(this.archivesQuery.unitList),
-              button: this.archivesQuery.button,
-              type: this.archivesQuery.type, //搜索下拉框
-              condition: this.archivesQuery.condition, //搜索框里的关键词
-              pageIndex: 1,
-              pagesize: 10
-            }
-          })
-          .then(res => {
-            this.archivesTableData = res.data.data[0].list;
-            this.searchDisplay = false;
-            // this.archivesQuery = res.data.data[0].list;
-            console.log("搜索结果1", res);
-            this.paging = res.data.data[0];
-            console.log("btn", this.archivesQuery.button);
-          });
-      } else if (btnType == "button2") {
-        this.archivesQuery.button = "button2";
-        console.log("------", this.archivesQuery.rankList);
-        this.$http
-          .get("/query/complexQuery", {
-            params: {
-              userId: window.sessionStorage.getItem("userId"),
-              deptId: window.sessionStorage.getItem("deptId"),
-              dateYear: this.archivesQuery.dateYear,
-              idCard: this.archivesQuery.idCard,
-              userName: this.archivesQuery.userName,
-              rankList: JSON.stringify(this.archivesQuery.rankList),
-              area: this.archivesQuery.area,
-              carNum: this.archivesQuery.carNum,
-              estateNum: this.archivesQuery.estateNum,
-              goboard: this.archivesQuery.goboard,
-              salary: this.archivesQuery.salary,
-              punishmentList: JSON.stringify(this.archivesQuery.punishmentList),
-              unitList: JSON.stringify(this.archivesQuery.unitList),
-              button: this.archivesQuery.button,
-              type: 1, //搜索下拉框
-              condition: this.archivesQuery.condition, //搜索框里的关键词
-              pageIndex: 1,
-              pagesize: 10
-            }
-          })
-          .then(res => {
-            console.log("搜索结果2", res);
-            // this.archivesTableData = res.data.data[0].list;
-            // console.log("btn", this.archivesQuery.button);
-            //1.把点击搜索之后返回的数据保存起来archivesTableData
-            //2.搜索结果界面v-for渲染archivesTableData
-            this.archivesTableData = res.data.data[0].list;
-            this.paging = res.data.data[0];
-            this.searchDisplay = false;
-            console.log("搜索结果3", this.archivesTableData);
-          });
-      }
+    getDataList(data) {
+      console.log("----", data);
+      //易错点：get格式 get("url",{params:data});  post格式 post("url",data)
+      this.$http.get("/query/complexQuery", { params: data }).then(res => {
+        console.log("搜索结果1", res);
+        this.archivesTableData = res.data.data[0].list;
+        this.searchDisplay = false;
+        this.paging = res.data.data[0];
+      });
+    },
+
+    getAdvancedList() {
+      this.archivesQuery.rankList = JSON.stringify(this.archivesQuery.rankList);
+      console.warn(this.archivesQuery);
+      return;
+      /*this.$http
+        .get("/query/complexQuery", {
+          params: this.archivesQuery
+          // params:
+          // {
+          // userId: window.sessionStorage.getItem("userId"),
+          // deptId: window.sessionStorage.getItem("deptId"),
+          // dateYear: this.archivesQuery.dateYear,
+          // idCard: this.archivesQuery.idCard,
+          // userName: this.archivesQuery.userName,
+          // rankList: JSON.stringify(this.archivesQuery.rankList),
+          // area: this.archivesQuery.area,
+          // carNum: this.archivesQuery.carNum,
+          // estateNum: this.archivesQuery.estateNum,
+          // goboard: this.archivesQuery.goboard,
+          // salary: this.archivesQuery.salary,
+          // punishmentList: JSON.stringify(
+          //   this.archivesQuery.punishmentList
+          // ),
+          // unitList: JSON.stringify(this.archivesQuery.unitList),
+          // button: 'button2',
+          // type: 1, //搜索下拉框
+          // condition: this.archivesQuery.condition, //搜索框里的关键词
+          // pageIndex: 1,
+          // pagesize: 10
+          //  }
+        })
+        .then(res => {
+          console.log("搜索结果2", res);
+          // this.archivesTableData = res.data.data[0].list;
+          // console.log("btn", this.archivesQuery.button);
+          //1.把点击搜索之后返回的数据保存起来archivesTableData
+          //2.搜索结果界面v-for渲染archivesTableData
+          this.archivesTableData = res.data.data[0].list;
+          this.paging = res.data.data[0];
+          this.searchDisplay = false;
+          console.log("搜索结果3", this.archivesTableData);
+        });*/
     },
     checkedBox(selVal) {
       console.log("已勾选", selVal);
@@ -482,7 +534,7 @@ export default {
       });
     },
     advancedShow() {
-      this.display = !this.display;    
+      this.display = !this.display;
     }
   },
   watch: {
@@ -507,10 +559,10 @@ export default {
 .advancedSearch {
   display: none;
 }
-.search{
+.search {
   display: flex;
-  >*{
-    padding-right:10px;
+  > * {
+    padding-right: 10px;
   }
 }
 .titleFlex {

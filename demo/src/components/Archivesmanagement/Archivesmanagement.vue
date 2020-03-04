@@ -25,7 +25,7 @@
       ></el-input>
       <el-button size="mini" type="primary" @click="getList">搜索</el-button>
     </div> -->
-<quick-search></quick-search>
+<quick-search @onGetList="getDataList"></quick-search>
     <el-table
       ref="filterTable"
       :data="archivesTableData"
@@ -119,18 +119,20 @@ export default {
   },
    components:{quickSearch},
   created() {
-    this.getList();
+    this.getDataList();
   },
   methods: {
-    getList() {
+    getDataList(data) {
+      console.log("chuan",data)
       this.$http
         .get("/query/complexQuery", {
-          params: this.archivesQuery
+          //这里之所以有或，是因为在页面加载后需要立即调用这个函数，此时用this.archivesQuery；搜索时则用data，不能用data是因为data一开始为空，得点击搜索按钮后才会从子组件里传来数据
+          params: data || this.archivesQuery
         })
         .then(res => {
           this.archivesTableData = res.data.data[0].list;
           this.paging = res.data.data[0];
-          console.log(this.archivesTableData);
+          // console.log(this.archivesTableData);
         });
     },
     currenSel(selVal) {

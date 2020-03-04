@@ -5,6 +5,7 @@
         v-model="searchSel"
         @change="currenSearchSel"
         clearable
+        @clear="resetSel"
         placeholder="全部"
         size="small"
       >
@@ -16,14 +17,14 @@
           size="small"
         ></el-option>
       </el-select>
-      <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable size="small"></el-input>
+      <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable @clear="setListQuery()" size="small"></el-input>
       <!--自定义传参，参数用括号括起来-->
-      <el-button size="small" type="primary" @click="getList()">查询</el-button>
+      <el-button size="small" type="primary" @click="setListQuery()">查询</el-button>
       <!-- <el-button size="small" type="text" @click="toggleShow">高级搜索</el-button> -->
     </div>
   </div>
 </template>
-searchSel: "",
+
 <script>
 export default {
   data() {
@@ -60,21 +61,32 @@ export default {
     };
   },
   methods: {
+    // test(){
+    //   console.log("test")
+    // },
     currenSearchSel(selVal) {
       // this.searchSel = selVal;
       console.log("简易搜索", selVal);
       this.archivesQuery.type = selVal;
     },
-    getList() {
-      this.$http
-        .get("/query/complexQuery", {
-          params: this.archivesQuery
-        })
-        .then(res => {
-          this.archivesTableData = res.data.data[0].list;
-          this.paging = res.data.data[0];
-          console.log(this.archivesTableData);
-        });
+    resetSel(){      
+      this.archivesQuery.condition="";
+      this.archivesQuery.type=1;
+      this.setListQuery();
+      // console.log()
+    },
+    setListQuery() {
+      // this.$http
+      //   .get("/query/complexQuery", {
+      //     params: this.archivesQuery
+      //   })
+      //   .then(res => {
+      //     this.archivesTableData = res.data.data[0].list;
+      //     this.paging = res.data.data[0];
+      //     console.log(this.archivesTableData);
+          this.$emit("onGetList",this.archivesQuery)
+        // }        
+        // );
     }
   }
 };
