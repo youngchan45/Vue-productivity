@@ -9,38 +9,43 @@
     <div>
       <div :class="{'advancedSearch':display}">
         <h2>高级搜索</h2>
-        <el-form ref="searchRef" :model="archivesQuery" :rules="advancedRules" label-width="100px" class="demo-form-inline">
+        <el-form
+          ref="searchRef"
+          :model="archivesQuery"
+          :rules="advancedRules"
+          label-width="100px"
+          class="demo-form-inline"
+        >
           <el-form-item label="姓名" prop="userName">
             <el-input v-model="archivesQuery.userName" placeholder="请输入姓名" size="small"></el-input>
           </el-form-item>
-          <el-form-item label="房产面积" prop="area">
-            <el-input v-model="archivesQuery.area" placeholder="请输入面积" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.area" placeholder="请输入面积" size="small" type="number"></el-input>
+          <el-form-item label="房产面积">
+            <el-col :span="11">
+              <el-form-item prop="area1">
+                <el-input v-model="area.area1" placeholder="请输入面积" size="small"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">至</el-col>
+            <el-col :span="11">
+              <el-form-item prop="area2">
+                <el-input v-model="area.area2" placeholder="请输入面积" size="small" type="number"></el-input>
+              </el-form-item>
+            </el-col>
           </el-form-item>
           <el-form-item label="房产数量" prop="estateNum">
-            <el-input
-              v-model="archivesQuery.estateNum"
-              placeholder="请输入数量"
-              size="small"
-              type="number"
-            ></el-input>至
-            <el-input
-              v-model="archivesQuery.estateNum"
-              placeholder="请输入数量"
-              size="small"
-              type="number"
-            ></el-input>
+            <el-input v-model="estate.estate1" placeholder="请输入数量" size="small" type="number"></el-input>至
+            <el-input v-model="estate.estate2" placeholder="请输入数量" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="身份证" prop="idCard">
             <el-input v-model="archivesQuery.idCard" placeholder="请输入内容" size="small"></el-input>
           </el-form-item>
           <el-form-item label="汽车数量" prop="car">
-            <el-input v-model="archivesQuery.carNum" placeholder="请输入数量" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.carNum" placeholder="请输入数量" size="small" type="number"></el-input>
+            <el-input v-model="car.car1" placeholder="请输入数量" size="small" type="number"></el-input>至
+            <el-input v-model="car.car2" placeholder="请输入数量" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="奖金金额" prop="salary">
-            <el-input v-model="archivesQuery.salary" placeholder="请输入金额" size="small" type="number"></el-input>至
-            <el-input v-model="archivesQuery.salary" placeholder="请输入金额" size="small" type="number"></el-input>
+            <el-input v-model="salary.salary1" placeholder="请输入金额" size="small" type="number"></el-input>至
+            <el-input v-model="salary.salary2" placeholder="请输入金额" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="级别" prop="rank">
             <el-select
@@ -61,18 +66,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="出境次数" prop="goboard">
-            <el-input
-              v-model="archivesQuery.goboard"
-              placeholder="请输入数字"
-              size="small"
-              type="number"
-            ></el-input>至
-            <el-input
-              v-model="archivesQuery.goboard"
-              placeholder="请输入数字"
-              size="small"
-              type="number"
-            ></el-input>
+            <el-input v-model="goboard.goboard1" placeholder="请输入数字" size="small" type="number"></el-input>至
+            <el-input v-model="goboard.goboard2" placeholder="请输入数字" size="small" type="number"></el-input>
           </el-form-item>
           <el-form-item label="工作单位" placeholder="请搜索单位" clearable prop="unit">
             <el-select
@@ -205,9 +200,14 @@
 import quickSearch from "../publicUse/Quicksearch";
 export default {
   data() {
-//     var checkArea = (rule,value,callback)=>{
-// console.log(rule,value,callback)
-//       }
+    // var checkArea = (rule, value, callback) => {
+    //   console.log(rule, value, callback);
+    //   if (this.area.area1 && this.area.area2) {
+    //     if (this.area.area1 > this.area.area2) {
+    //       callback();
+    //     }
+    //   }
+    // };
     return {
       checked: false,
       searchForm: {},
@@ -220,24 +220,42 @@ export default {
       archivesQuery: {
         userId: window.sessionStorage.getItem("userId"),
         deptId: window.sessionStorage.getItem("deptId"),
-        dateYear: "2019", //此处不能写死，to-do
+        dateYear: "2019",
         idCard: "",
         userName: "",
-        // rankList: JSON.stringify(this.archivesQuery.rankList),
         rankList: [],
-        // rankList:[],
         area: "",
         carNum: "",
         estateNum: "",
         goboard: "",
         salary: "",
-        punishmentList: ""+JSON.stringify([]),
-        unitList: ""+JSON.stringify([]),
+        punishmentList: [],
+        unitList: [],
         button: "button2",
         type: 1, //搜索下拉框
         condition: "", //搜索框里的关键词
         pageIndex: 1,
         pagesize: 10
+      },
+      area: {
+        area1: "",
+        area2: ""
+      },
+      estate: {
+        estate1: "",
+        estate2: ""
+      },
+      car: {
+        car1: "",
+        car2: ""
+      },
+      salary: {
+        salary1: "",
+        salary2: ""
+      },
+      goboard: {
+        goboard1: "",
+        goboard2: ""
       },
       years: [
         // {label:'2018',value:0},
@@ -299,55 +317,54 @@ export default {
       ],
       display: true,
       faShow: true,
-     
-      advancedRules:{
+
+      advancedRules: {
         //只能输入中文；最多4个字符
-        userName:[
-          {pattern: /^[\u2E80-\u9FFF]+$/, message:"只能输入中文",trigger:"blur"},
-          {max:4, message:"最多4个汉字",trigger:"blur"}
+        userName: [
+          {
+            pattern: /^[\u2E80-\u9FFF]+$/,
+            message: "只能输入中文",
+            trigger: "blur"
+          },
+          { max: 4, message: "最多4个汉字", trigger: "blur" }
         ],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
-        area:[
-          {pattern:/^\d+$/,message:"只能输入数字",trigger:"blur"},
-          {min:1,message:"不能小于1",trigger:"blur"},
-          // {validator:checkArea}
+        //易错点：这里的面积是由两条输入框组成的合集，不能在两条输入框的父框上面加prop，得加在两条子框
+        // area: [
+        //   {
+        //     validator: checkArea,
+        //     message: "请输入正确顺序的数字范围",
+        //     trigger: "blur"
+        //   }
+        // ],
+        area1: [
+          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
         ],
+        area2: [{ pattern: /^\d+$/, message: "只能输入数字", trigger: "blur" }],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
-        estateNum:[
-          {}
-        ],
+        estateNum: [{}],
         //统一身份证验证规则
-        idCard:[
-          {}
+        idCard: [
+          {
+            pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/,
+            message: "请输入正确的身份证号码",
+            trigger: "blur"
+          }
         ],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
-        car:[
-          {}
-        ],
+        car: [{}],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
-        salary:[
-          {}
-        ],
-        rank:[
-          {}
-        ],
+        salary: [],
+        rank: [],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
-        goboard:[
-          {}
-        ],
-        unit:[
-          {}
-        ],
-        punishment:[
-          {}
-        ],
-        dateYear:[
-          {}
-        ],
+        goboard: [],
+        unit: [{}],
+        punishment: [{}],
+        dateYear: [{}]
       }
     };
   },
-  
+
   components: { quickSearch },
   created() {
     this.getYear();
@@ -366,9 +383,41 @@ export default {
     },
 
     getAdvancedList() {
+      //这里的三个列表数据需要转换成字符串(接口要求)，但不能在data里面直接转换，因为data里面是对数据的声明、格式设定和默认值。或者直接把参数全部带过去，但这样列表太长。其实这里修改很简单，在函数里面先转换，然后再对接接口即可。
       this.archivesQuery.rankList = JSON.stringify(this.archivesQuery.rankList);
-      console.warn(this.archivesQuery);
-      return;
+      this.archivesQuery.punishmentList = JSON.stringify(
+        this.archivesQuery.punishmentList
+      );
+      this.archivesQuery.unitList = JSON.stringify(this.archivesQuery.unitList);
+      if (this.area.area1 === "" && this.area.area2 === "") {
+        this.archivesQuery.area = "";
+      } else {
+        this.archivesQuery.area = `${this.area.area1}-${this.area.area2}`;
+      }
+      //易错点：在这里报错提示"Required String parameter 'area' is not present" 是因为我又将data的archivesQuery里的一些参数改了名字，但这些参数是后台设定好的，这里要注意，可以先从后台拿回需要的数据，然后在data里面定义;如果有其他报错，可考虑是否数据格式问题，比如需要字符串，但传过去是数组等等
+      this.$http
+        .get("/query/complexQuery", { params: this.archivesQuery })
+        .then(res => {
+          console.log("搜索结果2", res);
+          this.archivesTableData = res.data.data[0].list;
+          this.searchDisplay = false;
+          this.paging = res.data.data[0];
+        });
+      //知识点：//假设res为一个请求返回的结果
+      // let res={
+      //     status:200,
+      //     id:12,
+      //     data:[{name:'Bob'},{name:'Shuang Dan'}]
+      // }
+
+      // es6一行搞定
+      // let {status,id,data}=res;
+
+      // es5
+      // var status=res.status;
+      // var id=res.id;
+      // var data=res.data;
+
       /*this.$http
         .get("/query/complexQuery", {
           params: this.archivesQuery

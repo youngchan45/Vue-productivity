@@ -224,51 +224,51 @@ export default {
     this.getWaringList();
   },
   methods: {
-    getWaringList() {
-      this.$http
-        .get("/warn/searchWarn", {
-          params: {
-            warnName: "",
-            id: ""
-          }
-        })
-        .then(res => {
-          // res.data.data.forEach(item => {
-          //   this.waringData.push(item);
-          //   console.log("父亲", this.waringData);
-          //   let arr = [];
-          //   // res.data.data.forEach(item => {
-          //   arr.push(item.warnConditions);
-          //   console.log("儿子", arr);
-          //   // });
-          //   let arr1 = [];
-          //   arr[0].forEach(item => {
-          //     arr1.push(item.conditions);
-          //     console.log("孙子", arr1);
-          //   });
-          //   //  this.waringData.conditions=arr1;
-          //   for (var i = 3;  i < this.waringData.length;i++) {
-          //      console.log('???', this.waringData[i].conditions)
-          //     for (var j = 0;  j < arr1.length;j++) {
-          //       console.log('要循环的数组',arr1[j])
-          //       this.waringData[i].conditions = arr1[j];
-          //     }
-          //   }
-          // });
-          console.log("1", res);
-          for (var i = 0; i < this.waringData.length; i++) {
-            res.data.data.forEach(item => {
-              this.waringData.push({
-                officialType: "111",
-                warnName: item.warnName,
-                conditions: item.warnConditions.conditions,
-                content: item.warnConditions.content
-              });
-              console.log('222',this.waringData)
-            });
-          }
-        });
-    },
+    // getWaringList() {
+    //   this.$http
+    //     .get("/warn/searchWarn", {
+    //       params: {
+    //         warnName: "",
+    //         id: ""
+    //       }
+    //     })
+    //     .then(res => {
+    //       // res.data.data.forEach(item => {
+    //       //   this.waringData.push(item);
+    //       //   console.log("父亲", this.waringData);
+    //       //   let arr = [];
+    //       //   // res.data.data.forEach(item => {
+    //       //   arr.push(item.warnConditions);
+    //       //   console.log("儿子", arr);
+    //       //   // });
+    //       //   let arr1 = [];
+    //       //   arr[0].forEach(item => {
+    //       //     arr1.push(item.conditions);
+    //       //     console.log("孙子", arr1);
+    //       //   });
+    //       //   //  this.waringData.conditions=arr1;
+    //       //   for (var i = 3;  i < this.waringData.length;i++) {
+    //       //      console.log('???', this.waringData[i].conditions)
+    //       //     for (var j = 0;  j < arr1.length;j++) {
+    //       //       console.log('要循环的数组',arr1[j])
+    //       //       this.waringData[i].conditions = arr1[j];
+    //       //     }
+    //       //   }
+    //       // });
+    //       console.log("1", res);
+    //       for (var i = 0; i < this.waringData.length; i++) {
+    //         res.data.data.forEach(item => {
+    //           this.waringData.push({
+    //             officialType: "111",
+    //             warnName: item.warnName,
+    //             conditions: item.warnConditions.conditions,
+    //             content: item.warnConditions.content
+    //           });
+    //           console.log('222',this.waringData)
+    //         });
+    //       }
+    //     });
+    // },
     objectSpanMethod({ rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         if (rowIndex % 2 === 0) {
