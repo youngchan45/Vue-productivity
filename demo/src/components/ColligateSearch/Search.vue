@@ -316,8 +316,6 @@ export default {
         { title: "分管部门(岗位职责)", istrue: false }
       ],
       display: true,
-      faShow: true,
-
       advancedRules: {
         //只能输入中文；最多4个字符
         userName: [
@@ -381,7 +379,6 @@ export default {
         this.paging = res.data.data[0];
       });
     },
-
     getAdvancedList() {
       //这里的三个列表数据需要转换成字符串(接口要求)，但不能在data里面直接转换，因为data里面是对数据的声明、格式设定和默认值。或者直接把参数全部带过去，但这样列表太长。其实这里修改很简单，在函数里面先转换，然后再对接接口即可。
       this.archivesQuery.rankList = JSON.stringify(this.archivesQuery.rankList);
@@ -588,6 +585,11 @@ export default {
   },
   watch: {
     userDefinedChecked: {
+      //1.给表格里的每一列增加v-if，定义一个容器colData放置所有列
+      //2.监听自定义列框里面的选项，把自定义列里的选项数组传递过来
+      //3.使用filter()方法，把colData里的每一项title和自定义列里的选项数组进行比较
+        //3.1如果coldata里的title也存在于用户操作的自定义列框中，则coldata的另一个属性istrue也就是控制列v-if为true，列表显示
+        //3.2如果coldata里的title没有在用户操作的自定义列框中，则代表用户没有选中，因为自定义列框checkbox的原理是，被选中的选项才会进入checkbox中
       handler: function(valArr) {
         this.colData.filter(i => {
           if (valArr.indexOf(i.title) !== -1) {
