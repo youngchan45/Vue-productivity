@@ -19,7 +19,7 @@
       </el-select>
       <el-input placeholder="请输入关键字" v-model="archivesQuery.condition" clearable @clear="setListQuery()" size="small"></el-input>
       <!--自定义传参，参数用括号括起来-->
-      <el-button size="small" type="primary" @click="setListQuery()">查询</el-button>
+      <el-button size="small" type="primary" @click="setListQuery">查询</el-button>
       <!-- <el-button size="small" type="text" @click="toggleShow">高级搜索</el-button> -->
     </div>
   </div>

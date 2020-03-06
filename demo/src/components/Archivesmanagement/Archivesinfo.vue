@@ -26,7 +26,7 @@
       <el-tab-pane label="个人基本情况" class="inTabs" name="first">
         <div>
           <h4>基础资料</h4>
-          <el-card class="basicEveryLine">
+          <el-card class="basic everyLine">
             <el-row>
               <el-row>
                 <el-col :span="21">
@@ -61,8 +61,9 @@
                   </el-col>
                 </el-col>
                 <el-col :span="3">
-                  <div class="photo">
-                    <img :src="'http://itlead.vicp.net:9905'+personList.photoPath.toString()" alt="个人证件照" />
+                  <div>
+                    <img :src="'http://itlead.vicp.net:9905'+personList.photoPath.toString()" class="photo" alt="个人证件照" />
+                    <!-- <img :src="personList.photoPath.toString()" alt="个人证件照" /> -->
                   </div>
                 </el-col>
               </el-row>
@@ -1041,17 +1042,20 @@ export default {
 
 <style lang='less' scoped>
 .container {
-  padding: 0 130px;
+  // padding: 0 200px;
   // min-width: 980px;
-  overflow-x: scroll;
+  display: flex;
+  flex-direction: column;
   .basic {
     font-size: 13px;
   }
 
   .photo {
-    border: 1px solid #000;
-    width: 100%;
-    height: 100%;
+      // min-width:140px;
+      // min-height:150px;
+      width:140px;
+      height:150px;
+    }
   }
   .title0 {
     display: flex;
@@ -1078,5 +1082,4 @@ export default {
     content: ":";
     position: absolute;
   }
-}
 </style>

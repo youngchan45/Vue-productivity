@@ -68,26 +68,25 @@
       </el-tabs>
     </el-card>
 
-    <el-card :body-style="{ padding: '10px' }">        
-<abroadcompare></abroadcompare>
+    <el-card :body-style="{ padding: '10px' }">
+      <abroadcompare></abroadcompare>
     </el-card>
 
     <div class="flex">
       <el-card :body-style="{ padding: '10px' }">
-          <estatcompare></estatcompare>
+        <estatcompare></estatcompare>
       </el-card>
-  
       <el-card :body-style="{ padding: '10px' }">
-          <businesscompare></businesscompare>
+        <businesscompare></businesscompare>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-import Abroadcompare from '../Statisticalgraph/Abroadcompare'
-import Estatcompare from '../Statisticalgraph/Estatcompare'
-import Businesscompare from '../Statisticalgraph/Businesscompare'
+import Abroadcompare from "../Statisticalgraph/Abroadcompare";
+import Estatcompare from "../Statisticalgraph/Estatcompare";
+import Businesscompare from "../Statisticalgraph/Businesscompare";
 export default {
   data() {
     return {
@@ -108,7 +107,9 @@ export default {
     getData() {
       this.$http
         .get("/archive/infoCompare", {
+        //params是格式  
           params: {
+            //用query传，就用query接收
             idcard: this.$route.query.idcard,
             dateYear: this.$route.query.dateYear,
             type: this.type
@@ -140,10 +141,10 @@ export default {
       this.getData();
     }
   },
-  components:{
-      "abroadcompare":Abroadcompare,
-      "estatcompare":Estatcompare,
-      "businesscompare":Businesscompare,
+  components: {
+    abroadcompare: Abroadcompare,
+    estatcompare: Estatcompare,
+    businesscompare: Businesscompare
   }
 };
 </script>

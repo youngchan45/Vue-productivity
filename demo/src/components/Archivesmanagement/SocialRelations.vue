@@ -16,31 +16,8 @@
         <el-button plain size="mini" @click="openUserDefine" type="success">自定义列</el-button>
         <el-dialog title="自定义列" :visible.sync="userDefinedVisible" class="userDialog">
           <!-- :style="{top:top+ &quot;px&quot;,left:left+ &quot;px&quot;}" -->
-
           <el-checkbox-group v-model="userDefinedChecked" class="flex">
             <el-checkbox v-for="(item,index) in userDefinedBox" :key="index" :label="item"></el-checkbox>
-            <!-- <el-checkbox label="姓名"></el-checkbox>
-            <el-checkbox label="与本人关系"></el-checkbox>
-            <el-checkbox label="性别"></el-checkbox>
-            <el-checkbox label="民族"></el-checkbox>
-            <el-checkbox label="政治面貌"></el-checkbox>
-            <el-checkbox label="工作单位"></el-checkbox>
-            <el-checkbox label="婚姻状况"></el-checkbox>
-            <el-checkbox label="身份证号"></el-checkbox>
-            <el-checkbox label="户籍地址"></el-checkbox>
-            <el-checkbox label="籍贯"></el-checkbox>
-            <el-checkbox label="出生地"></el-checkbox>
-            <el-checkbox label="参加工作地址"></el-checkbox>
-            <el-checkbox label="专业技术职称"></el-checkbox>
-            <el-checkbox label="入党时间"></el-checkbox>
-            <el-checkbox label="手机号码"></el-checkbox>
-            <el-checkbox label="职务"></el-checkbox>
-            <el-checkbox label="级别"></el-checkbox>
-            <el-checkbox label="是否市管干部"></el-checkbox>
-            <el-checkbox label="是否本单位/下属单位党政一把手"></el-checkbox>
-            <el-checkbox label="是否专职纪检(监察)干部"></el-checkbox>
-            <el-checkbox label="任线级别时间"></el-checkbox>
-            <el-checkbox label="分管部门(岗位职责)"></el-checkbox>-->
           </el-checkbox-group>
           <el-button plain size="mini" @click="userDefinedVisible = false">取消</el-button>
           <el-button type="primary" plain size="mini" @click="userDefinedVisible = false">确定</el-button>
@@ -86,6 +63,13 @@
             plain
             size="mini"
             @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+          >详情</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="mini"
+            @click="goInfo(scope.row.dateYear,scope.row.idcard)"
+            v-if="scope.row.exsit==1"
           >详情</el-button>
         </template>
       </el-table-column>
