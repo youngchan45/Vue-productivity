@@ -198,6 +198,7 @@
 
 <script>
 import quickSearch from "../publicUse/Quicksearch";
+import { validCname, validIdCard } from "../../rules.js";
 export default {
   data() {
     // var checkArea = (rule, value, callback) => {
@@ -319,12 +320,13 @@ export default {
       advancedRules: {
         //只能输入中文；最多4个字符
         userName: [
-          {
-            pattern: /^[\u2E80-\u9FFF]+$/,
-            message: "只能输入中文",
-            trigger: "blur"
-          },
-          { max: 4, message: "最多4个汉字", trigger: "blur" }
+          // {
+          //   pattern: /^[\u2E80-\u9FFF]+$/,
+          //   message: "只能输入中文",
+          //   trigger: "blur"
+          // },
+          // { max: 4, message: "最多4个汉字", trigger: "blur" }，
+          { validator: validCname, trigger: "blur" }
         ],
         //只能输入数字；最小大于0；if两个框都有数字，则第二个框必须大于第一个框
         //易错点：这里的面积是由两条输入框组成的合集，不能在两条输入框的父框上面加prop，得加在两条子框
@@ -343,9 +345,13 @@ export default {
         estateNum: [{}],
         //统一身份证验证规则
         idCard: [
+          // {
+          //   pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/,
+          //   message: "请输入正确的身份证号码",
+          //   trigger: "blur"
+          // },
           {
-            pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/,
-            message: "请输入正确的身份证号码",
+            validator: validIdCard,
             trigger: "blur"
           }
         ],
@@ -588,8 +594,8 @@ export default {
       //1.给表格里的每一列增加v-if，定义一个容器colData放置所有列
       //2.监听自定义列框里面的选项，把自定义列里的选项数组传递过来
       //3.使用filter()方法，把colData里的每一项title和自定义列里的选项数组进行比较
-        //3.1如果coldata里的title也存在于用户操作的自定义列框中，则coldata的另一个属性istrue也就是控制列v-if为true，列表显示
-        //3.2如果coldata里的title没有在用户操作的自定义列框中，则代表用户没有选中，因为自定义列框checkbox的原理是，被选中的选项才会进入checkbox中
+      //3.1如果coldata里的title也存在于用户操作的自定义列框中，则coldata的另一个属性istrue也就是控制列v-if为true，列表显示
+      //3.2如果coldata里的title没有在用户操作的自定义列框中，则代表用户没有选中，因为自定义列框checkbox的原理是，被选中的选项才会进入checkbox中
       handler: function(valArr) {
         this.colData.filter(i => {
           if (valArr.indexOf(i.title) !== -1) {
