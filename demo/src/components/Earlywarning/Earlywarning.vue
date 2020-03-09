@@ -17,12 +17,7 @@
         <el-button @click="warningDialog" size="mini" type="primary">新建预警</el-button>
       </div>
     </div>
-    <el-table
-      :data="waringData"
-      :span-method="objectSpanMethod"
-      border
-      style="width: 100%; margin-top: 20px"
-    >
+    <el-table :data="waringData" border style="width: 100%; margin-top: 20px">
       <el-table-column prop="officialType" label="预警类型" width="180"></el-table-column>
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="warnName" label="预警名称"></el-table-column>
@@ -224,66 +219,65 @@ export default {
     this.getWaringList();
   },
   methods: {
-    // getWaringList() {
-    //   this.$http
-    //     .get("/warn/searchWarn", {
-    //       params: {
-    //         warnName: "",
-    //         id: ""
-    //       }
-    //     })
-    //     .then(res => {
-    //       // res.data.data.forEach(item => {
-    //       //   this.waringData.push(item);
-    //       //   console.log("父亲", this.waringData);
-    //       //   let arr = [];
-    //       //   // res.data.data.forEach(item => {
-    //       //   arr.push(item.warnConditions);
-    //       //   console.log("儿子", arr);
-    //       //   // });
-    //       //   let arr1 = [];
-    //       //   arr[0].forEach(item => {
-    //       //     arr1.push(item.conditions);
-    //       //     console.log("孙子", arr1);
-    //       //   });
-    //       //   //  this.waringData.conditions=arr1;
-    //       //   for (var i = 3;  i < this.waringData.length;i++) {
-    //       //      console.log('???', this.waringData[i].conditions)
-    //       //     for (var j = 0;  j < arr1.length;j++) {
-    //       //       console.log('要循环的数组',arr1[j])
-    //       //       this.waringData[i].conditions = arr1[j];
-    //       //     }
-    //       //   }
-    //       // });
-    //       console.log("1", res);
-    //       for (var i = 0; i < this.waringData.length; i++) {
-    //         res.data.data.forEach(item => {
-    //           this.waringData.push({
-    //             officialType: "111",
-    //             warnName: item.warnName,
-    //             conditions: item.warnConditions.conditions,
-    //             content: item.warnConditions.content
-    //           });
-    //           console.log('222',this.waringData)
-    //         });
-    //       }
-    //     });
-    // },
-    objectSpanMethod({ rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          };
-        }
-      }
+    getWaringList() {
+      this.$http
+        .get("/warn/searchWarn", {
+          params: {
+            warnName: "",
+            id: ""
+          }
+        })
+        .then(res => {
+          console.log("warn", res);
+          //for in循环
+          // for (var i in res.data.data) {
+          //   this.waringData.push({
+          //     officialType: "房产",
+          //     warnName: res.data.data[i].warnName,
+          //     conditions: res.data.data[i].warnConditions[0].conditions,
+          //     content: res.data.data[i].warnConditions[0].content
+          //   });
+          //   for (var j in res.data.data[i].warnConditions) {
+          //     console.log("小", res.data.data[i].warnConditions[j]);
+          //     this.waringData.push({
+          //       conditions:
+          //         res.data.data[i].warnConditions[Number(j) + 1].conditions,
+          //       content: res.data.data[i].warnConditions[Number(j) + 1].content
+          //     });
+          //   }
+          // }
+          //for循环
+          for (var i = 0; i < res.data.data.length; i++) {
+            this.waringData.push({
+              officialType: "房产",
+              warnName: res.data.data[i].warnName,
+           conditions: res.data.data[i].warnConditions[0].conditions,
+              content: res.data.data[i].warnConditions[0].content
+            });
+            for (var j = 1; j < res.data.data[i].warnConditions.length; j++) {
+              this.waringData.push({
+                 conditions: res.data.data[i].warnConditions[j].conditions,
+                 content: res.data.data[i].warnConditions[j].content
+               });
+            }
+          }
+        });
     },
+    // objectSpanMethod({ rowIndex, columnIndex }) {
+    //   if (columnIndex === 0) {
+    //     if (rowIndex % 2 === 0) {
+    //       return {
+    //         rowspan: 2,
+    //         colspan: 1
+    //       };
+    //     } else {
+    //       return {
+    //         rowspan: 0,
+    //         colspan: 0
+    //       };
+    //     }
+    //   }
+    // },
     warningDialog() {
       this.warningAddVisible = true;
       this.getPropertyRight();

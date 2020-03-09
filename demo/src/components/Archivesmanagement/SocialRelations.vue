@@ -122,7 +122,7 @@
         </td>
       </tr>
     </table>-->
-    <el-table
+    <!-- <el-table
       ref="filterTable"
       :data="relationsData"
       style="width: 100%"
@@ -173,7 +173,7 @@
           >详情</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
   </div>
 </template>
 
