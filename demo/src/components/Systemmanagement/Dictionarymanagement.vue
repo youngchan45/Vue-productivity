@@ -16,9 +16,9 @@
 
     <el-table ref="dictTable" :data="dictList" style="width: 100%" stripe border max-height="470px">
       <el-table-column type="index" label="#" align="center" width="40"></el-table-column>
-      <el-table-column prop="dictName" label="字典名称" width="160"></el-table-column>
-      <el-table-column prop="dictRemark" label="字典备注" width="70"></el-table-column>
-      <el-table-column prop="createTime" type="date" label="更新时间" width="190" sortable>
+      <el-table-column prop="dictName" label="字典名称" width="80"></el-table-column>
+      <el-table-column prop="dictRemark" label="字典备注" width="100"></el-table-column>
+      <el-table-column prop="createTime" type="date" label="更新时间" width="150" sortable>
         <template slot-scope="scope">{{scope.row.createTime | timeset}}</template>
       </el-table-column>
       <el-table-column label="操作" width="160">
