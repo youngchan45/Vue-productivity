@@ -25,8 +25,8 @@ const recordcomparison = () => import('../components/Archivesmanagement/Recordco
 const socialRelations = () => import('../components/Archivesmanagement/SocialRelations.vue')
 const colligateSearch = () => import('../components/ColligateSearch/Search.vue')
 const leaflet = () => import('../components/Leaflet/Leaflet.vue')
+const earlyWarning =()=> import("../components/Earlywarning/Earlywarning.vue")
 const entrance = () => import('../components/Subjectanalysis/Entrance.vue')
-const earlyWarning = () => import('../components/Earlywarning/EarlyWarning.vue')
 
 const routes = [
   {
