@@ -17,7 +17,7 @@
         <el-button @click="warningDialog" size="mini" type="primary">新建预警</el-button>
       </div>
     </div>
-    <table>
+    <!-- <table>
       <thead>
         <tr>
           <th>预警类型</th>
@@ -29,7 +29,7 @@
           </th>
         </tr>
       </thead>
-      <tbody width="100%" >
+      <tbody width="100%"> -->
         <!-- <tr>
           <td>裸官</td>
           <td>{{index+1}}</td>
@@ -51,13 +51,13 @@
           <td>配偶、子女、子女的配偶三种身份中只要任意一种有创建经商办企业，则符合条件</td>
           <td>*</td> 
         </tr>-->
-        <tr v-for="(item,index) in waringData" :key="index" width="100%">
-          <!-- <td v-for="(items,index) in item.warnConditions" :key="index"></td> -->
+        <!-- <tr v-for="(item,index) in waringData" :key="index" width="100%">
+          <td v-for="(items,index) in item.warnConditions" :key="index"></td> 
           <td width="15%">{{item.officialType}}</td>
           <td width="5%">{{index+1}}</td>
           <td width="20%">{{item.warnName}}</td>
           <td width="60%">
-          <!-- <span>{{item}}</span> -->
+            <span>{{item}}</span> 
             <span class="line_item" v-for="(items,index) in item.conditions" :key="index">
               <span class="line_items">{{items.conditions}}</span>
               <span class="line_items">{{items.content}}</span>
@@ -65,19 +65,19 @@
           </td>
         </tr>
       </tbody>
-    </table>
-    <!-- <el-table :data="waringData" border style="width: 100%; margin-top: 20px" > -->
-    <!-- <el-table-column v-for="(item,index) in waringData" :key="index">{{item.warnName}}</el-table-column> -->
-    <!-- <el-table-column prop="officialType" label="预警类型" width="180"></el-table-column>
+    </table> -->
+    <el-table :data="waringData" border style="width: 100%; margin-top: 20px" >
+    <!-- <el-table-column v-for="(item,index) in waringData" :key="index">{{item.warnName}}</el-table-column>  -->
+    <el-table-column prop="officialType" label="预警类型" width="180"></el-table-column>
         <el-table-column type="index" label="序号"></el-table-column>
         <el-table-column prop="warnName" label="预警名称"></el-table-column>
       <el-table-column prop="conditions" label="预警条件"></el-table-column>
-    <el-table-column prop="content" label="预警内容"></el-table-column>-->
+    <el-table-column prop="content" label="预警内容"></el-table-column>
     <!-- <p v-for="(item,index) in waringData.warnConditions " :key="index">
         <el-table-column prop="item.conditions" label="预警条件"></el-table-column>
         <el-table-column prop="item.content" label="预警内容"></el-table-column>
     </p>-->
-    <!-- </el-table> -->
+    </el-table>
 
     <!--新建弹窗-->
     <el-dialog
@@ -278,34 +278,35 @@ export default {
         })
         .then(res => {
           res.data.data.forEach(item => {
+            // this.waringData.push({
+              // officialType: "房产",
+              // warnName: item.warnName
+              // conditions: item.warnConditions,
+              // content: item.warnConditions
+            // });
+
+//for in循环
+          for (var i in res.data.data) {
             this.waringData.push({
               officialType: "房产",
-              warnName: item.warnName,
-              conditions: item.warnConditions,
-              content: item.warnConditions
+              warnName: res.data.data[i].warnName,
+              // conditions: res.data.data[i].warnConditions[0].conditions,
+              // content: res.data.data[i].warnConditions[0].content
             });
-            
-            console.log("warn!!!", this.waringData);
-          });
-            console.log("!!!", res.data.data);
+            for (var j in res.data.data[i].warnConditions) {
+              console.log("小", res.data.data[i].warnConditions[j]);
+              this.waringData.push({
+                conditions: res.data.data[i].warnConditions[j].conditions,
+                content: res.data.data[i].warnConditions[j].content
+              });
+            }
+          }
 
-          //for in循环
-          // for (var i in res.data.data) {
-          //   this.waringData.push({
-          //     officialType: "房产",
-          //     warnName: res.data.data[i].warnName,
-          // conditions: res.data.data[i].warnConditions[0].conditions,
-          // content: res.data.data[i].warnConditions[0].content
-          // });
-          // for (var j in res.data.data[i].warnConditions) {
-          //   console.log("小", res.data.data[i].warnConditions[j]);
-          //   this.waringData.push({
-          //     conditions:
-          //       res.data.data.warnConditions[j].conditions,
-          //     content: res.data.data[i].warnConditions[j].content
-          //   });
-          // }
-          // }
+            console.log("warn!!!", this.waringData,item);
+          });
+          // console.log("!!!", res.data.data);
+
+          
 
           //for循环
           // for (var i = 0; i < res.data.data.length; i++) {
@@ -420,14 +421,14 @@ td {
 td {
   padding: 6px;
 }
-.line_item{
-  display:inline-block;
+.line_item {
+  display: inline-block;
   width: 100%;
-  .line_items{
-    display:inline-block;
+  .line_items {
+    display: inline-block;
     box-sizing: border-box;
     width: 50%;
-    &:last-of-type{
+    &:last-of-type {
       border-left: 1px solid #909090;
     }
   }
