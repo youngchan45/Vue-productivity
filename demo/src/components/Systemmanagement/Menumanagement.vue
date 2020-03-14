@@ -120,6 +120,8 @@ export default {
         // 不同级进行处理
       }
 
+      console.warn(moveNodeLength,inNodeLength)
+      console.error(moveNodeOne,inNodeOne)
       //自己的子级只能在内部移动
       if (moveNodeLength === inNodeLength) {
         if (moveNodeOne === inNodeOne) {
@@ -129,6 +131,7 @@ export default {
         }
       } else {
         // 不同级进行处理
+         return;
       }
     },
 
