@@ -4,10 +4,10 @@ import axios from 'axios'
 //配置请求的根路径
 axios.defaults.baseURL = 'http://itlead.vicp.net:9905/archive'
 Vue.prototype.$http = axios
-axios.interceptors.request.use(config => {
-  config.headers.authorization = window.sessionStorage.getItem('token')
-  return config;
-})
+// axios.interceptors.request.use(config => {
+//   config.headers.authorization = window.sessionStorage.getItem('token')
+//   return config;
+// })
 // import login from '../components/Login.vue'
 const login = () => import('../components/Login.vue')
 const home = () => import('../components/Home.vue')

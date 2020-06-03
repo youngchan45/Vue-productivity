@@ -2,6 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import axios from "axios";
+Vue.prototype.$http = axios;
+
 import './plugins/element.js'
 //导入全局样式表
 import './assets/css/global.css'
@@ -57,10 +60,10 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-Vue.filter('ellipsis',value=>{
-if(!value) return ''
-if(value.length>6){
-  return value.slice(0,5)+'...'
-}
-return value;
+Vue.filter('ellipsis', value => {
+  if (!value) return ''
+  if (value.length > 6) {
+    return value.slice(0, 5) + '...'
+  }
+  return value;
 })
