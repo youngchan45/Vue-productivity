@@ -22,6 +22,7 @@
 
 <script>
 import Group from "../components/publicUse/Group";
+import { getWarnInfo } from "../request/api";
 export default {
   data() {
     return {
@@ -48,14 +49,12 @@ export default {
       this.getWarnInfo();
     },
     getWarnInfo() {
-      this.$http
-        .get("/warn/indexWarnInfo", {
-          params: this.warnQuery
-        })
-        .then(res => {
-          console.log("卡片3", res);
-          this.warnList = res.data.data.slice(0, 5);
-        });
+      getWarnInfo(this.warnQuery).then(res => {
+        console.log("卡片3", res);
+        // this.warnList = res.data.data.slice(0, 5);
+        this.warnList = res.data.slice(0, 5);
+      });
+
     }
   },
   components: {
@@ -70,7 +69,7 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
-.el-link{
-  padding:4px 0;
+.el-link {
+  padding: 4px 0;
 }
 </style>
